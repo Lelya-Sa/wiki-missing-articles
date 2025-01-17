@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="mlklk">
-      <change afterPath="$PROJECT_DIR$/templates/search_by_q.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Missing_App/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Missing_App/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finalproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/finalproject/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/makemigrations/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/makemigrations/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,8 +115,16 @@
       <workItem from="1737107900365" duration="1471000" />
       <workItem from="1737111348441" duration="3286000" />
       <workItem from="1737115001404" duration="111000" />
-      <workItem from="1737115164409" duration="2140000" />
+      <workItem from="1737115164409" duration="3062000" />
     </task>
+    <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
+      <created>1737118314494</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1737118314494</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -138,5 +140,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)" />
+    <option name="LAST_COMMIT_MESSAGE" value="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)" />
   </component>
 </project>
