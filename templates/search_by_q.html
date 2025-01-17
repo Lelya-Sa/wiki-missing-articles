@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search by Q Query</title>
+</head>
+<body>
+    <h1>Search by Q Query</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="language">Choose language:</label>
+        <select name="language" id="language">
+            <option value="he">Hebrew</option>
+            <option value="en">English</option>
+            <option value="ar">Arabic</option>
+            <!-- Add more language options as needed -->
+        </select>
+
+        <label for="q_value">Search Q:</label>
+        <input type="text" name="q_value" id="q_value" required>
+
+        <button type="submit">Search</button>
+    </form>
+
+    {% if result_message %}
+        <h2>Result:</h2>
+        <p>{{ result_message }}</p>
+    {% endif %}
+</body>
+</html>

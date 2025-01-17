@@ -4,9 +4,6 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    #בשביל שנידע בהמשך איך נוסיף קבצי html לפה
+    path('search_by_q', views.search_by_q, name='search_by_q')
 
-    # path('QueryResults', views.QueryResults, name='QueryResults'),
-    # path('AddTransaction', views.AddTransaction, name='AddTransaction'),
-    # path('BuyStocks', views.BuyStocks, name='BuyStocks')
 ]
