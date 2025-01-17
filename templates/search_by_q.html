@@ -9,11 +9,8 @@
     <form method="POST">
         {% csrf_token %}
         <label for="language">Choose language:</label>
-        <select name="language" id="language">
-            <option value="he">Hebrew</option>
-            <option value="en">English</option>
-            <option value="ar">Arabic</option>
-            <!-- Add more language options as needed -->
+        <select name="language" id="language" required>
+            <option value="">Loading languages...</option>
         </select>
 
         <label for="q_value">Search Q:</label>
@@ -26,5 +23,50 @@
         <h2>Result:</h2>
         <p>{{ result_message }}</p>
     {% endif %}
+
+    <script>
+        // MediaWiki Sitematrix API URL
+        const apiURL = "https://www.mediawiki.org/w/api.php?action=sitematrix&format=json&origin=*";
+
+        // Function to fetch and populate the language dropdown
+        async function fetchLanguages() {
+            try {
+                const response = await fetch(apiURL);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch languages from the API.");
+                }
+                const data = await response.json();
+
+                // Get the dropdown element
+                const languageSelect = document.getElementById("language");
+
+                // Clear the loading message
+                languageSelect.innerHTML = "";
+
+                // Parse the languages from the sitematrix
+                for (const key in data.sitematrix) {
+                    if (key !== "specials") { // Skip the "specials" entry
+                        const languageData = data.sitematrix[key];
+                        const langCode = languageData.code; // Language code
+                        const langName = languageData.localname; // Localized name
+
+                        // Create an option element for each language
+                        const option = document.createElement("option");
+                        option.value = langCode;
+                        option.textContent = `${langName} (${langCode})`;
+                        languageSelect.appendChild(option);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching languages:", error);
+                const languageSelect = document.getElementById("language");
+                languageSelect.innerHTML = "<option value=''>Error loading languages</option>";
+            }
+        }
+
+        // Call the function to fetch and populate the languages
+        fetchLanguages();
+    </script>
 </body>
 </html>
+

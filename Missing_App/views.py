@@ -16,6 +16,7 @@ def index(request):
     return render(request, 'index.html')
 
 
+
 def search_by_q(request):
     if request.method == 'POST':
         language = request.POST.get('language')  # Example: 'he' for Hebrew
@@ -62,5 +63,6 @@ def search_by_q(request):
         return render(request, 'search_by_q.html', context)
 
     return render(request, 'search_by_q.html')
+
 
 
