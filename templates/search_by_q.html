@@ -9,10 +9,13 @@
     <form method="POST">
         {% csrf_token %}
         <label for="language">Choose language:</label>
-        <select name="language" id="language" required>
+{#        <select name="language" id="language" required>#}
+{#            <option value="">Loading languages...</option>#}
+{#        </select>#}
+        <input type="text" list="language" placeholder="Enter Your Language Here" />
+        <datalist id="language">
             <option value="">Loading languages...</option>
-        </select>
-
+        </datalist>
         <label for="q_value">Search Q:</label>
         <input type="text" name="q_value" id="q_value" required>
 
