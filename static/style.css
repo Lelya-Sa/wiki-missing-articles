@@ -1,0 +1,16 @@
+body{
+ background-color: #ffffff;
+ }
+ h1{
+ color: #3161d6;
+ }
+ h2{
+ color: #97b7e4;
+ }
+
+.rectangle{
+ background-color: #ffffff;
+ text-align: center;
+ border: 5px outset #041540;
+ width: 500px;
+ }
