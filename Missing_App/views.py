@@ -33,8 +33,11 @@ def search_by_q(request):
             entity_data = data.get('entities', {}).get(q_value, {})
             sitelinks = entity_data.get('sitelinks', {})
 
-            # Check if the language exists in the sitelinks
-            is_found = language in sitelinks
+            # Construct the expected key for the sitelink
+            sitelink_key = f"{language}wiki"
+
+            # Check if the sitelink exists
+            is_found = sitelink_key in sitelinks
 
             # Prepare the result message
             if is_found:
@@ -59,4 +62,5 @@ def search_by_q(request):
         return render(request, 'search_by_q.html', context)
 
     return render(request, 'search_by_q.html')
+
 
