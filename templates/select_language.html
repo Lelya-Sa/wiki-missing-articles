@@ -1,32 +1,29 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Search by Q Query</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Language</title>
 </head>
 <body>
-    <h1>Search by Q Query</h1>
-    <form method="POST">
+    <h1>Select Language</h1>
+    <form method="post" action="">
         {% csrf_token %}
-        <label for="language">Choose language:</label>
+        <label for="language_code">Enter Language Code:</label>
+{#        <input type="text" id="language_code" name="language_code" placeholder="e.g., en, fr, de" required>#}
+        
+{#        <label for="language">Choose language:</label>#}
 {#        <select name="language" id="language" required>#}
 {#            <option value="">Loading languages...</option>#}
 {#        </select>#}
-        <input type="text" list="language"  name="language" placeholder="Enter Your Language Here" />
-        <datalist id="language">
+        <input type="text" list="language_code" name="language_code" placeholder="Enter Your Language Here"  required>
+        
+        <datalist id="language_code">
             <option value="">Loading languages...</option>
         </datalist>
         
-        <label for="q_value">Search Q:</label>
-        <input type="text" name="q_value" id="q_value" required>
-
-        <button type="submit">Search</button>
+        <button type="submit">Submit</button>
     </form>
-
-    {% if result_message %}
-        <h2>Result:</h2>
-        <p>{{ result_message }}</p>
-    {% endif %}
 
     <script>
         // MediaWiki Sitematrix API URL
@@ -42,7 +39,7 @@
                 const data = await response.json();
 
                 // Get the dropdown element
-                const languageSelect = document.getElementById("language");
+                const languageSelect = document.getElementById("language_code");
 
                 // Clear the loading message
                 languageSelect.innerHTML = "";
@@ -63,7 +60,7 @@
                 }
             } catch (error) {
                 console.error("Error fetching languages:", error);
-                const languageSelect = document.getElementById("language");
+                const languageSelect = document.getElementById("language_code");
                 languageSelect.innerHTML = "<option value=''>Error loading languages</option>";
             }
         }
@@ -71,6 +68,6 @@
         // Call the function to fetch and populate the languages
         fetchLanguages();
     </script>
+
 </body>
 </html>
-
