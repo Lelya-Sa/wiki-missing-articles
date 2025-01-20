@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Category</title>
+</head>
+<body>
+    <h1>Categories in Language: {{ language_code }}</h1>
+    
+{#    <form method="post" action="">#}
+{#        {% csrf_token %}#}
+{#        <label for="category">Select a Category:</label>#}
+{#    #}
+{#        <input type="text" list="category" name="category" placeholder="Enter Category Here" required>#}
+{#        #}
+{#        <datalist id="category" >#}
+{#            {% for category in categories %}#}
+{#                <option value="{{ category.name }}">{{ category.name }}</option>#}
+{#            {% endfor %}#}
+{#        </datalist>#}
+{#        #}
+{#        <button type="submit">Submit</button>#}
+{#    </form>#}
+{#    #}
+    
+{#    {% if categories %}#}
+{#        <ul>#}
+{#        {% for category in categories %}#}
+{#            <li>{{ category.name }}</li>#}
+{#        {% endfor %}#}
+{#        </ul>#}
+{#    {% else %}#}
+{#        <p>No categories available.</p>#}
+{#    {% endif %}#}
+    
+{#    <form method="get" action="{% url 'fetch_articles_in_category' language_code=language_code category_name=category.name %}">#}
+        
+{#    <form method="POST">#}
+{#        #}
+{#    </form>#}
+    <form method="POST" id="category-form">
+        {% csrf_token %}
+            <label>
+                <input type="text" list="categories" name="category_name" placeholder="Enter Category Here" required>
+            </label>
+            {% if categories %}
+                <datalist id="categories">
+                    {% for category in categories %}
+                        <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </datalist>
+        <button type="submit">See Articles</button>
+            
+            {% else %}
+                <p>No categories available.</p>
+            {% endif %}
+    </form>
+
+    
+{#<form method="get" action="{% url 'fetch_articles_in_category' language_code=language_code category_name=''%}">#}
+{#    <input type="text" list="category" name="category" placeholder="Enter Category Here" required>#}
+{#    #}
+{#    <datalist id="category">#}
+{#            {% for category in categories %}#}
+{#                <option value="{{ category.name }}">{{ category.name }}</option>#}
+{#            {% endfor %}#}
+{#        </datalist>#}
+{#    <button type="submit">See Articles</button>#}
+{#</form>#}
+
+{#<script>#}
+{#    document.querySelector("form").addEventListener("submit", function(event) {#}
+{#        var categoryName = document.querySelector('input[name="category"]').value;#}
+{#        #}
+{#        // Check if category name is empty#}
+{#        if (!categoryName.trim()) {#}
+{#            alert("Please select or enter a valid category.");#}
+{#            event.preventDefault(); // Prevent form submission#}
+{#        } else {#}
+{#            // Construct the correct URL dynamically#}
+{#            var actionUrl = "{% url 'fetch_articles_in_category' language_code=language_code category_name=''%}".replace("category_name=''", "category_name=" + categoryName);#}
+{#            this.action = actionUrl; // Update form action URL before submission#}
+{#        }#}
+{#    });#}
+{#</script>#}
+    <!-- JavaScript to update form action dynamically -->
+{#    <script>#}
+{#        document.getElementById("category-form").addEventListener("submit", function(event) {#}
+{#            var categoryName = document.querySelector('input[name="category"]').value;#}
+{##}
+{#            // Check if the category name is empty#}
+{#            if (!categoryName.trim()) {#}
+{#                alert("Please select or enter a valid category.");#}
+{#                event.preventDefault(); // Prevent form submission if category is empty#}
+{#            } else {#}
+{#                // Dynamically update the form's action URL#}
+{#                var actionUrl = "{% url 'fetch_articles_in_category' language_code=language_code category_name='' %}".replace("category_name=''", "category_name=" + encodeURIComponent(categoryName));#}
+{#                this.action = actionUrl; // Update form action URL with the correct category name#}
+{#            }#}
+{#        });#}
+{#    </script>#}
+</body>
+</html>
