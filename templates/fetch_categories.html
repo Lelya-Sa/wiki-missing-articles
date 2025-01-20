@@ -34,22 +34,29 @@
 {#        <p>No categories available.</p>#}
 {#    {% endif %}#}
     
-    {% if categories %}
 {#    <form method="get" action="{% url 'fetch_articles_in_category' language_code=language_code category_name=category.name %}">#}
-        <form method="get" id="category-form">
-
-        <input type="text" list="categories" name="category" placeholder="Enter Category Here" required>
-    
-        <datalist id="categories">
-                {% for category in categories %}
-                    <option value="{{ category.name }}">{{ category.name }}</option>
-                {% endfor %}
-            </datalist>
+        
+{#    <form method="POST">#}
+{#        #}
+{#    </form>#}
+    <form method="POST" id="category-form">
+        {% csrf_token %}
+            <label>
+                <input type="text" list="categories" name="category_name" placeholder="Enter Category Here" required>
+            </label>
+            {% if categories %}
+                <datalist id="categories">
+                    {% for category in categories %}
+                        <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </datalist>
         <button type="submit">See Articles</button>
+            
+            {% else %}
+                <p>No categories available.</p>
+            {% endif %}
     </form>
-    {% else %}
-        <p>No categories available.</p>
-    {% endif %}
+
     
 {#<form method="get" action="{% url 'fetch_articles_in_category' language_code=language_code category_name=''%}">#}
 {#    <input type="text" list="category" name="category" placeholder="Enter Category Here" required>#}
@@ -78,20 +85,20 @@
 {#    });#}
 {#</script>#}
     <!-- JavaScript to update form action dynamically -->
-    <script>
-        document.getElementById("category-form").addEventListener("submit", function(event) {
-            var categoryName = document.querySelector('input[name="category"]').value;
-
-            // Check if the category name is empty
-            if (!categoryName.trim()) {
-                alert("Please select or enter a valid category.");
-                event.preventDefault(); // Prevent form submission if category is empty
-            } else {
-                // Dynamically update the form's action URL
-                var actionUrl = "{% url 'fetch_articles_in_category' language_code=language_code category_name=''%}".replace("category_name=''", "category_name=" + encodeURIComponent(categoryName));
-                this.action = actionUrl; // Update form action URL with the correct category name
-            }
-        });
-    </script>
+{#    <script>#}
+{#        document.getElementById("category-form").addEventListener("submit", function(event) {#}
+{#            var categoryName = document.querySelector('input[name="category"]').value;#}
+{##}
+{#            // Check if the category name is empty#}
+{#            if (!categoryName.trim()) {#}
+{#                alert("Please select or enter a valid category.");#}
+{#                event.preventDefault(); // Prevent form submission if category is empty#}
+{#            } else {#}
+{#                // Dynamically update the form's action URL#}
+{#                var actionUrl = "{% url 'fetch_articles_in_category' language_code=language_code category_name='' %}".replace("category_name=''", "category_name=" + encodeURIComponent(categoryName));#}
+{#                this.action = actionUrl; // Update form action URL with the correct category name#}
+{#            }#}
+{#        });#}
+{#    </script>#}
 </body>
 </html>
