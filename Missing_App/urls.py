@@ -7,7 +7,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('search_by_q', views.search_by_q, name='search_by_q'),
     path('select_language', views.select_language, name='select_language'),
-
     path('search_by_name', views.search_by_name, name='search_by_name'),
     # path('fetch-categories/<str:language_code>/', fetch_categories, name='fetch_categories'),
     # path('fetch-articles/<str:language_code>/<str:category_name>/',

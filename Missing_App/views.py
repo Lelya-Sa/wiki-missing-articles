@@ -64,6 +64,7 @@ def search_by_name(request):
             q_response = requests.get(api_url)
             q_response.raise_for_status()
 
+
             # Parse the Q-value data
             q_data = q_response.json()
             entity_data = q_data.get('entities', {}).get(q_value, {})
