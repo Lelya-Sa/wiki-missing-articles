@@ -14,8 +14,6 @@ urlpatterns = [
     #      fetch_articles_in_category,
     #      name='fetch_articles_in_category'),
     path('fetch-categories', views.fetch_categories, name='fetch_categories'),
-    path('fetch-articles',
-         views.fetch_articles_in_category,
-         name='fetch_articles_in_category'),
+    path('fetch-articles',views.fetch_articles_in_category,name='fetch_articles_in_category'),
 
 ]
