@@ -1,22 +1,94 @@
-
+<!--{% load static %}
 
 <!DOCTYPE html>
+
+
+
+
 <html>
+
 <head>
     <title>Missing Wikipedia Entries</title>
 </head>
 <body>
     <h1>Welcome to Missing Wikipedia Entries!</h1>
+
+    <img src="{% static 'images/globe.jpg' %}" alt="Wikipedia Globe" class="globe" width="800" height="500">
+
+
     <p>Use this tool to check if a specific Q-value exists in a particular language or find missing entries in a category.</p>
 
     <h2>Choose an Option:</h2>
     <ul>
         <li><a href="{% url 'search_by_name' %}">Search by name</a></li>
-        <!-- Add more navigation options here -->
+
 
 
         <li><a href="{% url 'missing_articles' %}">Search by category</a></li>
 
     </ul>
 </body>
+</html>-->
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Missing Wikipedia Entries</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
+        .globe {
+            margin: 20px auto;
+            display: block;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dear Contributor, welcome to the Missing Wikipedia Entries Tool!</h1>
+
+        <img src="{% static 'images/globe.jpg' %}" alt="Wikipedia Globe" class="globe" width="650" height="400">
+
+        <p>Use this tool to check if a specific Q-value exists in a particular language or find missing entries in a category.</p>
+
+        <h2>Choose an Option:</h2>
+        <ul>
+            <li><a href="{% url 'search_by_name' %}">Search by name</a></li>
+            <li><a href="{% url 'missing_articles' %}">Search by category</a></li>
+        </ul>
+    </div>
+</body>
 </html>
+
