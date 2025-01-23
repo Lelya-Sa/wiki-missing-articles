@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="&#10;views.py&#10;search_by_name.html&#10;urls.py">
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="search by q bug fix&#10;TODO : search by category">
+      <change afterPath="$PROJECT_DIR$/templates/missing_articles.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/finalproject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/finalproject.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Missing_App/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Missing_App/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/views.py" afterDir="false" />
@@ -70,6 +73,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Django Server.FinalProject.executor&quot;: &quot;Run&quot;,
     &quot;Django Server.malak.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
@@ -77,8 +81,8 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;malak&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Technion/FifthYear/semester9/malak/templates&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;lelya&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/lelya/Desktop/py/finalproject&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -86,6 +90,9 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
   }
 }</component>
   <component name="RecentsManager">
@@ -93,11 +100,11 @@
       <recent name="D:\Technion\FifthYear\semester9\malak\templates" />
     </key>
   </component>
-  <component name="RunManager" selected="Django Server.malak">
+  <component name="RunManager" selected="Django Server.FinalProject">
     <configuration name="search_by_q.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/malak/templates/search_by_q.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
-    <configuration name="malak" type="Python.DjangoServer" factoryName="Django server">
+    <configuration name="FinalProject" type="Python.DjangoServer" factoryName="Django server">
       <module name="finalproject" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -111,6 +118,16 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </EXTENSION>
       <option name="launchJavascriptDebuger" value="false" />
       <option name="port" value="8000" />
       <option name="host" value="localhost" />
@@ -123,7 +140,7 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Django Server.malak" />
+      <item itemvalue="Django Server.FinalProject" />
       <item itemvalue="JavaScript Debug.search_by_q.html" />
     </list>
     <recent_temporary>
@@ -135,8 +152,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220" />
-        <option value="bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.17011.127" />
+        <option value="bundled-python-sdk-48aec45f0201-7e9c3bbb6e34-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.17011.127" />
       </set>
     </attachedChunks>
   </component>
@@ -164,6 +181,9 @@
       <workItem from="1737396516362" duration="1269000" />
       <workItem from="1737399063149" duration="1742000" />
       <workItem from="1737453222456" duration="509000" />
+      <workItem from="1737569085082" duration="771000" />
+      <workItem from="1737576007143" duration="46000" />
+      <workItem from="1737583320425" duration="1225000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>

@@ -1,18 +1,16 @@
 
 from django.urls import path
 from . import views
-from .views import fetch_categories, fetch_articles_in_category
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('search_by_q', views.search_by_q, name='search_by_q'),
-    path('select_language', views.select_language, name='select_language'),
     path('search_by_name', views.search_by_name, name='search_by_name'),
-    # path('fetch-categories/<str:language_code>/', fetch_categories, name='fetch_categories'),
-    # path('fetch-articles/<str:language_code>/<str:category_name>/',
-    #      fetch_articles_in_category,
-    #      name='fetch_articles_in_category'),
-    path('fetch-categories', views.fetch_categories, name='fetch_categories'),
-    path('fetch-articles',views.fetch_articles_in_category,name='fetch_articles_in_category'),
+    path('get_languages/', views.get_supported_languages, name='get_supported_languages'),
+    path('missing_articles', views.missing_articles, name='missing_articles'),
+    path('get_categories/<str:lang>/', views.get_categories, name='get_categories'),
+    path('get_missing_articles/', views.get_missing_articles, name='get_missing_articles'),
+    path('get_articles_from_other_languages/', views.get_articles_from_other_languages,
+         name='get_articles_from_other_languages'),
 
 ]

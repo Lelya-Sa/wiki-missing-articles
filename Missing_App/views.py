@@ -1,28 +1,12 @@
 
 from django.shortcuts import render, redirect
 from django.db import connection
-import requests
 from django.http import HttpResponse
 from django.http import JsonResponse
-
-def fetch_wikipedia_api(api_url, params):
-    try:
-        response = requests.get(api_url, params=params)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        raise RuntimeError(f"API request failed: {e}")
-
-
-def fetch_paginated_data(api_url, params, key):
-    data = []
-    while True:
-        response = fetch_wikipedia_api(api_url, params)
-        data.extend(response.get("query", {}).get(key, []))
-        if "continue" not in response:
-            break
-        params.update(response["continue"])
-    return data
+from django.shortcuts import render
+from django.http import JsonResponse
+import requests
+from django.core.cache import cache  # Import Django's caching framework
 
 
 def dictfetchall(cursor):
@@ -31,8 +15,263 @@ def dictfetchall(cursor):
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
 # Create your views here.
 
+
 def index(request):
     return render(request, 'index.html')
+
+
+WIKI_API_URL = "https://{lang}.wikipedia.org/w/api.php"
+WIKIDATA_URL = "https://www.wikidata.org/wiki/Special:EntityData/{qcode}.json"
+
+
+# Fetch supported languages (with caching)
+def get_supported_languages(request):
+    # Try to get languages from cache first
+    cached_languages = cache.get("supported_languages")
+
+    if cached_languages:
+        return JsonResponse({"languages": cached_languages})
+
+    # If not cached, fetch from the Wikimedia API
+    api_url = "https://www.mediawiki.org/w/api.php?action=sitematrix&format=json&origin=*"
+
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise an error for bad responses
+        data = response.json()
+
+        # Extracting the languages from the API response
+        languages = []
+        for value in data['sitematrix'].values():
+            if isinstance(value, dict) and 'code' in value:
+                name = value.get('localname',
+                                 'Unknown Language')  # Default to 'Unknown Language' if 'localname' is missing
+                languages.append({"code": value['code'], "name": name})
+
+        # Cache the result for 24 hours (86400 seconds)
+        cache.set("supported_languages", languages, timeout=86400)
+
+        # Return the list of languages as a JSON response
+        return JsonResponse({"languages": languages})
+
+    except requests.RequestException as e:
+        result_message = f"An error occurred while searching for language: {e}"
+        return JsonResponse({"error": "Failed to fetch data from Wikipedia. Please try again later."}, status=500)
+
+
+def get_categories(request, lang):
+    try:
+        # Fetch the Q-code for "Category:Contents"
+        contents_qcode = "Q4587687"  # Q-code for "Category:Contents" in English
+        response = requests.get(WIKIDATA_URL.format(qcode=contents_qcode))
+        response.raise_for_status()
+        wikidata = response.json()
+
+        # Get the name of "Category:Contents" in the selected language
+        category_title = wikidata['entities'][contents_qcode]['labels'].get(lang, {}).get('value', 'Category:Contents')
+
+        # Use the dynamically fetched category title for the selected language
+        params = {
+            "action": "query",
+            "list": "categorymembers",
+            "cmtitle": category_title,  # Now using the correct translated category title
+            "cmtype": "subcat",  # Get subcategories
+            "cmlimit": 50,  # Limit to top-level categories
+            "format": "json",
+        }
+        url = WIKI_API_URL.format(lang=lang)
+        category_response = requests.get(url, params=params)
+        category_response.raise_for_status()
+        category_data = category_response.json()
+
+        # Extract the top-level categories under 'Category:Contents'
+        categories = [
+            category['title'] for category in category_data['query']['categorymembers']
+        ]
+
+        if not categories:
+            return JsonResponse({"error": f"No categories found for {category_title} in this language."}, status=500)
+
+        return JsonResponse({"categories": categories})
+
+    except Exception as e:
+        # Log the error with more detailed information
+        # logger.error(f"Error fetching categories for lang: {lang}. Error: {str(e)}")
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+def get_localized_category_names(qcode):
+    try:
+        # Query Wikidata to get translations for the Q code
+        wikidata_url = f"https://www.wikidata.org/w/api.php?action=wbgetentities&ids={qcode}&props=labels&languages=en,fr,de,es,it,ru,ja,zh,pt,ar&format=json"
+        response = requests.get(wikidata_url)
+        response.raise_for_status()
+        data = response.json()
+
+        # Extract and return the localized category names
+        localized_names = {}
+        for lang, label in data['entities'][qcode]['labels'].items():
+            localized_names[lang] = label['value']
+
+        return localized_names
+    except Exception as e:
+        print(f"Error fetching localized category names for {qcode}: {e}")
+        return None
+
+
+def get_category_qcode(category):
+    try:
+        # Query Wikidata to get the Q code for the category
+        wikidata_url = f"https://www.wikidata.org/w/api.php?action=wbsearchentities&search={category}&language=en&limit=1&format=json"
+        response = requests.get(wikidata_url)
+        response.raise_for_status()
+        data = response.json()
+
+        if data['search']:
+            # Return the Q code of the first search result (should be the correct category)
+            return data['search'][0]['id']
+        else:
+            raise ValueError(f"Category {category} not found on Wikidata.")
+    except Exception as e:
+        print(f"Error fetching Q code for category {category}: {e}")
+        return None
+
+
+def get_articles_from_other_languages(request):
+    lang = request.GET.get("lang")
+    category = request.GET.get("category")
+    articles = []
+
+    try:
+        # Get the Q code for the category from Wikidata
+        qcode = get_category_qcode(category)
+        if not qcode:
+            return JsonResponse({"error": "Category not found in Wikidata"}, status=400)
+
+        # Get the localized category names for the selected Q code
+        localized_category_names = get_localized_category_names(qcode)
+        if not localized_category_names:
+            return JsonResponse({"error": "Localized category names not found"}, status=400)
+
+        # Get the category name in the selected language
+        if lang not in localized_category_names:
+            return JsonResponse({"error": f"Category not available in language {lang}"}, status=400)
+
+        selected_category = localized_category_names[lang]
+
+        # Add the articles from the selected language (same process as before)
+        params = {
+            "action": "query",
+            "list": "categorymembers",
+            "cmtitle": selected_category,
+            "cmtype": "page",
+            "cmlimit": 50,
+            "format": "json",
+        }
+        url = WIKI_API_URL.format(lang=lang)
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        # Add the articles to the list
+        articles.extend(article["title"] for article in data["query"]["categorymembers"])
+
+        # Check if there's more data (pagination)
+        while "continue" in data:
+            params["cmcontinue"] = data["continue"]["cmcontinue"]
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            # Add more articles to the list
+            articles.extend(article["title"] for article in data["query"]["categorymembers"])
+
+        # Now, we will fetch articles from the top 10 other languages, excluding the selected language
+        common_languages = ['en', 'fr', 'de', 'es', 'it', 'ru', 'ja', 'zh', 'pt', 'ar']  # Most common languages
+        common_languages.remove(lang)  # Remove the selected language
+
+        random_articles = []
+        for other_lang in common_languages:
+            # Get the localized category name for the current language
+            if other_lang not in localized_category_names:
+                continue  # Skip if category is not available in this language
+
+            other_category = localized_category_names[other_lang]
+            params = {
+                "action": "query",
+                "list": "categorymembers",
+                "cmtitle": other_category,
+                "cmtype": "page",
+                "cmlimit": 50,
+                "format": "json",
+            }
+            url = WIKI_API_URL.format(lang=other_lang)
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            # Add the articles from the other language to the list if not already in the selected language
+            for article in data["query"]["categorymembers"]:
+                if article["title"] not in articles:
+                    random_articles.append(article["title"])
+
+                if len(random_articles) >= 100:
+                    break
+
+            if len(random_articles) >= 100:
+                break
+
+        # Ensure we have at least 100 articles
+        random_articles = random_articles[:100]
+
+        return JsonResponse({"articles": random_articles})
+
+    except Exception as e:
+        # logger.error(f"Error fetching articles from other languages: {str(e)}")
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+# Fetch articles missing in the selected language (with pagination support)
+def get_missing_articles(request):
+    lang = request.GET.get("lang")
+    category = request.GET.get("category")
+
+    articles = []
+    try:
+        # Initial request for the first set of articles
+        params = {
+            "action": "query",
+            "list": "categorymembers",
+            "cmtitle": category,
+            "cmtype": "page",
+            "cmlimit": 50,
+            "format": "json",
+        }
+        url = WIKI_API_URL.format(lang=lang)
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        # Add the articles to the list
+        articles.extend(article["title"] for article in data["query"]["categorymembers"])
+
+        # Check if there's more data (pagination)
+        while "continue" in data:
+            params["cmcontinue"] = data["continue"]["cmcontinue"]
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            # Add more articles to the list
+            articles.extend(article["title"] for article in data["query"]["categorymembers"])
+
+        # Return all articles
+        return JsonResponse({"articles": articles})
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
 
 
 def search_by_name(request):
@@ -144,178 +383,6 @@ def search_by_q(request):
 
     return render(request, 'search_by_q.html')
 
-# Step 1: Select Language
-def select_language(request):
-    if request.method == "POST":
-        language_code = request.POST.get("language_code")
-        return fetch_categories(request, language_code)
-    return render(request, "select_language.html")
 
-# Step 2: Fetch Categories for Selected Language
-# def fetch_categories(request, language_code):
-#     api_url = f"https://{language_code}.wikipedia.org/w/api.php"
-#     try:
-#         category_params = {
-#             "action": "query",
-#             "list": "allcategories",
-#             "aclimit": 50,  # Limit to 50 categories
-#             "format": "json"
-#         }
-#         response = requests.get(api_url, params=category_params)
-#         response.raise_for_status()
-#         categories = response.json().get("query", {}).get("allcategories", [])
-#     except requests.exceptions.RequestException as e:
-#         return HttpResponse(f"Error fetching categories for language '{language_code}': {e}", status=500)
-#
-#     return render(request, "fetch_categories.html", {
-#         "categories": categories,
-#         "language_code": language_code,
-#     })
-
-
-def fetch_categories(request, language_code):
-    if request.method == "POST":
-        category_name = request.POST.get("category_name")
-        if category_name:
-            # Render the categories on the page
-            return render(request, "fetch_articles_in_category.html", {
-                "categories": [],
-                "language_code": language_code,
-                "category_name": category_name,
-            })
-        api_url = f"https://{language_code}.wikipedia.org/w/api.php"
-        try:
-            # Define the API parameters for fetching categories
-            category_params = {
-                "action": "query",
-                "list": "allcategories",
-                "aclimit": 5000,  # Limit to 5000 categories
-                "format": "json"
-            }
-
-            # Make the API request
-            response = requests.get(api_url, params=category_params)
-            response.raise_for_status()  # Raise an exception for HTTP errors
-
-            # Process the response and extract categories
-            data = response.json()
-            raw_categories = data.get("query", {}).get("allcategories", [])
-
-            # If no categories are found
-            if not raw_categories:
-                return HttpResponse(f"No categories found for language '{language_code}'.", status=404)
-
-            # Convert raw categories into a list of dictionaries with 'name' key
-            categories = [{"name": cat.get("*", "Unknown")} for cat in raw_categories]
-            # if category_name:
-            #     # Render the categories on the page
-            #     return render(request, "fetch_articles_in_category.html", {
-            #         "categories": categories,
-            #         "language_code": language_code,
-            #         "category_name": category_name,
-            #     })
-            return render(request, "fetch_categories.html", {
-                "language_code": language_code,
-                "categories": categories,
-            })
-
-        except requests.exceptions.RequestException as e:
-            # If there's an error in the request, return a helpful message
-            return HttpResponse(f"Error fetching categories for language '{language_code}': {e}", status=500)
-        except ValueError:
-            # Handle JSON decoding error
-            return HttpResponse("Error decoding response from Wikipedia API.", status=500)
-
-
-    return render(request, "fetch_categories.html", {
-            "language_code": language_code,
-        })
-#
-# def fetch_articles_in_category(request, language_code, category_name):
-#     api_url = f"https://{language_code}.wikipedia.org/w/api.php"
-#     articles = []
-#
-#     try:
-#         # Fetch articles in the selected category
-#         category_params = {
-#             "action": "query",
-#             "list": "categorymembers",
-#             "cmtitle": f"Category:{category_name}",
-#             "cmlimit": 5000,  # Limit the number of results
-#             "format": "json"
-#         }
-#
-#         response = requests.get(api_url, params=category_params)
-#         response.raise_for_status()
-#
-#         # Extract articles from the response
-#         raw_articles = response.json().get("query", {}).get("categorymembers", [])
-#         articles = [{"title": article["title"]} for article in raw_articles]
-#
-#     except requests.exceptions.RequestException as e:
-#         return HttpResponse(f"Error fetching articles in category '{category_name}': {e}", status=500)
-#
-#     return render(request, "fetch_articles_in_category.html", {
-#         "articles": articles,
-#         "category_name": category_name,
-#         "language_code": language_code
-#     })
-
-def set_language_and_category(request):
-    if request.method == "POST":
-        language_code = request.POST.get("language_code")
-        category_name = request.POST.get("category_name")
-        request.session["language_code"] = language_code
-        request.session["category_name"] = category_name
-        return redirect("fetch_articles_in_category")
-
-def fetch_articles_in_category(request, categories, language_code,category_name):
-    # Step 1: Retrieve inputs from the request
-    # language_code = request.GET.get('language_code') or request.POST.get('language_code')
-    # category_name = request.GET.get('category_name') or request.POST.get('category_name')
-
-    # # Step 2: Validate inputs
-    # if not language_code or not category_name:
-    #     return JsonResponse({"error": "Language code and category name are required."}, status=400)
-
-    # Step 2: Validate inputs
-    if not language_code or not categories:
-        return JsonResponse({"error": "There are no categories."}, status=400)
-
-    # Step 3: Build the Wikipedia API request
-    wikipedia_api_url = f"https://{language_code}.wikipedia.org/w/api.php"
-    params = {
-        "action": "query",
-        "list": "categorymembers",
-        "cmtitle": f"Category:{category_name}",
-        "cmlimit": 50,
-        "format": "json",
-    }
-
-    try:
-        # Step 4: Make the API call
-        response = requests.get(wikipedia_api_url, params=params)
-        response.raise_for_status()
-
-        data = response.json()
-
-        # Step 5: Process API response
-        if "query" in data and "categorymembers" in data["query"]:
-            articles = [
-                {
-                    "title": article["title"],
-                    "pageid": article["pageid"],
-                }
-                for article in data["query"]["categorymembers"]
-            ]
-            return JsonResponse({"articles": articles}, status=200)
-
-        # Handle cases with no results
-        return JsonResponse({"error": f"No articles found in category '{category_name}'."}, status=404)
-
-    except requests.exceptions.RequestException as e:
-        # Handle errors
-        return JsonResponse({"error": f"Failed to fetch articles: {str(e)}"}, status=500)
-
-
-
+def missing_articles(request):
+    return render(request, 'missing_articles.html')
