@@ -29,6 +29,12 @@ def index(request):
 WIKI_API_URL = "https://{lang}.wikipedia.org/w/api.php"
 WIKIDATA_URL = "https://www.wikidata.org/wiki/Special:EntityData/{qcode}.json"
 
+from django.shortcuts import redirect
+
+def translated_page(request):
+    lang = request.GET.get("lang", "en")  # Default to English if no language is selected
+    wikipedia_url = f"https://{lang}.wikipedia.org"  # Construct the Wikipedia URL for the selected language
+    return redirect(wikipedia_url)
 
 # Fetch supported languages (with caching)
 def get_supported_languages(request):

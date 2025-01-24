@@ -1,5 +1,6 @@
 /* General body styling */
 body {
+    overflow: visible; /* Ensure body doesn't hide dropdowns */
     margin: 0;
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
@@ -11,8 +12,20 @@ body {
     height: 100vh;
 }
 
+/* Position the Languages button at the top-right */
+.top-right-container {
+    position: fixed; /* Ensures it's fixed to the top-right corner */
+    top: 20px;
+    right: 20px;
+    z-index: 2000; /* Ensure button is above other elements */
+
+}
+
 /* Central container styling */
 .central-container {
+    overflow: visible;
+    position: relative; /* Ensure container respects its children */
+    z-index: 1;
     width: 100%;
     max-width: 960px;
     padding: 20px;
@@ -93,4 +106,89 @@ h1 {
 
 .languages ul li a:hover {
     text-decoration: underline;
+}
+
+/* Language Selector */
+.language-selector {
+    position: absolute;
+    top: 60px; /* Adjust based on your button's position */
+    right: 20px; /* Ensure it aligns with the button */
+    width: 300px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    display: none; /* Initially hidden */
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+
+/* Ensure proper positioning of dropdown */
+.language-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute; /* Relative to the container */
+    top: 100%; /* Positions directly below the search box */
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 1000;
+    display: none; /* Initially hidden */
+}
+
+.language-list li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    transition: background-color 0.2s ease;
+}
+
+.language-list li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Search box input focus styling */
+#language-search {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    display: block;
+    margin-top: 10px;
+    transition: box-shadow 0.2s;
+}
+
+
+ /*Display list when search input is focused */
+#language-search:focus {
+    box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
+}
+
+/* Display list when search input is focused */
+#language-search:focus + .language-list {
+    display: block; /* Show the dropdown when the input is focused */
+}
+
+/* Styling for the Languages button */
+#language-search-button {
+    background-color: #f6f7f8;
+    color: #3366cc;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#language-search-button:hover {
+    background-color: #efefef;
 }

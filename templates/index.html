@@ -1,42 +1,56 @@
+<!DOCTYPE html>
 {% load static %}
 
-<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missing Wikipedia Entries</title>
+    <title>Wikipedia Missing Articles</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
+
 <body>
+    <!-- Top-right Language Button -->
+    <div class="top-right-container">
+        <button id="language-search-button" class="search-button">Languages</button>
+        <!-- Language Search (Initially hidden) -->
+    <div class="language-selector" id="language-selector" style="display: none;">
+    <input 
+        type="text" 
+        id="language-search" 
+        placeholder="Search for a language..." 
+        autocomplete="off"
+    >
+    <ul id="language-list" class="language-list">
+        <!-- Suggestions will be dynamically populated -->
+    </ul>
+</div>
+
+    </div>
+
     <div class="central-container">
-        <p> <br> </p>
+
         <!-- Wikipedia Globe -->
         <img src="{% static 'images/wikipedia-spins.gif' %}" alt="Wikipedia Globe" class="globe">
 
         <!-- Heading -->
-        <h1>Missing Wikipedia Entries</h1>
-        <p class="tagline">Explore missing articles or search by category.</p>
+        <h1 id="heading">Wikipedia Missing Articles</h1>
+        <p id="tagline" class="tagline">
+            Explore missing articles searching by name or searching by category.
+        </p>
 
         <!-- Search Options -->
         <div class="search-options">
-            <a href="{% url 'search_by_name' %}" class="search-button">Search by Name</a>
-            <a href="{% url 'missing_articles' %}" class="search-button">Search by Category</a>
+            <a href="{% url 'search_by_name' %}" class="search-button" id="search-by-name">Search by Name</a>
+            <a href="{% url 'missing_articles' %}" class="search-button" id="search-by-category">Search by Category</a>
         </div>
 
-        <!-- Language Links (Optional) -->
-        <div class="languages">
-            <p class="language-title">Languages</p>
-            <ul>
-                <li><a href="#">English</a></li>
-                <li><a href="#">Español</a></li>
-                <li><a href="#">Français</a></li>
-                <li><a href="#">Deutsch</a></li>
-                <li><a href="#">日本語</a></li>
-                <li><a href="#">Русский</a></li>
-                <!-- Add more languages as needed -->
-            </ul>
-        </div>
     </div>
+
+    <!-- Include JavaScript for the language search functionality -->
+    <script src="{% static 'js/language-selector.js' %}" defer></script>
+
 </body>
+
 </html>
