@@ -9,6 +9,12 @@ import requests
 from django.core.cache import cache  # Import Django's caching framework
 
 
+from django.shortcuts import render
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
+
+
 def dictfetchall(cursor):
     # Return all rows from a cursor as a dict
     columns = [col[0] for col in cursor.description]

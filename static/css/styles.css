@@ -1,0 +1,96 @@
+/* General body styling */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #202122;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Central container styling */
+.central-container {
+    width: 100%;
+    max-width: 960px;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Logo styling */
+.globe {
+    max-width: 200px;
+    height: auto;
+    margin: 20px auto;
+}
+
+/* Headings and tagline */
+h1 {
+    font-family: 'Georgia', serif;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.tagline {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* Search options */
+.search-options {
+    margin-bottom: 30px;
+}
+
+.search-button {
+    display: inline-block;
+    background-color: #3366cc;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin: 5px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #254a91;
+}
+
+/* Language links */
+.languages {
+    margin-top: 30px;
+}
+
+.language-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.languages ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.languages ul li {
+    margin: 5px 10px;
+}
+
+.languages ul li a {
+    color: #0645ad;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.languages ul li a:hover {
+    text-decoration: underline;
+}
