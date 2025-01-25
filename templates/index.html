@@ -9,30 +9,43 @@
     <title>Wikipedia Missing Articles</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-
 <body>
-    <!-- Top-right Language Button -->
-    <div class="top-right-container">
-        <button id="language-search-button" class="search-button">Languages</button>
-        <!-- Language Search (Initially hidden) -->
-    <div class="language-selector" id="language-selector" style="display: none;">
-    <input 
-        type="text" 
-        id="language-search" 
-        placeholder="Search for a language..." 
-        autocomplete="off"
-    >
-    <ul id="language-list" class="language-list">
-        <!-- Suggestions will be dynamically populated -->
-    </ul>
-</div>
-
+    <div class="top-bar">
+        <div class="top-left-container">
+            <a href="" title="Wikipedia Home">
+                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia_Home_" class="wikipedia_up_left_globe_logo">
+{#                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="Wikipedia_Home" class="wikipedia_up_left_text_logo">#}
+            </a>
+            <a href="" title="Wikipedia Home">
+{#                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia_Home_" class="wikipedia_up_left_globe_logo">#}
+                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="Wikipedia_Home" class="wikipedia_up_left_text_logo">
+            </a>
+        </div>
+        <!-- Top-right Language Button -->
+        <div class="top-right-container">  
+            <button id="language-search-button" class="search-button">
+                <img src="{% static 'images/language_icon_blue.png' %}" alt="language icon" class="language_icon">
+                Languages
+            </button>
+            <!-- Language Search (Initially hidden) -->
+            <div class="language-selector" id="language-selector">
+                <label for="language-search"></label>
+                <input 
+                    type="text" 
+                    id="language-search" 
+                    placeholder="Search for a language..." 
+                    autocomplete="off"
+                >
+                <ul id="language-list" class="language-list">
+                    <!-- Suggestions will be dynamically populated -->
+                </ul>
+            </div>
+        </div>
     </div>
-
     <div class="central-container">
 
         <!-- Wikipedia Globe -->
-        <img src="{% static 'images/wikipedia-spins.gif' %}" alt="Wikipedia Globe" class="globe">
+        <img src="{% static 'images/wikipedia-spins.gif' %}" alt="Wikipedia Globe" class="globe" loading="lazy">
 
         <!-- Heading -->
         <h1 id="heading">Wikipedia Missing Articles</h1>
@@ -50,7 +63,13 @@
 
     <!-- Include JavaScript for the language search functionality -->
     <script src="{% static 'js/language-selector.js' %}" defer></script>
+    <script>
+        document.addEventListener("click", (e) => {
+    if (!languageSelector.contains(e.target) && e.target !== languageSearchButton) {
+        languageSelector.style.display = "none";
+    }
+});
 
+    </script>
 </body>
-
 </html>

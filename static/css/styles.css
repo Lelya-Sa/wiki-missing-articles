@@ -1,34 +1,71 @@
 /* General body styling */
 body {
     overflow: visible; /* Ensure body doesn't hide dropdowns */
-    margin: 0;
+    margin: 1px; /* Reset margins */
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
     color: #202122;
     text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
 }
 
-/* Position the Languages button at the top-right */
-.top-right-container {
-    position: fixed; /* Ensures it's fixed to the top-right corner */
-    top: 20px;
-    right: 20px;
-    z-index: 2000; /* Ensure button is above other elements */
+/* Flex container for top-left and top-right containers */
+.top-bar {
+    display: flex; /* Enables flexbox */
+    /*justify-content: space-between; !* Positions children at opposite ends *!*/
+    align-items: center; /* Aligns items vertically (centered if needed) */
+    /*position: sticky; !* Keeps the containers fixed on the page The position:*/
+    /*             sticky ensures that the top bar stays at the top during scrolling*/
+    /*             but remains in its natural place within the layout.*!*/
+    top: 0; /* Aligns the container to the top */
+    left: 0;
+    right: 0;
+    padding: 1px 10px; /* Adds padding for spacing */
+    background-color: #f6f7f8; /* Optional: Background color for the top bar */
+    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); !* Optional: Adds a shadow *!*/
+    height: 30px; /* Consistent height for layout spacing */
+    position: relative;
+    z-index: 1000;
+    overflow: visible; /* Prevent clipping of dropdowns */
+}
 
+/* Left container styles */
+.top-left-container {
+    /*padding: 10px 20px; !* Adds padding for spacing *!*/
+    margin-right: auto; /* Ensures it's pushed to the left */
+    display: flex; /* Align items in a row */
+    align-items: center; /* Vertically center the content */
+    /*display: inline-block;*/
+    /*text-decoration: none;  !* Ensure there's no underline or unwanted content *!*/
+
+}
+
+/* Right container styles */
+.top-right-container {
+    /*z-index: 1;*/
+    /*padding: 10px 20px; !* Adds padding for spacing *!*/
+    margin-left: auto; /* Ensures it's pushed to the right */
 }
 
 /* Central container styling */
 .central-container {
+    margin-top: 20px; /* Same as .top-bar height */
+    padding-top: 10px; /* Adjust this based on the height of .top-bar */
+    /*text-align: center; !* Optional: Keep content centered *!*/
     overflow: visible;
     position: relative; /* Ensure container respects its children */
     z-index: 1;
     width: 100%;
     max-width: 960px;
-    padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Additional styling for the central container */
+.central-container .globe {
+    z-index: 1;
+    max-width: 200px;
+    margin-bottom: 20px;
     text-align: center;
 }
 
@@ -37,6 +74,25 @@ body {
     max-width: 200px;
     height: auto;
     margin: 20px auto;
+    z-index: 1;
+}
+
+.wikipedia_up_left_globe_logo{
+    max-width: 25px;
+    height: auto;
+    margin: 0; /* Ensure no extra margins */
+    padding: 0; /* Remove padding */
+}
+.wikipedia_up_left_text_logo{
+    max-width: 70px;
+    height: auto;
+    margin: 0; /* Ensure no extra margins */
+    padding: 0; /* Remove padding */
+}
+
+.language_icon{
+    max-width: 22px;
+    height: 15px;
 }
 
 /* Headings and tagline */
@@ -52,26 +108,52 @@ h1 {
     color: #555;
     margin-bottom: 30px;
 }
+.main-button {
+    background-color: #f6f7f8;
+    color: #3366cb;
+    /*padding: 8px 16px;*/
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.main-button:hover {
+    background-color: #e9ebee;
+}
+
+#language-select {
+    padding: 60px 20px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
 /* Search options */
 .search-options {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
     margin-bottom: 30px;
 }
 
 .search-button {
     display: inline-block;
-    background-color: #3366cc;
-    color: white;
+    background-color: #3366cb;
+    color: #f6f7f8;
     font-size: 18px;
     padding: 10px 20px;
     margin: 5px;
     text-decoration: none;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    cursor: pointer;
 }
 
 .search-button:hover {
-    background-color: #254a91;
+    background-color: #e9ebee;
+    color: #3366ca;
 }
 
 /* Language links */
@@ -111,54 +193,83 @@ h1 {
 /* Language Selector */
 .language-selector {
     position: absolute;
-    top: 60px; /* Adjust based on your button's position */
-    right: 20px; /* Ensure it aligns with the button */
-    width: 300px;
-    padding: 10px;
-    background-color: white;
+    display: none; /* Initially hidden */
+    background-color: #f6f7f8;
     border: 1px solid #ccc;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
-    display: none; /* Initially hidden */
-    z-index: 1000; /* Ensure it appears above other elements */
+    padding: 10px;
+    width: 250px; /* Adjust width as needed */
+    z-index: 1000; /* Ensure it's above other elements */
+    /*position: absolute;*/
+    /*top: 40px; !* Adjust based on your button's position *!*/
+    /*right: 50px; !* Ensure it aligns with the button *!*/
+    /*width: 200px;*/
+    /*!*padding: 1px;*!*/
+    /*background-color: #f6f7f8;*/
+    /*!*color: #3366cb;*!*/
+    /*border: 1px solid #ccc;*/
+    /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
+    /*border-radius: 5px;*/
+    /*display: none; !* Initially hidden *!*/
+    /*z-index: 1000; !* High enough to appear above other elements *!*/
 }
 
 
 /* Ensure proper positioning of dropdown */
 .language-list {
+    /*position: relative; !* Ensure it's properly positioned *!*/
+    /*margin: 0;*/
+    /*padding: 0;*/
+    /*list-style: none;*/
+    /*max-height: 200px;*/
+    /*overflow-y: auto; !* Enable scroll for long lists *!*/
+    /*top: 100%; !* Positions directly below the search box *!*/
+    /*width: 100%;*/
+    /*background-color: white;*/
+    /*border: 1px solid #ccc;*/
+    /*border: none;*/
+    /*z-index: 1001; !* Match the parent container for layering *!*/
+    /*display: none; !* Initially hidden *!*/
+    list-style: none;
     margin: 0;
     padding: 0;
-    list-style: none;
-    max-height: 200px;
-    overflow-y: auto;
-    position: absolute; /* Relative to the container */
-    top: 100%; /* Positions directly below the search box */
-    width: 100%;
-    background: white;
+    max-height: 200px; /* Limit height for scrolling */
+    overflow-y: scroll; /* Enable scrolling */
+    background-color: #fff;
     border: 1px solid #ccc;
-    border-top: none;
-    z-index: 1000;
-    display: none; /* Initially hidden */
+    border-radius: 4px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
-
+.language-list::-webkit-scrollbar {
+    width: 8px;
+}
+.language-list::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+.language-list::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
 .language-list li {
     padding: 10px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     text-align: left;
     transition: background-color 0.2s ease;
 }
 
 .language-list li:hover {
-    background-color: #f0f0f0;
+    background-color: #f6f7f8;
+    /*color: #3366cb;*/
 }
 
 /* Search box input focus styling */
 #language-search {
     width: 100%;
-    padding: 10px;
+    padding: 10px 20px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #3161d6;
     border-radius: 4px;
     outline: none;
     display: block;
@@ -180,7 +291,7 @@ h1 {
 /* Styling for the Languages button */
 #language-search-button {
     background-color: #f6f7f8;
-    color: #3366cc;
+    color: #3366cb;
     font-size: 16px;
     padding: 10px 20px;
     border: none;
@@ -190,5 +301,10 @@ h1 {
 }
 
 #language-search-button:hover {
-    background-color: #efefef;
+    background-color: #e9ebee;
+}
+
+/* Show dropdown when button is clicked */
+.language-selector.active .language-list {
+    display: block; /* Ensure dropdown is visible when active */
 }

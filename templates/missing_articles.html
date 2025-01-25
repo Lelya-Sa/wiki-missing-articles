@@ -5,141 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Language & Category Selection</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Select Language and Category</h1>
+<div class="top-bar">
+    <div class="top-left-container">
+        <a href="/" class="main-button">Home</a>
+    </div>
+    <!-- Top-right Language Button -->
+    <div class="top-right-container">
+        <button id="language-search-button" class="search-button">Languages</button>
+        <!-- Language Search (Initially hidden) -->
+        <div class="language-selector" id="language-selector" style="display: none;">
+            <input 
+                type="text" 
+                id="language-search" 
+                placeholder="Search for a language..." 
+                autocomplete="off"
+            >
+            <ul id="language-list" class="language-list">
+                <!-- Suggestions will be dynamically populated -->
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    <div class="central-container">
+        <h2>Select Language and Category</h2>
+        <br>
+        <br>
+        <form id="selection-form">
+            <label for="language">Select Language:</label>
+            <select id="language" name="language">
+                <option value="">Loading...</option>
+            </select>
+            <div id="language-spinner" style="display: none;">Loading languages...</div>
+    
+            <br><br>
+    
+            <label for="category">Select Main Category:</label>
+            <select id="category" name="category" disabled>
+                <option value="">Select a language first</option>
+            </select>
+            <div id="category-spinner" style="display: none;">Loading categories...</div>
+            <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+    
+            <br>
+    
+            <button type="submit">Submit</button>
+        </form>
+        <br>
+        <br>
 
-    <form id="selection-form">
-        <label for="language">Select Language:</label>
-        <select id="language" name="language">
-            <option value="">Loading...</option>
-        </select>
-        <div id="language-spinner" style="display: none;">Loading languages...</div>
+        <h2>Articles Missing in Selected Language:</h2>
+        <ul id="articles"></ul>
+   
+    </div>
 
-        <br><br>
 
-        <label for="category">Select Main Category:</label>
-        <select id="category" name="category" disabled>
-            <option value="">Select a language first</option>
-        </select>
-        <div id="category-spinner" style="display: none;">Loading categories...</div>
-        <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
-
-        <br><br>
-
-        <button type="submit">Submit</button>
-    </form>
-
-    <h2>Articles Missing in Selected Language:</h2>
-    <ul id="articles"></ul>
-
-    <script>
-        $(document).ready(function () {
-            const languageSelect = $('#language');
-            const languageSpinner = $('#language-spinner');
-            const categorySelect = $('#category');
-            const categorySpinner = $('#category-spinner');
-            const feedbackMessage = $('#feedback-message');
-            const articlesList = $('#articles');
-
-            // Show spinner initially for languages
-            languageSpinner.show();
-            console.log("Fetching languages...");
-
-            // Fetch supported languages
-            $.getJSON('/get_languages/', function (data) {
-                console.log("Languages fetched:", data);
-                languageSpinner.hide(); // Hide spinner after data is loaded
-                languageSelect.empty(); // Clear existing options
-
-                if (data && Array.isArray(data.languages) && data.languages.length > 0) {
-                    data.languages.forEach(lang => {
-                        languageSelect.append(`<option value="${lang.code}">${lang.name} (${lang.code})</option>`);
-                        console.log(`Added language: ${lang.name} (${lang.code})`);
-                    });
-                } else {
-                    languageSelect.append('<option value="" disabled>No languages found</option>');
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.error("Failed to fetch languages:", textStatus, errorThrown);
-                languageSpinner.hide();
-                languageSelect.append('<option value="" disabled>Error loading languages</option>');
-            });
-
-            // Fetch categories based on selected language
-            $('#language').on('change', function () {
-                const lang = $(this).val();
-                feedbackMessage.text('').hide(); // Clear feedback messages
-                categorySelect.empty().prop('disabled', true).append('<option value="" disabled>Loading categories...</option>');
-
-                if (lang) {
-                    categorySpinner.show(); // Show spinner for categories
-                    console.log(`Fetching categories for language: ${lang}`);
-
-                    $.getJSON(`/get_categories/${lang}/`, function (data) {
-                        categorySpinner.hide();
-                        categorySelect.empty().prop('disabled', false);
-
-                        if (data.categories && data.categories.length > 0) {
-                            data.categories.forEach(category => {
-                                categorySelect.append(`<option value="${category}">${category}</option>`);
-                                console.log(`Added category: ${category}`);
-                            });
-                        } else {
-                            categorySelect.append('<option value="" disabled>No categories available</option>');
-                            feedbackMessage.text('No categories found for this language. Please try another language.').show();
-                        }
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        categorySpinner.hide();
-                        console.error("Error fetching categories:", textStatus, errorThrown);
-                        categorySelect.empty().prop('disabled', true).append('<option value="" disabled>Error loading categories</option>');
-                        feedbackMessage.text('There was an error fetching categories. Please try again later.').show();
-                    });
-                } else {
-                    categorySelect.empty().prop('disabled', true).append('<option value="" disabled>Select a language first</option>');
-                }
-            });
-
-            // Handle form submission for missing articles
-            $('#selection-form').on('submit', function (e) {
-                e.preventDefault();
-
-                const lang = $('#language').val();
-                const category = $('#category').val();
-                const articlesSpinner = $('#articles-spinner');
-
-                articlesList.empty(); // Clear existing articles
-                feedbackMessage.text('').hide(); // Clear feedback messages
-
-                if (lang && category) {
-                    console.log(`Fetching missing articles for language: ${lang}, category: ${category}`);
-                    articlesSpinner.show(); // Show spinner for articles
-
-                    $.getJSON(`/get_missing_articles/`, { lang, category }, function (data) {
-                        articlesSpinner.hide();
-
-                        if (data.articles && data.articles.length > 0) {
-                            data.articles.forEach(article => {
-                                articlesList.append(`<li><a href="https://${lang}.wikipedia.org/wiki/${article}" target="_blank">${article}</a></li>`);
-                                console.log(`Added article: ${article}`);
-                            });
-                        } else {
-                            articlesList.append('<li>No missing articles found</li>');
-                        }
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        articlesSpinner.hide();
-                        console.error("Error fetching missing articles:", textStatus, errorThrown);
-                        articlesList.append('<li>Error loading articles. Please try again later.</li>');
-                    });
-                } else {
-                    feedbackMessage.text('Please select a language and category before submitting.').show();
-                }
-            });
-        });
-    </script>
-
-            <a href="{% url 'index' %}" class="search-button">Return to main page</a>
+    <script src="{% static 'js/language-selector.js' %}" defer></script>
+    <script src="{% static 'js/category-search.js' %}" defer></script>
 
 </body>
 </html>

@@ -1,62 +1,86 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const languageSearchButton = document.getElementById("language-search-button");
-    const languageSelector = document.getElementById("language-selector");
-    const languageSearch = document.getElementById("language-search");
-    const languageList = document.getElementById("language-list");
+  const languageSearchButton = document.getElementById("language-search-button");
+  const languageSelector = document.getElementById("language-selector");
+  const languageSearch = document.getElementById("language-search");
+  const languageList = document.getElementById("language-list");
 
-    let languages = [];
+  let languages = [];
 
-    // Toggle visibility of the language selector
-    languageSearchButton.addEventListener("click", () => {
-        languageSelector.style.display =
-            languageSelector.style.display === "none" || !languageSelector.style.display
-                ? "block"
-                : "none";
-    });
+  // Fetch supported languages from the backend
+  async function fetchLanguages() {
+    try {
+      const response = await fetch('/api/supported_languages/');
+      if (!response.ok) throw new Error('Failed to fetch languages');
+      const data = await response.json();
+      languages = data.languages;
+    } catch (error) {
+      console.error('Error fetching languages:', error);
+    }
+  }
 
-    // Fetch supported languages from the backend
-    async function fetchLanguages() {
-        try {
-            const response = await fetch('/api/supported_languages/');
-            if (!response.ok) {
-                throw new Error("Failed to fetch languages");
-            }
-            const data = await response.json();
-            languages = data.languages;
-        } catch (error) {
-            console.error("Error fetching languages:", error);
-        }
+  // Populate the language list
+  function populateLanguages(query = '') {
+    const filteredLanguages = languages.filter(lang =>
+      lang.name.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
+    );
+
+    languageList.innerHTML = ''; // Clear the list
+
+    if (filteredLanguages.length === 0) {
+      const noResults = document.createElement('li');
+      noResults.textContent = 'No results found.';
+      noResults.style.color = '#555';
+      languageList.appendChild(noResults);
+      return;
     }
 
-    // Populate suggestions based on search input
-    languageSearch.addEventListener("input", () => {
-        const query = languageSearch.value.toLowerCase();
-        const filteredLanguages = languages.filter(lang =>
-            lang.name.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
-        );
+    filteredLanguages.forEach(lang => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `${lang.name} (${lang.code})`;
+      listItem.dataset.langCode = lang.code;
+      listItem.addEventListener('click', () => {
+        window.location.href = `/translated_page/?lang=${lang.code}`;
+      });
+      languageList.appendChild(listItem);
+    });
+  }
 
-        // Clear previous suggestions
-        languageList.innerHTML = "";
+  // Show/Hide dropdown logic
+  languageSearchButton.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent document click
+    const isHidden = languageSelector.style.display === 'none' || !languageSelector.style.display;
+    languageSelector.style.display = isHidden ? 'block' : 'none';
+    if (isHidden) languageSearch.focus(); // Focus input
+  });
 
-        // Add new suggestions
-        filteredLanguages.forEach(lang => {
-            const listItem = document.createElement("li");
-            listItem.textContent = `${lang.name} (${lang.code})`;
-            listItem.dataset.langCode = lang.code;
+  // Search functionality
+  languageSearch.addEventListener('input', () => {
+    const query = languageSearch.value.trim().toLowerCase();
+    populateLanguages(query);
+    languageList.style.display = query || languages.length ? 'block' : 'none';
+  });
 
-            // Handle language selection
-            listItem.addEventListener("click", () => {
-                const selectedLanguage = lang.code;
-                window.location.href = `/translated_page/?lang=${selectedLanguage}`;
-            });
+  // Close dropdown when clicking outside
+document.addEventListener("click", (e) => {
+    const isClickInsideSelector = languageSelector.contains(e.target);
+    const isClickOnButton = languageSearchButton.contains(e.target);
 
-            languageList.appendChild(listItem);
-        });
+    if (!isClickInsideSelector && !isClickOnButton) {
+        languageSelector.style.display = "none";
+    }
+});
 
-        // Show the list if there are results
-        languageList.style.display = filteredLanguages.length > 0 ? "block" : "none";
+
+  // Prevent propagation when interacting with dropdown
+  languageSelector.addEventListener('click', (e) => e.stopPropagation());
+    languageSearch.addEventListener("focus", () => {
+        languageSelector.style.display = "block";
     });
 
-    // Fetch languages on page load
-    fetchLanguages();
+    languageList.addEventListener("mouseenter", () => {
+        languageSelector.style.display = "block";
+    });
+
+  // Fetch languages on load
+  fetchLanguages();
 });
