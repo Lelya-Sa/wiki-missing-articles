@@ -20,7 +20,7 @@ body {
     top: 0; /* Aligns the container to the top */
     left: 0;
     right: 0;
-    padding: 1px 10px; /* Adds padding for spacing */
+    padding: 10px 10px 10px; /* Adds padding for spacing */
     background-color: #f6f7f8; /* Optional: Background color for the top bar */
     /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); !* Optional: Adds a shadow *!*/
     height: 30px; /* Consistent height for layout spacing */
@@ -31,8 +31,8 @@ body {
 
 /* Left container styles */
 .top-left-container {
-    /*padding: 10px 20px; !* Adds padding for spacing *!*/
-    margin-right: auto; /* Ensures it's pushed to the left */
+    /* Ensures it's pushed to the left */
+    margin: 20px auto 10px 30px; /* top right bottom left*/
     display: flex; /* Align items in a row */
     align-items: center; /* Vertically center the content */
     /*display: inline-block;*/
@@ -42,6 +42,8 @@ body {
 
 /* Right container styles */
 .top-right-container {
+    position: relative;
+
     /*z-index: 1;*/
     /*padding: 10px 20px; !* Adds padding for spacing *!*/
     margin-left: auto; /* Ensures it's pushed to the right */
@@ -78,14 +80,14 @@ body {
 }
 
 .wikipedia_up_left_globe_logo{
-    max-width: 25px;
-    height: auto;
+    max-width: 40px;
+    height: 40px;
     margin: 0; /* Ensure no extra margins */
     padding: 0; /* Remove padding */
 }
 .wikipedia_up_left_text_logo{
-    max-width: 70px;
-    height: auto;
+    max-width: 140px;
+    height: 120px;
     margin: 0; /* Ensure no extra margins */
     padding: 0; /* Remove padding */
 }
@@ -134,8 +136,8 @@ h1 {
 .search-options {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
+    /*gap: 15px;*/
+    /*margin-bottom: 30px;*/
 }
 
 .search-button {
@@ -192,45 +194,26 @@ h1 {
 
 /* Language Selector */
 .language-selector {
-    position: absolute;
+    position: absolute; /* Ensure the dropdown appears on top */
+    top: 40px; /* Adjust based on layout */
+    left: auto; /* Adjust based on your layout */
+    right: 0; /* Align to the right edge of the button */
     display: none; /* Initially hidden */
     background-color: #f6f7f8;
     border: 1px solid #ccc;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    padding: 10px;
-    width: 250px; /* Adjust width as needed */
+    border-radius: 1px;
+    padding: 5px; /* Add some padding inside the dropdown */
+    /*width: 100%;*/
+    width: 200px; /* Adjust width as needed */
     z-index: 1000; /* Ensure it's above other elements */
-    /*position: absolute;*/
-    /*top: 40px; !* Adjust based on your button's position *!*/
-    /*right: 50px; !* Ensure it aligns with the button *!*/
-    /*width: 200px;*/
-    /*!*padding: 1px;*!*/
-    /*background-color: #f6f7f8;*/
-    /*!*color: #3366cb;*!*/
-    /*border: 1px solid #ccc;*/
-    /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
-    /*border-radius: 5px;*/
-    /*display: none; !* Initially hidden *!*/
-    /*z-index: 1000; !* High enough to appear above other elements *!*/
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(-10px); /* Start slightly above */
+    opacity: 0;
 }
-
 
 /* Ensure proper positioning of dropdown */
 .language-list {
-    /*position: relative; !* Ensure it's properly positioned *!*/
-    /*margin: 0;*/
-    /*padding: 0;*/
-    /*list-style: none;*/
-    /*max-height: 200px;*/
-    /*overflow-y: auto; !* Enable scroll for long lists *!*/
-    /*top: 100%; !* Positions directly below the search box *!*/
-    /*width: 100%;*/
-    /*background-color: white;*/
-    /*border: 1px solid #ccc;*/
-    /*border: none;*/
-    /*z-index: 1001; !* Match the parent container for layering *!*/
-    /*display: none; !* Initially hidden *!*/
     list-style: none;
     margin: 0;
     padding: 0;
@@ -267,16 +250,13 @@ h1 {
 /* Search box input focus styling */
 #language-search {
     width: 100%;
-    padding: 10px 20px;
     font-size: 16px;
     border: 1px solid #3161d6;
     border-radius: 4px;
     outline: none;
     display: block;
-    margin-top: 10px;
     transition: box-shadow 0.2s;
 }
-
 
  /*Display list when search input is focused */
 #language-search:focus {
@@ -302,6 +282,12 @@ h1 {
 
 #language-search-button:hover {
     background-color: #e9ebee;
+}
+
+.language-selector.active {
+    transform: translateY(0); /* Move to normal position */
+    opacity: 1;
+    display: block;
 }
 
 /* Show dropdown when button is clicked */
