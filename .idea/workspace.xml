@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="added page language translation to main page&#10;restyled main page, category page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="restyled main page language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language">
       <change beforePath="$PROJECT_DIR$/static/js/language-selector.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/language-selector.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -238,7 +236,7 @@
       <workItem from="1737640223364" duration="111000" />
       <workItem from="1737665459124" duration="27241000" />
       <workItem from="1737748498425" duration="13889000" />
-      <workItem from="1737805171829" duration="3695000" />
+      <workItem from="1737805171829" duration="4034000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -378,7 +376,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737764475658</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="restyled main page language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language">
+      <option name="closed" value="true" />
+      <created>1737809033637</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1737809033637</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -417,6 +423,7 @@
     <MESSAGE value="added navigation to main page&#10;restyled main page&#10;TODO : search by subcategories&#10;exclude articles in selected language" />
     <MESSAGE value="added page language translation to main page&#10;restyled main page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="added page language translation to main page&#10;restyled main page, category page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
-    <option name="LAST_COMMIT_MESSAGE" value="added page language translation to main page&#10;restyled main page, category page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
+    <MESSAGE value="restyled main page language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
+    <option name="LAST_COMMIT_MESSAGE" value="restyled main page language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
   </component>
 </project>

@@ -63,20 +63,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Toggle dropdown visibility
-  languageSearchButton.addEventListener("click", (e) => {
-    e.stopPropagation(); // Prevent document click
-    const isHidden = languageSelector.style.display === "none" || !languageSelector.style.display;
-    languageSelector.classList.toggle("active");
+languageSearchButton.addEventListener("click", (e) => {
+  e.stopPropagation(); // Prevent document click from triggering
+  const isActive = languageSelector.classList.contains("active");
 
-    if (isHidden) {
-      if (isLoading) showLoading(); // Show "Loading..." if still loading
-      else populateLanguages(); // Populate the list with all languages if loaded
-      languageSelector.style.display = "block"; // Show the dropdown
-      languageSearch.focus(); // Focus the search bar
-    } else {
-      languageSelector.style.display = "none"; // Hide the dropdown if it's already visible
-    }
-  });
+  if (!isActive) {
+    // Show the dropdown
+    languageSelector.classList.add("active");
+    if (isLoading) showLoading(); // Show "Loading..." if still loading
+    else populateLanguages(); // Populate the list with all languages if loaded
+    languageSearch.focus(); // Focus the search bar
+  } else {
+    // Hide the dropdown
+    languageSelector.classList.remove("active");
+  }
+});
 
   // Handle search input
   languageSearch.addEventListener("input", () => {
@@ -90,8 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Close dropdown when clicking outside
   document.addEventListener("click", () => {
-    languageSelector.style.display = "none";
+    languageSelector.classList.remove("active");
   });
+
 
   // Fetch languages on load
   fetchLanguages();
