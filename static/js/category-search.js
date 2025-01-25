@@ -1,102 +1,129 @@
-$(document).ready(function () {
-    const languageSelect = $('#language');
-    const languageSpinner = $('#language-spinner');
-    const categorySelect = $('#category');
-    const categorySpinner = $('#category-spinner');
-    const feedbackMessage = $('#feedback-message');
-    const articlesList = $('#articles');
+document.addEventListener("DOMContentLoaded", () => {
+    const articleLanguageSearchInput = document.getElementById("article-language-search");
+    const articleLanguageList = document.getElementById("article-language-list");
+    const selectedLanguageInput = document.getElementById("selected-language");
+    const categoryDropdown = document.getElementById("category");
+    const feedbackMessage = document.getElementById("feedback-message");
+    const theSelectedLang = document.getElementById("the_selected_lang");
+    const responseData = document.getElementById("response_data");
+    const populateOptions = document.getElementById("populate_options");
 
-    // Show spinner initially for languages
-    languageSpinner.show();
-    console.log("Fetching languages...");
+    let languages = [];
 
-    // Fetch supported languages
-    $.getJSON('/get_languages/', function (data) {
-        console.log("Languages fetched:", data);
-        languageSpinner.hide(); // Hide spinner after data is loaded
-        languageSelect.empty(); // Clear existing options
+    // Fetch languages
+    async function fetchLanguages() {
+        articleLanguageList.innerHTML = "<li>Loading languages...</li>";
+        console.log("DEBUG: Fetching languages...");
 
-        if (data && Array.isArray(data.languages) && data.languages.length > 0) {
-            data.languages.forEach(lang => {
-                languageSelect.append(`<option value="${lang.code}">${lang.name} (${lang.code})</option>`);
-                console.log(`Added language: ${lang.name} (${lang.code})`);
-            });
-        } else {
-            languageSelect.append('<option value="" disabled>No languages found</option>');
+        try {
+            const response = await fetch("/api/supported_languages/");
+            if (!response.ok) throw new Error("Failed to fetch languages");
+            const data = await response.json();
+            languages = data.languages;
+
+            console.log("DEBUG: Fetched languages:", languages);
+            populateLanguageList();
+        } catch (error) {
+            articleLanguageList.innerHTML = "<li style='color: red;'>Failed to load languages.</li>";
+            console.error("DEBUG: Error fetching languages:", error);
         }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        console.error("Failed to fetch languages:", textStatus, errorThrown);
-        languageSpinner.hide();
-        languageSelect.append('<option value="" disabled>Error loading languages</option>');
+    }
+
+    // Populate language dropdown
+    function populateLanguageList(query = "") {
+        const filteredLanguages = languages.filter((lang) =>
+            lang.name.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
+        );
+
+        console.log("DEBUG: Filtering languages with query:", query);
+        articleLanguageList.innerHTML = ""; // Clear the list
+
+        if (!filteredLanguages.length) {
+            articleLanguageList.innerHTML = "<li>No results found</li>";
+            console.log("DEBUG: No languages match the query.");
+            return;
+        }
+
+        filteredLanguages.forEach((lang) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${lang.name} (${lang.code})`;
+            listItem.dataset.langCode = lang.code;
+            listItem.addEventListener("click", () => {
+                console.log("DEBUG: Selected language:", lang);
+
+                selectedLanguageInput.value = lang.code;
+                articleLanguageSearchInput.value = `${lang.name} (${lang.code})`;
+                articleLanguageList.innerHTML = ""; // Clear the dropdown
+                fetchCategories(lang.code);
+            });
+            articleLanguageList.appendChild(listItem);
+        });
+    }
+
+    // Fetch categories
+    async function fetchCategories(languageCode) {
+        if (!languageCode) return;
+
+        console.log("DEBUG: Fetching categories for language:", languageCode);
+        theSelectedLang.innerHTML = `DEBUG: Selected language is ${languageCode}`;
+        categoryDropdown.innerHTML = "<option>Loading categories...</option>";
+        categoryDropdown.disabled = true;
+
+        try {
+            const response = await fetch(`/get_categories/${languageCode}`);
+            responseData.innerHTML = `DEBUG: Category response is in: <a href='/get_categories/${languageCode}'>URL</a>`;
+            if (!response.ok) throw new Error("Failed to fetch categories");
+
+            const data = await response.json();
+            console.log("DEBUG: Fetched categories:", data.categories);
+            populateCategoryDropdown(data.categories);
+        } catch (error) {
+            console.error("DEBUG: Error fetching categories:", error);
+            categoryDropdown.innerHTML = "<option>Failed to load categories</option>";
+        }
+    }
+
+    // Populate category dropdown
+    function populateCategoryDropdown(categories) {
+        categoryDropdown.innerHTML = ""; // Clear options
+        console.log("DEBUG: Populating category dropdown...");
+
+        if (!categories || !categories.length) {
+            console.log("DEBUG: No categories available for this language.");
+            populateOptions.innerHTML = "DEBUG: No categories available.";
+            categoryDropdown.innerHTML = "<option>No categories available</option>";
+            categoryDropdown.disabled = true;
+            return;
+        }
+
+        populateOptions.innerHTML = "DEBUG: Categories found:<br>";
+        categories.forEach((category) => {
+            console.log("DEBUG: Adding category:", category);
+            populateOptions.innerHTML += `PageID: ${category.pageid}, NS: ${category.ns}, Title: ${category.title}<br>`;
+
+            const option = document.createElement("option");
+            option.value = category.pageid; // Use the category's ID for the value
+            option.textContent = category.title; // Use the category's name for display
+            categoryDropdown.appendChild(option);
+        });
+
+        categoryDropdown.disabled = false;
+    }
+
+    // Handle input changes
+    articleLanguageSearchInput.addEventListener("input", () => {
+        const query = articleLanguageSearchInput.value.toLowerCase();
+        console.log("DEBUG: Search input changed, query:", query);
+        populateLanguageList(query);
     });
 
-    // Fetch categories based on selected language
-    $('#language').on('change', function () {
-        const lang = $(this).val();
-        feedbackMessage.text('').hide(); // Clear feedback messages
-        categorySelect.empty().prop('disabled', true).append('<option value="" disabled>Loading categories...</option>');
-
-        if (lang) {
-            categorySpinner.show(); // Show spinner for categories
-            console.log(`Fetching categories for language: ${lang}`);
-
-            $.getJSON(`/get_categories/${lang}/`, function (data) {
-                categorySpinner.hide();
-                categorySelect.empty().prop('disabled', false);
-
-                if (data.categories && data.categories.length > 0) {
-                    data.categories.forEach(category => {
-                        categorySelect.append(`<option value="${category}">${category}</option>`);
-                        console.log(`Added category: ${category}`);
-                    });
-                } else {
-                    categorySelect.append('<option value="" disabled>No categories available</option>');
-                    feedbackMessage.text('No categories found for this language. Please try another language.').show();
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                categorySpinner.hide();
-                console.error("Error fetching categories:", textStatus, errorThrown);
-                categorySelect.empty().prop('disabled', true).append('<option value="" disabled>Error loading categories</option>');
-                feedbackMessage.text('There was an error fetching categories. Please try again later.').show();
-            });
-        } else {
-            categorySelect.empty().prop('disabled', true).append('<option value="" disabled>Select a language first</option>');
+    // Close dropdown on outside click
+    document.addEventListener("click", (event) => {
+        if (!articleLanguageList.contains(event.target) && event.target !== articleLanguageSearchInput) {
+            console.log("DEBUG: Click outside, closing language dropdown.");
+            articleLanguageList.innerHTML = ""; // Clear the dropdown
         }
     });
 
-    // Handle form submission for missing articles
-    $('#selection-form').on('submit', function (e) {
-        e.preventDefault();
-
-        const lang = $('#language').val();
-        const category = $('#category').val();
-        const articlesSpinner = $('#articles-spinner');
-
-        articlesList.empty(); // Clear existing articles
-        feedbackMessage.text('').hide(); // Clear feedback messages
-
-        if (lang && category) {
-            console.log(`Fetching missing articles for language: ${lang}, category: ${category}`);
-            articlesSpinner.show(); // Show spinner for articles
-
-            $.getJSON(`/get_missing_articles/`, { lang, category }, function (data) {
-                articlesSpinner.hide();
-
-                if (data.articles && data.articles.length > 0) {
-                    data.articles.forEach(article => {
-                        articlesList.append(`<li><a href="https://${lang}.wikipedia.org/wiki/${article}" target="_blank">${article}</a></li>`);
-                        console.log(`Added article: ${article}`);
-                    });
-                } else {
-                    articlesList.append('<li>No missing articles found</li>');
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                articlesSpinner.hide();
-                console.error("Error fetching missing articles:", textStatus, errorThrown);
-                articlesList.append('<li>Error loading articles. Please try again later.</li>');
-            });
-        } else {
-            feedbackMessage.text('Please select a language and category before submitting.').show();
-        }
-    });
+    fetchLanguages(); // Initialize language fetch
 });

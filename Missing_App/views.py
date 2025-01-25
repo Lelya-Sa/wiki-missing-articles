@@ -71,7 +71,11 @@ def get_supported_languages(request):
         return JsonResponse({"error": "Failed to fetch data from Wikipedia. Please try again later."}, status=500)
 
 
-def get_categories(request, lang):
+def get_categories(request, lang=None):
+    lang = lang or request.GET.get("lang")  # Fallback to query parameter if `lang` isn't in the path
+    if not lang:
+        return JsonResponse({"error": "Language not specified."}, status=400)
+
     try:
         # Fetch the Q-code for "Category:Contents"
         contents_qcode = "Q4587687"  # Q-code for "Category:Contents" in English
@@ -97,8 +101,9 @@ def get_categories(request, lang):
         category_data = category_response.json()
 
         # Extract the top-level categories under 'Category:Contents'
+        # print(category_data)
         categories = [
-            category['title'] for category in category_data['query']['categorymembers']
+            category for category in category_data['query']['categorymembers']
         ]
 
         if not categories:
@@ -107,8 +112,6 @@ def get_categories(request, lang):
         return JsonResponse({"categories": categories})
 
     except Exception as e:
-        # Log the error with more detailed information
-        # logger.error(f"Error fetching categories for lang: {lang}. Error: {str(e)}")
         return JsonResponse({"error": str(e)}, status=500)
 
 

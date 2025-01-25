@@ -9,63 +9,86 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class="top-bar">
-    <div class="top-left-container">
-        <a href="/" class="main-button">Home</a>
-    </div>
-    <!-- Top-right Language Button -->
-    <div class="top-right-container">
-        <button id="language-search-button" class="search-button">Languages</button>
-        <!-- Language Search (Initially hidden) -->
-        <div class="language-selector" id="language-selector" style="display: none;">
-            <input 
-                type="text" 
-                id="language-search" 
-                placeholder="Search for a language..." 
-                autocomplete="off"
-            >
-            <ul id="language-list" class="language-list">
-                <!-- Suggestions will be dynamically populated -->
-            </ul>
+    <div class="top-bar">
+        <div class="top-left-container">
+            <a href="/" title="Wikipedia Home">
+                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia_Home_" class="wikipedia_up_left_globe_logo">
+            </a>
+            <a href="/" title="Wikipedia Home">
+                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="Wikipedia_Home" class="wikipedia_up_left_text_logo">
+            </a>
+        </div>
+        <!-- Top-right Language Button -->
+        <div class="top-right-container">  
+            <button id="language-search-button" class="search-button">
+                <img src="{% static 'images/language_icon_blue.png' %}" alt="language icon" class="language_icon">
+                Languages
+            </button>
+            <!-- Language Search (Initially hidden) -->
+            <div class="language-selector" id="language-selector">
+                <label for="language-search"></label>
+                <input 
+                    type="text" 
+                    id="language-search" 
+                    placeholder="Search for a language..." 
+                    autocomplete="off"
+                >
+                <ul id="language-list" class="language-list">
+                    <!-- Suggestions will be dynamically populated -->
+                </ul>
+            </div>
         </div>
     </div>
+    
+<div class="central-left-container">
+    <h2 align="center">Select Language and Category</h2>
+    <br>
+    <br>
+    <form id="selection-form">
+        <!-- Language Search Bar -->
+        <label for="article-language-search">Search for Language:</label>
+        <input 
+            type="text" 
+            id="article-language-search" 
+            placeholder="Search for a language..." 
+            autocomplete="off"
+        >
+        <ul id="article-language-list" class="language-list">
+            <!-- Suggestions will be dynamically populated -->
+        </ul>
+        <input type="hidden" id="selected-language" name="language">
+        <div id="language-spinner" style="display: none;">
+            <img src="/static/images/spinner.gif" alt="language_spinner">
+            Loading languages...
+        </div>
+
+        <p id="the_selected_lang" style="color: #7c0808;"></p>
+        <br><br>
+
+        <label for="category">Select Main Category:</label>
+        <select id="category" name="category" disabled>
+            <option value="">Select a language first</option>
+        </select>
+        <div id="category-spinner" style="display: none;">Loading categories...</div>
+        <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+
+        <br>
+        <p id="category_response" style="color: #7c0808;"></p>
+        <p id="response_data" style="color: #7c0808;"></p>
+
+        <p id="populate_options" style="color: #7c0808;"></p>
+
+        <button type="submit">Submit</button>
+    </form>
+    <br>
+    <br>
+
+    <h2>Articles Missing in Selected Language:</h2>
+    <ul id="articles"></ul>
 </div>
-    
-    <div class="central-container">
-        <h2>Select Language and Category</h2>
-        <br>
-        <br>
-        <form id="selection-form">
-            <label for="language">Select Language:</label>
-            <select id="language" name="language">
-                <option value="">Loading...</option>
-            </select>
-            <div id="language-spinner" style="display: none;">Loading languages...</div>
-    
-            <br><br>
-    
-            <label for="category">Select Main Category:</label>
-            <select id="category" name="category" disabled>
-                <option value="">Select a language first</option>
-            </select>
-            <div id="category-spinner" style="display: none;">Loading categories...</div>
-            <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
-    
-            <br>
-    
-            <button type="submit">Submit</button>
-        </form>
-        <br>
-        <br>
 
-        <h2>Articles Missing in Selected Language:</h2>
-        <ul id="articles"></ul>
-   
-    </div>
-
-
-    <script src="{% static 'js/language-selector.js' %}" defer></script>
-    <script src="{% static 'js/category-search.js' %}" defer></script>
+<script src="{% static 'js/category-search.js' %}" defer></script>
+<script src="{% static 'js/language-selector.js' %}" defer></script>
 
 </body>
 </html>

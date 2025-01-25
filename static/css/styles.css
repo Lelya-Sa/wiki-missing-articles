@@ -63,6 +63,18 @@ body {
     margin-right: auto;
 }
 
+.central-left-container {
+    margin-top: 20px; /* Same as .top-bar height */
+    padding-top: 10px; /* Adjust this based on the height of .top-bar */
+    text-align: left; /* Optional: Keep content  */
+    overflow: visible;
+    position: relative; /* Ensure container respects its children */
+    z-index: 1;
+    width: 100%;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
 /* Additional styling for the central container */
 .central-container .globe {
     z-index: 1;
