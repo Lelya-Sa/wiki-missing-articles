@@ -260,10 +260,20 @@ h1 {
 }
 
 /* Search box input focus styling */
-#language-search {
+.language-search {
     width: 100%;
     font-size: 16px;
     border: 1px solid #3161d6;
+    border-radius: 4px;
+    /*outline: none;*/
+    display: block;
+    transition: box-shadow 0.2s;
+}
+
+.article-language-search {
+    /*width: 100%;*/
+    font-size: 16px;
+    border: 1px solid #0a39aa;
     border-radius: 4px;
     outline: none;
     display: block;
@@ -275,8 +285,17 @@ h1 {
     box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
 }
 
+#article-language-search:focus {
+    box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
+}
+
 /* Display list when search input is focused */
 #language-search:focus + .language-list {
+    display: block; /* Show the dropdown when the input is focused */
+}
+
+/* Display list when search input is focused */
+#article-language-search:focus + .language-list {
     display: block; /* Show the dropdown when the input is focused */
 }
 
@@ -306,3 +325,55 @@ h1 {
 .language-selector.active .language-list {
     display: block; /* Ensure dropdown is visible when active */
 }
+
+/* Language Selector */
+.article-language-selector {
+    position: relative;
+    background-color: #f6f7f8;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 5px;
+    width: 50%; /* Adjust width as needed */
+    z-index: 1000;
+    opacity: 1; /* Ensure visible */
+    display: block; /* Ensure it is displayed */
+    transform: translateY(0); /* Remove hidden transform */
+}
+
+.article-language-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 200px; /* Limit the height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.article-language-selector.active {
+    transform: translateY(0); /* Move to normal position */
+    opacity: 1;
+    display: block;
+}
+.article-language-list li {
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+}
+
+.article-language-list li:hover {
+    background-color: #f6f7f8;
+}
+/* Show dropdown when button is clicked */
+.article-language-selector.active .article-language-list {
+    display: block; /* Ensure dropdown is visible when active */
+}
+/*!* Show dropdown when button is clicked *!*/
+/*.article-language-selector.active .article-language-list {*/
+/*    display: block; !* Ensure dropdown is visible when active *!*/
+/*}*/

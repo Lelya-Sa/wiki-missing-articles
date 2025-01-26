@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="language click bug fixed language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language">
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Missing_App/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/category-search.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-search.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/missing_articles.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles.html" afterDir="false" />
@@ -240,7 +239,8 @@
       <workItem from="1737640223364" duration="111000" />
       <workItem from="1737665459124" duration="27241000" />
       <workItem from="1737748498425" duration="13889000" />
-      <workItem from="1737805171829" duration="16038000" />
+      <workItem from="1737805171829" duration="16437000" />
+      <workItem from="1737894695500" duration="5769000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -396,7 +396,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737809352636</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language">
+      <option name="closed" value="true" />
+      <created>1737833548139</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1737833548139</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -437,6 +445,7 @@
     <MESSAGE value="added page language translation to main page&#10;restyled main page, category page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="restyled main page language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="language click bug fixed language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
-    <option name="LAST_COMMIT_MESSAGE" value="language click bug fixed language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
+    <MESSAGE value="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
+    <option name="LAST_COMMIT_MESSAGE" value="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
   </component>
 </project>

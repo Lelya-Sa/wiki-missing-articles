@@ -46,21 +46,37 @@
     <br>
     <form id="selection-form">
         <!-- Language Search Bar -->
-        <label for="article-language-search">Search for Language:</label>
-        <input 
-            type="text" 
-            id="article-language-search" 
-            placeholder="Search for a language..." 
-            autocomplete="off"
-        >
-        <ul id="article-language-list" class="language-list">
-            <!-- Suggestions will be dynamically populated -->
-        </ul>
-        <input type="hidden" id="selected-language" name="language">
+                    <!-- Language Search (Initially hidden) -->
+        <div class="article-language-selector" id="article-language-selector">
+                <label for="article-language-search"></label>
+                <input 
+                    type="text" 
+                    id="article-language-search" 
+                    placeholder="Search languages..." 
+                    autocomplete="off"
+                />
+                <ul id="article-language-list" class="article-language-list">
+                    <!-- Suggestions will be dynamically populated -->
+                </ul>
+        </div>
+        
+{#        <label for="article-language-search">Search for Language:</label>#}
+{#        <input #}
+{#            type="text" #}
+{#            id="article-language-search" #}
+{#            placeholder="Search for a language..." #}
+{#            autocomplete="off"#}
+{#            class="language-search"#}
+{#        >#}
+{#        <ul id="article-language-list" class="language-list">#}
+{#            <!-- Suggestions will be dynamically populated -->#}
+{#        </ul>#}
+{#        <input type="hidden" id="selected-language" name="language">#}
         <div id="language-spinner" style="display: none;">
             <img src="/static/images/spinner.gif" alt="language_spinner">
             Loading languages...
         </div>
+        
 
         <p id="the_selected_lang" style="color: #7c0808;"></p>
         <br><br>
