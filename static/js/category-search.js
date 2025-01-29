@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     categoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
+    allCategoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
+    // all_cat_feedbackMessage.textContent = "Please select a language first.";
 
     // Fetch languages
     async function fetchLanguages() {
@@ -212,6 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
         allCategoryList.innerHTML = ""; // Clear previous results
 
         if (!query) {
+            all_cat_feedbackMessage.textContent = "write your category.";
             allCategoryList.style.display = "none";
             return;
         }
@@ -250,9 +253,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const query = e.target.value.trim();
         const selectedLanguage = document.getElementById("article-language-search").value;
         const languageCode = selectedLanguage.match(/\((.*)\)/)?.[1]; // Extract language code
-        if (languageCode) {
+        if (selectedLanguage) {
             fetchAllCategories(languageCode, query); // Pass the correct language code and query
         } else {
+            all_cat_feedbackMessage.textContent = "Please select a language first.";
             allCategoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
         }
 
@@ -264,68 +268,68 @@ document.addEventListener("DOMContentLoaded", () => {
     // fetchAllCategories("en");
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const portalSearchInput = document.getElementById("portal-search");
-    const portalList = document.getElementById("portal-list");
-    const portalSelector = document.getElementById("portal-selector-class");
-    console.log(window.getComputedStyle(portalSelector).display);
-    portalList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
-
-    // Fetch portals
-    async function fetchPortals(languageCode, query = "") {
-        portalList.innerHTML = "<li><img src='/static/images/spinner.gif' alt='Loading...' /></li>";
-
-        if (!languageCode) return;
-
-        portalList.innerHTML = "<li>Loading portals...</li>"; // Show loading state
-
-        try {
-            const response = await fetch(`/get_portals/${languageCode}?query=${query}`);
-            if (!response.ok) throw new Error("Failed to fetch portals");
-
-            const data = await response.json();
-            populatePortalList(data.portals); // Populate fetched portals
-        } catch (error) {
-            console.error("Error fetching portals:", error);
-            portalList.innerHTML = "<li style='color: red;'>Failed to load portals</li>";
-        }
-    }
-
-    // Populate portal list with suggestions
-    function populatePortalList(portals) {
-        portalList.innerHTML = ""; // Clear previous suggestions
-
-        if (!portals || !portals.length) {
-            portalList.innerHTML = "<li>No portals available</li>";
-            return;
-        }
-
-        portals.forEach((portal) => {
-            const listItem = document.createElement("li");
-            listItem.textContent = portal.title;
-            listItem.dataset.pageid = portal.pageid;
-
-            listItem.addEventListener("click", () => {
-
-                portalSearchInput.value = portal.title; // Set selected portal
-                portalList.innerHTML = ""; // Clear dropdown
-                console.log(`Selected portal: ${portal.title} (Page ID: ${portal.pageid})`);
-            });
-
-            portalList.appendChild(listItem);
-        });
-    }
-
-    // Handle user input for portal search
-    portalSearchInput.addEventListener("input", () => {
-        const query = portalSearchInput.value.toLowerCase();
-        const selectedLanguage = document.getElementById("article-language-search").value;
-
-        if (selectedLanguage) {
-            const languageCode = selectedLanguage.match(/\((.*)\)/)?.[1]; // Extract language code
-            fetchPortals(languageCode, query); // Fetch portals for the language and query
-        } else {
-            portalList.innerHTML = "<li style='color: red;'>Please select a language first</li>";
-        }
-    });
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//     const portalSearchInput = document.getElementById("portal-search");
+//     const portalList = document.getElementById("portal-list");
+//     const portalSelector = document.getElementById("portal-selector-class");
+//     console.log(window.getComputedStyle(portalSelector).display);
+//     portalList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
+//
+//     // Fetch portals
+//     async function fetchPortals(languageCode, query = "") {
+//         portalList.innerHTML = "<li><img src='/static/images/spinner.gif' alt='Loading...' /></li>";
+//
+//         if (!languageCode) return;
+//
+//         portalList.innerHTML = "<li>Loading portals...</li>"; // Show loading state
+//
+//         try {
+//             const response = await fetch(`/get_portals/${languageCode}?query=${query}`);
+//             if (!response.ok) throw new Error("Failed to fetch portals");
+//
+//             const data = await response.json();
+//             populatePortalList(data.portals); // Populate fetched portals
+//         } catch (error) {
+//             console.error("Error fetching portals:", error);
+//             portalList.innerHTML = "<li style='color: red;'>Failed to load portals</li>";
+//         }
+//     }
+//
+//     // Populate portal list with suggestions
+//     function populatePortalList(portals) {
+//         portalList.innerHTML = ""; // Clear previous suggestions
+//
+//         if (!portals || !portals.length) {
+//             portalList.innerHTML = "<li>No portals available</li>";
+//             return;
+//         }
+//
+//         portals.forEach((portal) => {
+//             const listItem = document.createElement("li");
+//             listItem.textContent = portal.title;
+//             listItem.dataset.pageid = portal.pageid;
+//
+//             listItem.addEventListener("click", () => {
+//
+//                 portalSearchInput.value = portal.title; // Set selected portal
+//                 portalList.innerHTML = ""; // Clear dropdown
+//                 console.log(`Selected portal: ${portal.title} (Page ID: ${portal.pageid})`);
+//             });
+//
+//             portalList.appendChild(listItem);
+//         });
+//     }
+//
+//     // Handle user input for portal search
+//     portalSearchInput.addEventListener("input", () => {
+//         const query = portalSearchInput.value.toLowerCase();
+//         const selectedLanguage = document.getElementById("article-language-search").value;
+//
+//         if (selectedLanguage) {
+//             const languageCode = selectedLanguage.match(/\((.*)\)/)?.[1]; // Extract language code
+//             fetchPortals(languageCode, query); // Fetch portals for the language and query
+//         } else {
+//             portalList.innerHTML = "<li style='color: red;'>Please select a language first</li>";
+//         }
+//     });
+// });

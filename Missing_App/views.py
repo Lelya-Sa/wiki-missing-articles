@@ -440,8 +440,7 @@ def get_categories_with_query(request, lang, query):
     # query = request.GET.get("query", "").strip()
 
     if not query:
-        # If no query is provided, use a default query (e.g., "History" or any other default term)
-        query = "History"
+        # If no query is provided, return there is no query
         return JsonResponse({"error": "there is no query"}, status=500)
 
     base_url = f"https://{lang}.wikipedia.org/w/api.php"

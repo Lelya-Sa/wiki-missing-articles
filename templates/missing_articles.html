@@ -42,6 +42,8 @@
 
 <div class="central-left-container">
     <h2 align="center">Select Language and Category</h2>
+    <p id="general-message" style="color: #367ee7; font-weight: bold; margin-top: 10px;">First enter a language then write your category</p>
+
     <br>
     <br>
     <form id="missing-articles-form">
@@ -97,20 +99,20 @@
         <br>
             
         <!-- Portal Selector -->
-        <label for="portals">Select Portal</label>
-        <div class="portal-selector" id="portal-selector-class">
-            <div id="portal-selector" class="portal-selector">
-                <input 
-                    type="text" 
-                    id="portal-search" 
-                    placeholder="Enter portal name..." 
-                    autocomplete="off"
-                >
-                <ul id="portal-list" class="portal-list" role="listbox" aria-live="polite">
-                    <!-- Suggestions dynamically populated -->
-                </ul>
-            </div>
-        </div>
+{#        <label for="portals">Select Portal</label>#}
+{#        <div class="portal-selector" id="portal-selector-class">#}
+{#            <div id="portal-selector" class="portal-selector">#}
+{#                <input #}
+{#                    type="text" #}
+{#                    id="portal-search" #}
+{#                    placeholder="Enter portal name..." #}
+{#                    autocomplete="off"#}
+{#                >#}
+{#                <ul id="portal-list" class="portal-list" role="listbox" aria-live="polite">#}
+{#                    <!-- Suggestions dynamically populated -->#}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
         
         <br>
         <br>
@@ -131,7 +133,7 @@
             </div>
             
             <div id="category-spinner" style="display: none;">Loading categories...</div>
-            <div id="all-cat-feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+            <p id="all-cat-feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></p>
         
         <br>
 
