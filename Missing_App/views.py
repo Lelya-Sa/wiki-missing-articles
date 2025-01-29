@@ -1,3 +1,4 @@
+import json
 
 from django.shortcuts import render, redirect
 from django.db import connection
@@ -11,7 +12,9 @@ from django.core.cache import cache  # Import Django's caching framework
 
 from django.shortcuts import render
 
+
 def custom_404(request, exception):
+    # The requested resource could not be found.
     return render(request, '404.html', status=404)
 
 
@@ -83,9 +86,11 @@ def get_categories(request, lang=None):
         response.raise_for_status()
         wikidata = response.json()
 
+        # data = json.loads(wikidata)
+        # print(wikidata)  # Check if the "categories" key exists
         # Get the name of "Category:Contents" in the selected language
         category_title = wikidata['entities'][contents_qcode]['labels'].get(lang, {}).get('value', 'Category:Contents')
-
+        # print(category_title)
         # Use the dynamically fetched category title for the selected language
         params = {
             "action": "query",
@@ -246,111 +251,6 @@ def get_articles_from_other_languages(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-# Fetch articles missing in the selected language (with pagination support)
-def get_missing_articles(request):
-    lang = request.GET.get("lang")
-    category = request.GET.get("category")
-
-    articles = []
-    try:
-        # Initial request for the first set of articles
-        params = {
-            "action": "query",
-            "list": "categorymembers",
-            "cmtitle": category,
-            "cmtype": "page",
-            "cmlimit": 50,
-            "format": "json",
-        }
-        url = WIKI_API_URL.format(lang=lang)
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
-
-        # Add the articles to the list
-        articles.extend(article["title"] for article in data["query"]["categorymembers"])
-
-        # Check if there's more data (pagination)
-        while "continue" in data:
-            params["cmcontinue"] = data["continue"]["cmcontinue"]
-            response = requests.get(url, params=params)
-            response.raise_for_status()
-            data = response.json()
-
-            # Add more articles to the list
-            articles.extend(article["title"] for article in data["query"]["categorymembers"])
-
-        # Return all articles
-        return JsonResponse({"articles": articles})
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
-
-
-def search_by_name(request):
-    if request.method == 'POST':
-        language_code = request.POST.get('language')  # Example: 'ar' for Arabic
-        article_name = request.POST.get('article_name')  # Example: 'Douglas Adams'
-
-        # Step 1: Fetch the Q-value for the given article name using the Wikidata API
-        search_url = f"https://www.wikidata.org/w/api.php?action=wbsearchentities&search={article_name}&language=en&format=json"
-
-        try:
-            # Query the Wikidata search API for the Q-value
-            search_response = requests.get(search_url)
-            search_response.raise_for_status()
-            search_data = search_response.json()
-
-            # Get the first search result's Q-value
-            search_results = search_data.get('search', [])
-            if not search_results:
-                return render(request, 'search_by_name.html', {
-                    'result_message': f"No Q-value found for the article name '{article_name}'. Please try a different name.",
-                })
-
-            # Get the Q-value from the first search result
-            q_value = search_results[0]['id']  # Example: 'Q42' for Douglas Adams
-
-            # Step 2: Fetch the sitelinks for the Q-value
-            api_url = f"https://www.wikidata.org/wiki/Special:EntityData/{q_value}.json"
-            q_response = requests.get(api_url)
-            q_response.raise_for_status()
-
-
-            # Parse the Q-value data
-            q_data = q_response.json()
-            entity_data = q_data.get('entities', {}).get(q_value, {})
-            sitelinks = entity_data.get('sitelinks', {})
-
-            # Construct the sitelink key for the language (e.g., 'arwiki' for Arabic)
-            sitelink_key = f"{language_code}wiki"
-
-            # Check if the sitelink exists
-            is_found = sitelink_key in sitelinks
-
-            # Prepare the result message
-            if is_found:
-                result_message = f"The article '{article_name}' (Q-value: {q_value}) is already found in the '{language_code}' language."
-            else:
-                result_message = f"The article '{article_name}' (Q-value: {q_value}) is NOT found in the '{language_code}' language."
-
-        except requests.exceptions.RequestException as e:
-            result_message = f"An error occurred while searching for '{article_name}': {e}"
-
-        # Pass the result to the context
-        context = {
-            'article_name': article_name,
-            'language': language_code,
-            'result_message': result_message,
-        }
-        return render(request, 'search_by_name.html', context)
-
-    return render(request, 'search_by_name.html')
-
-
-
 def search_by_q(request):
     if request.method == 'POST':
         language = request.POST.get('language')  # Example: 'he' for Hebrew
@@ -394,10 +294,175 @@ def search_by_q(request):
             'language': language,
             'result_message': result_message,
         }
-        return render(request, 'search_by_q.html', context)
+        return context
 
-    return render(request, 'search_by_q.html')
+    return None
 
 
 def missing_articles(request):
-    return render(request, 'missing_articles.html')
+    if request.method == "POST":
+        lang = request.POST.get("article-language-search")  # Get the selected language
+        category = request.POST.get("all-category-search")  # Get the selected category
+
+        if not lang or not category:
+            return render(
+                request,
+                "missing_articles.html",
+                {"error": "Please select both a language and a category."},
+            )
+
+        print("language: ", lang, ", category:", category)
+        get_missing_articles(lang, category)
+
+    return render(request, "missing_articles.html")
+
+
+def get_missing_articles(request, lang, category):
+    try:
+        # Fetch missing articles using the Wikimedia API (adjust API call as needed)
+        url = f"https://{lang}.wikipedia.org/w/api.php"
+        params = {
+            "action": "query",
+            "list": "categorymembers",
+            "cmtitle": f"Category:{category}",
+            "cmtype": "page",
+            "cmlimit": 500,  # Adjust limit as needed
+            "format": "json"
+        }
+
+        response = requests.get(url, params=params)
+        data = response.json()
+        articles = [page["title"] for page in data.get("query", {}).get("categorymembers", [])]
+
+        return JsonResponse({"articles": articles})
+
+    except requests.RequestException as e:
+        return JsonResponse({"error": f"Failed to fetch categories: {str(e)}"}, status=500)
+
+
+# def get_missing_articles(request):
+#     lang = request.GET.get("lang")  # Selected language code
+#     category = request.GET.get("category")  # Selected category title
+#
+#     if not lang or not category:
+#         return JsonResponse({"error": "Language and category are required."}, status=400)
+#
+#     try:
+#         # Step 1: Fetch articles in the selected category and language
+#         params = {
+#             "action": "query",
+#             "list": "categorymembers",
+#             "cmtitle": category,
+#             "cmtype": "page",
+#             "cmlimit": 500,  # Adjust limit as needed
+#             "format": "json",
+#         }
+#         url = WIKI_API_URL.format(lang=lang)
+#         response = requests.get(url, params=params)
+#         response.raise_for_status()
+#         data = response.json()
+#
+#         existing_articles = {article["title"] for article in data["query"]["categorymembers"]}
+#
+#         # Step 2: Fetch the Q-code for the category
+#         qcode = get_category_qcode(category)
+#         if not qcode:
+#             return JsonResponse({"error": "Category Q-code not found."}, status=400)
+#
+#         # Step 3: Get localized category names
+#         localized_names = get_localized_category_names(qcode)
+#         if not localized_names:
+#             return JsonResponse({"error": "Localized category names not found."}, status=400)
+#
+#         # Step 4: Compare articles across other languages
+#         missing_articles_res = []
+#         for other_lang, other_category in localized_names.items():
+#             if other_lang == lang:  # Skip the selected language
+#                 continue
+#
+#             params["cmtitle"] = other_category
+#             url = WIKI_API_URL.format(lang=other_lang)
+#             response = requests.get(url, params=params)
+#             response.raise_for_status()
+#             data = response.json()
+#
+#             # Compare articles and find missing ones
+#             other_articles = {article["title"] for article in data["query"]["categorymembers"]}
+#             missing_articles_res.extend(other_articles - existing_articles)
+#
+#         return JsonResponse({"missing_articles": missing_articles_res})
+#
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)}, status=500)
+
+
+def get_portals(request, lang):
+    """
+    Fetch portals for a given language and optional query.
+    """
+    query = request.GET.get("query", "").strip()
+    base_url = f"https://{lang}.wikipedia.org/w/api.php"
+
+    params = {
+        "action": "query",
+        "list": "search",
+        "srnamespace": 100,  # Namespace 100 is for portals
+        "srlimit": 10,       # Limit the number of results
+        "srsearch": query,   # Add search query if provided
+        "format": "json",
+    }
+
+    try:
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        # Extract portal information
+        portals = []
+        if "query" in data and "search" in data["query"]:
+            for item in data["query"]["search"]:
+                portals.append({
+                    "title": item["title"],
+                    "pageid": item["pageid"]
+                })
+
+        return JsonResponse({"portals": portals}, status=200)
+
+    except requests.RequestException as e:
+        print(f"Error fetching portals: {e}")
+        return JsonResponse({"error": "Failed to fetch portals"}, status=500)
+
+
+def get_categories_with_query(request, lang, query):
+    """
+    Fetch categories dynamically based on query, filtering directly in the API request.
+    """
+    # query = request.GET.get("query", "").strip()
+
+    if not query:
+        # If no query is provided, use a default query (e.g., "History" or any other default term)
+        query = "History"
+        return JsonResponse({"error": "there is no query"}, status=500)
+
+    base_url = f"https://{lang}.wikipedia.org/w/api.php"
+
+    params = {
+        "action": "query",
+        "list": "allcategories",
+        "acprefix": query,  # Direct filtering using query prefix
+        "aclimit": 50,  # Limit results to 50 (can be adjusted)
+        "format": "json",
+    }
+
+    try:
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        # Extract filtered categories
+        categories = [cat["*"] for cat in data.get("query", {}).get("allcategories", [])]
+
+        return JsonResponse({"categories": categories}, status=200)
+
+    except requests.RequestException as e:
+        return JsonResponse({"error": f"Failed to fetch categories: {str(e)}"}, status=500)

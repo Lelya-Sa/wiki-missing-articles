@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Hide "Loading..." and populate the language list
-  async function fetchLanguages() {
+  async function fetchUpperLanguages() {
     showLoading(); // Show loading message
     try {
       const response = await fetch("/api/supported_languages/");
@@ -96,5 +96,5 @@ languageSearchButton.addEventListener("click", (e) => {
 
 
   // Fetch languages on load
-  fetchLanguages();
+  fetchUpperLanguages();
 });

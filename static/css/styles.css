@@ -212,8 +212,8 @@ h1 {
     right: 0; /* Align to the right edge of the button */
     display: none; /* Initially hidden */
     background-color: #f6f7f8;
-    border: 1px solid #ccc;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    /*border: 1px solid #ccc;*/
+    /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
     border-radius: 1px;
     padding: 5px; /* Add some padding inside the dropdown */
     /*width: 100%;*/
@@ -248,10 +248,10 @@ h1 {
 }
 .language-list li {
     padding: 10px;
-    cursor: pointer;
     font-size: 14px;
-    text-align: left;
     transition: background-color 0.2s ease;
+    text-align: left;
+    cursor: pointer;
 }
 
 .language-list li:hover {
@@ -270,32 +270,14 @@ h1 {
     transition: box-shadow 0.2s;
 }
 
-.article-language-search {
-    /*width: 100%;*/
-    font-size: 16px;
-    border: 1px solid #0a39aa;
-    border-radius: 4px;
-    outline: none;
-    display: block;
-    transition: box-shadow 0.2s;
-}
-
  /*Display list when search input is focused */
 #language-search:focus {
     box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
 }
 
-#article-language-search:focus {
-    box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
-}
 
 /* Display list when search input is focused */
 #language-search:focus + .language-list {
-    display: block; /* Show the dropdown when the input is focused */
-}
-
-/* Display list when search input is focused */
-#article-language-search:focus + .language-list {
     display: block; /* Show the dropdown when the input is focused */
 }
 
@@ -309,6 +291,25 @@ h1 {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+.article-language-search {
+    /*width: 100%;*/
+    font-size: 16px;
+    border: 1px solid #0a39aa;
+    border-radius: 4px;
+    outline: none;
+    display: block;
+    transition: box-shadow 0.2s;
+}
+
+#article-language-search:focus {
+    box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
+}
+
+/* Display list when search input is focused */
+#article-language-search:focus + .language-list {
+    display: block; /* Show the dropdown when the input is focused */
 }
 
 #language-search-button:hover {
@@ -330,15 +331,12 @@ h1 {
 .article-language-selector {
     position: relative;
     background-color: #f6f7f8;
-    border: 1px solid #ccc;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    padding: 5px;
-    width: 50%; /* Adjust width as needed */
-    z-index: 1000;
+    width: 25%; /* Adjust width as needed */
     opacity: 1; /* Ensure visible */
     display: block; /* Ensure it is displayed */
     transform: translateY(0); /* Remove hidden transform */
+    z-index: 1000; /* Ensure it's above other elements */
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .article-language-list {
@@ -361,9 +359,9 @@ h1 {
 .article-language-list li {
     padding: 10px;
     font-size: 14px;
-    cursor: pointer;
     transition: background-color 0.2s ease;
     text-align: left;
+    cursor: pointer;
 }
 
 .article-language-list li:hover {
@@ -373,7 +371,117 @@ h1 {
 .article-language-selector.active .article-language-list {
     display: block; /* Ensure dropdown is visible when active */
 }
-/*!* Show dropdown when button is clicked *!*/
-/*.article-language-selector.active .article-language-list {*/
-/*    display: block; !* Ensure dropdown is visible when active *!*/
-/*}*/
+
+
+
+.portal-search {
+    /*width: 100%;*/
+    font-size: 16px;
+    border: 1px solid #0a39aa;
+    border-radius: 4px;
+    outline: none;
+    display: block;
+    transition: box-shadow 0.2s;
+}
+/* Display list when search input is focused */
+#portal-search:focus {
+    display: block; /* Show the dropdown when the input is focused */
+}
+#portal-search:focus {
+    box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
+}
+
+/* Language Selector */
+.portal-selector {
+    position: relative;
+    background-color: #f6f7f8;
+    /*border: 1px solid #a1a8b0;*/
+    /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
+    /*border-radius: 4px;*/
+    padding: 5px;
+    width: 50%; /* Adjust width as needed */
+    z-index: 1000;
+    opacity: 1; /* Ensure visible */
+    display: block !important; /* Ensure it is displayed */
+    transform: translateY(0); /* Remove hidden transform */
+}
+
+.portal-list {
+    max-height: 200px; /* Limit the height for scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+.portal-selector.active {
+    transform: translateY(0); /* Move to normal position */
+    opacity: 1;
+    display: block;
+}
+.portal-list li {
+    padding: 10px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    text-align: left;
+    cursor: pointer;
+}
+
+.portal-list li:hover {
+    background-color: #f6f7f8;
+}
+/* Show dropdown when button is clicked */
+.portal-selector.active .portal-list {
+    display: block; /* Ensure dropdown is visible when active */
+}
+
+.category-list {
+        max-height: 200px; /* Limit the height for scrolling */
+        overflow-y: auto; /* Enable vertical scrolling */
+        border: 1px solid #ccc;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+.category-list li {
+    padding: 10px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    text-align: left;
+    cursor: pointer;
+}
+
+.category-list li:hover {
+        background-color: #f0f0f0;
+}
+
+.category-list li.selected {
+    background-color: #3366cb;
+    color: white;
+}
+
+#language-select, #category-search, #portal-search, #all-category-search, #language-search, #article-language-search {
+    width: 90%;
+    max-width: 500px;
+    /*margin: 0 auto 20px;*/
+    /*padding: 8px;*/
+    font-size: 16px;
+}
+
+.language-selector, .portal-selector, .article-language-selector {
+    position: relative;
+    background-color: #f6f7f8;
+    padding: 5px;
+    z-index: 1000;
+    display: block;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}

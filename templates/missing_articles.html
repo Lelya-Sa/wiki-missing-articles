@@ -39,14 +39,15 @@
             </div>
         </div>
     </div>
-    
+
 <div class="central-left-container">
     <h2 align="center">Select Language and Category</h2>
     <br>
     <br>
-    <form id="selection-form">
+    <form id="missing-articles-form">
+        <label for="language">Select Language:</label>
+
         <!-- Language Search Bar -->
-                    <!-- Language Search (Initially hidden) -->
         <div class="article-language-selector" id="article-language-selector">
                 <label for="article-language-search"></label>
                 <input 
@@ -55,49 +56,91 @@
                     placeholder="Search languages..." 
                     autocomplete="off"
                 />
-                <ul id="article-language-list" class="article-language-list">
+                <ul id="article-language-list" class="article-language-list" role="listbox">
+{#                <ul id="article-language-list" class="article-language-list" role="listitem">#}
                     <!-- Suggestions will be dynamically populated -->
                 </ul>
         </div>
-        
-{#        <label for="article-language-search">Search for Language:</label>#}
-{#        <input #}
-{#            type="text" #}
-{#            id="article-language-search" #}
-{#            placeholder="Search for a language..." #}
-{#            autocomplete="off"#}
-{#            class="language-search"#}
-{#        >#}
-{#        <ul id="article-language-list" class="language-list">#}
-{#            <!-- Suggestions will be dynamically populated -->#}
-{#        </ul>#}
-{#        <input type="hidden" id="selected-language" name="language">#}
-        <div id="language-spinner" style="display: none;">
+
+        <div id="article-language-spinner" style="display: none;">
             <img src="/static/images/spinner.gif" alt="language_spinner">
             Loading languages...
         </div>
-        
+
 
         <p id="the_selected_lang" style="color: #7c0808;"></p>
         <br><br>
-
+        
+        <!-- category Selector -->
         <label for="category">Select Main Category:</label>
-        <select id="category" name="category" disabled>
-            <option value="">Select a language first</option>
-        </select>
-        <div id="category-spinner" style="display: none;">Loading categories...</div>
-        <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
-
-        <br>
-        <p id="category_response" style="color: #7c0808;"></p>
+        <div class="portal-selector" id="category-selector-class">
+            
+            <div id="category" class="portal-selector">
+                <input 
+                    type="text" 
+                    id="category-search" 
+                    placeholder="Enter category name..." 
+                    autocomplete="off"
+                />
+                <ul id="category-list" class="category-list" role="listbox" aria-live="polite">
+                    <!-- Suggestions dynamically populated -->
+                </ul>
+            </div>
+            
+            <div id="category-spinner" style="display: none;">Loading categories...</div>
+            <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+            
         <p id="response_data" style="color: #7c0808;"></p>
+        </div>
+                
+        <br>
+        <br>
+            
+        <!-- Portal Selector -->
+        <label for="portals">Select Portal</label>
+        <div class="portal-selector" id="portal-selector-class">
+            <div id="portal-selector" class="portal-selector">
+                <input 
+                    type="text" 
+                    id="portal-search" 
+                    placeholder="Enter portal name..." 
+                    autocomplete="off"
+                >
+                <ul id="portal-list" class="portal-list" role="listbox" aria-live="polite">
+                    <!-- Suggestions dynamically populated -->
+                </ul>
+            </div>
+        </div>
+        
+        <br>
+        <br>
+    <br>
+    <!-- all category Selector -->
+        <label for="all-category">Write a category name:</label>
+        <div class="portal-selector" id="all-category-selector-class">
+            <div id="all-category" class="portal-selector">
+                <input 
+                    type="text" 
+                    id="all-category-search" 
+                    placeholder="Enter category name..." 
+                    autocomplete="off"
+                />
+                <ul id="all-category-list" class="portal-list">
+                    <!-- Suggestions dynamically populated -->
+                </ul>
+            </div>
+            
+            <div id="category-spinner" style="display: none;">Loading categories...</div>
+            <div id="all-cat-feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+        
+        <br>
 
-        <p id="populate_options" style="color: #7c0808;"></p>
-
+        <p id="all-cat-response_data" style="color: #7c0808;"></p>
+        </div>    
+        
+        
         <button type="submit">Submit</button>
     </form>
-    <br>
-    <br>
 
     <h2>Articles Missing in Selected Language:</h2>
     <ul id="articles"></ul>
@@ -105,6 +148,31 @@
 
 <script src="{% static 'js/category-search.js' %}" defer></script>
 <script src="{% static 'js/language-selector.js' %}" defer></script>
+<script src="{% static 'js/submission.js' %}" defer></script>
+    
+    <script>
+        
+        $(document).ready(function () {
+    const portalSearch = $("#portal-search");
+
+    // Check if the portal search field is visible
+    console.log("Portal Search Visible:", portalSearch.is(":visible"));
+
+    // Add a focus handler for debugging
+    portalSearch.focus(function () {
+        console.log("Portal search input is focused.");
+    });
+
+    // Example test log to ensure JS runs correctly
+    console.log("Portal Selector Initialized!");
+});
+
+    </script>
 
 </body>
 </html>
+
+
+
+
+
