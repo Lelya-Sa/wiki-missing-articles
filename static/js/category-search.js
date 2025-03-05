@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const allCategorySearchInput = document.getElementById("all-category-search");
     const selectedAllCategorySearchInput = document.getElementById("all-category-search");
     const allCategoryList = document.getElementById("all-category-list");
-    const all_cat_spinner = document.getElementById("category-spinner");
+    const all_cat_spinner = document.getElementById("all-category-spinner");
     const all_cat_feedbackMessage = document.getElementById("all-cat-feedback-message");
 
     let allCategories = []; // Store fetched categories
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function fetchCategories(languageCode, query = "") {
         categoryList.innerHTML = "<li><img src='/static/images/spinner.gif' alt='Loading...' /></li>";
-        spinner.style.display = "inline-block";
+        // spinner.style.display = "inline-block";
         feedbackMessage.textContent = "";
         if (!languageCode) return;
 
@@ -181,6 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("in fetch all categories: searchQuery:", searchQuery);
 
         isFetching = true;
+        allCategoryList.innerHTML = "<li><img src='/static/images/spinner.gif' alt='Loading...' /></li>";
         all_cat_spinner.style.display = "inline-block";
         all_cat_feedbackMessage.textContent = "";
 

@@ -20,10 +20,13 @@
         </div>
         <!-- Top-right Language Button -->
         <div class="top-right-container">  
-            <button id="language-search-button" class="search-button">
+            <div >
+                <button id="language-search-button" class="search-button">
                 <img src="{% static 'images/language_icon_blue.png' %}" alt="language icon" class="language_icon">
                 Languages
             </button>
+            </div>
+            
             <!-- Language Search (Initially hidden) -->
             <div class="language-selector" id="language-selector">
                 <label for="language-search"></label>
@@ -47,10 +50,10 @@
     <br>
     <br>
     <form id="missing-articles-form">
-        <label for="language">Select Language:</label>
+        <label for="language" style="align-content: center">Select Language:</label>
 
         <!-- Language Search Bar -->
-        <div class="article-language-selector" id="article-language-selector">
+        <div class="article-language-selector" id="article-language-selector" style="align-content: center">
                 <label for="article-language-search"></label>
                 <input 
                     type="text" 
@@ -71,7 +74,15 @@
 
 
         <p id="the_selected_lang" style="color: #7c0808;"></p>
-        <br><br>
+        <br>
+        
+        <!-- message -->
+        <p id="category-message" style="color: #367ee7; font-weight: bold; margin-top: 10px;"> 
+            you can search the main categories or all categories in the selected language, 
+            currently we are working on the second search which search all categories
+        </p>
+        
+        <br>
         
         <!-- category Selector -->
         <label for="category">Select Main Category:</label>
@@ -89,7 +100,7 @@
                 </ul>
             </div>
             
-            <div id="category-spinner" style="display: none;">Loading categories...</div>
+{#            <div id="main-category-spinner" style="display: none;">Loading categories...</div>#}
             <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
             
         <p id="response_data" style="color: #7c0808;"></p>
@@ -117,6 +128,10 @@
         <br>
         <br>
     <br>
+        
+        <p id="or-message" style="color: #367ee7; font-weight: bold; margin-top: 10px;"> 
+            OR
+        </p>
     <!-- all category Selector -->
         <label for="all-category">Write a category name:</label>
         <div class="portal-selector" id="all-category-selector-class">
@@ -132,7 +147,7 @@
                 </ul>
             </div>
             
-            <div id="category-spinner" style="display: none;">Loading categories...</div>
+            <div id="all-category-spinner" style="display: none;">Loading categories...</div>
             <p id="all-cat-feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></p>
         
         <br>
@@ -143,9 +158,15 @@
         
         <button type="submit">Submit</button>
     </form>
-
+    
+<br>
+    
     <h2>Articles Missing in Selected Language:</h2>
     <ul id="articles"></ul>
+    
+    <br>
+    <br>
+    <br>
 </div>
 
 <script src="{% static 'js/category-search.js' %}" defer></script>
