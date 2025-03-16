@@ -5,10 +5,11 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        const lang = document.getElementById("article-language-search").value.trim();
+        const edit_lang = document.getElementById("article-language-search").value.trim();
+        const refer_lang = document.getElementById("article-refer-language-search").value.trim();
         const category = document.getElementById("all-category-search").value.trim();
 
-        if (!lang || !category) {
+        if (!edit_lang || !category || !refer_lang ) {
             alert("Please select both a language and a category.");
             return;
         }
@@ -16,11 +17,18 @@ document.addEventListener("DOMContentLoaded", function () {
         articlesList.innerHTML = "<li>Loading missing articles...</li>";
 
         try {
-            console.log("Submitting request: lang:", lang, "category:", category);
+            console.log("Submitting request: edit_lang:", edit_lang,
+                        ", refer_lang", refer_lang, "category:", category);
 
             // Extract language code (inside parentheses)
-            const languageCode = lang.match(/\((.*?)\)/)?.[1];
+            const languageCode = edit_lang.match(/\((.*?)\)/)?.[1];
             if (!languageCode) {
+                alert("Invalid language selection. Please select a valid language.");
+                return;
+            }
+                        // Extract language code (inside parentheses)
+            const referlanguageCode = refer_lang.match(/\((.*?)\)/)?.[1];
+            if (!referlanguageCode) {
                 alert("Invalid language selection. Please select a valid language.");
                 return;
             }
@@ -28,8 +36,10 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Extracted language code:", languageCode);
 
             // Fetch missing articles
-            const response = await fetch(`/get_missing_articles/${languageCode}/${encodeURIComponent(category)}`);
+            const response = await fetch(
+                `/get_missing_articles/${languageCode}/${encodeURIComponent(category)}/${referlanguageCode}/`);
             const data = await response.json();
+            console.log("json response:", data);
 
             // Clear previous results
             articlesList.innerHTML = "";

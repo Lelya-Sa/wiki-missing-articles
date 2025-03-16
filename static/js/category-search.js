@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const articleLanguageList = document.getElementById("article-language-list");
     const selectedLanguageInput = document.getElementById("article-language-search");
     let languages = [];
+    const articleReferLanguageSearchInput = document.getElementById("article-refer-language-search");
+    const articleReferLanguageList = document.getElementById("article-refer-language-list");
+    const selectedReferLanguageInput = document.getElementById("article-refer-language-search");
 
     const categorySelector = document.getElementById("category-selector-class");
     const categorySearchInput = document.getElementById("category-search");
@@ -29,7 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.querySelector("button[type='submit']");
     submitButton.disabled = true;
     function checkInputs() {
-        if(selectedLanguageInput.value.trim() !== "" && selectedAllCategorySearchInput.value.trim() !== "") {
+        if(selectedLanguageInput.value.trim() !== ""
+            && selectedReferLanguageInput.value.trim() !== ""
+            && selectedAllCategorySearchInput.value.trim() !== ""
+        ) {
             submitButton.disabled = false;
         } else {
             submitButton.disabled = true;
@@ -37,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     selectedLanguageInput.addEventListener("input", checkInputs);
+    selectedReferLanguageInput.addEventListener("input", checkInputs);
     selectedAllCategorySearchInput.addEventListener("input", checkInputs);
 
 
@@ -47,6 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch languages
     async function fetchLanguages() {
         articleLanguageList.innerHTML = "<li>Loading languages...</li>";
+        articleReferLanguageList.innerHTML = "<li>Loading languages...</li>";
 
         try {
             const response = await fetch("/api/supported_languages/");
@@ -57,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
             populateLanguageList(""); // Populate list initially
         } catch (error) {
             articleLanguageList.innerHTML = "<li style='color: red;'>Failed to load languages.</li>";
+            articleReferLanguageList.innerHTML = "<li style='color: red;'>Failed to load languages.</li>";
             console.error("Error fetching languages:", error);
         }
     }
@@ -68,9 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         articleLanguageList.innerHTML = ""; // Clear the list
+        articleReferLanguageList.innerHTML = ""; // Clear the list
 
         if (!filteredLanguages.length) {
             articleLanguageList.innerHTML = "<li>No results found</li>";
+            articleReferLanguageList.innerHTML = "<li>No results found</li>";
             return;
         }
 
@@ -80,12 +91,30 @@ document.addEventListener("DOMContentLoaded", () => {
             listItem.dataset.langCode = lang.code;
             listItem.addEventListener("click", () => {
                 selectedLanguageInput.value = `${lang.name} (${lang.code})`;
+
                 articleLanguageList.innerHTML = ""; // Clear the dropdown
+
                 console.log("in populateLanguages: ", lang.code);
                 fetchCategories(lang.code);
                 fetchAllCategories(lang.code); // Fetch all categories for selected language
             });
             articleLanguageList.appendChild(listItem);
+
+        });
+        filteredLanguages.forEach((lang) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${lang.name} (${lang.code})`;
+            listItem.dataset.langCode = lang.code;
+            listItem.addEventListener("click", () => {
+                selectedReferLanguageInput.value = `${lang.name} (${lang.code})`;
+
+                articleReferLanguageList.innerHTML = ""; // Clear the dropdown
+
+                console.log("in populateReferLanguages: ", lang.code);
+
+            });
+            articleReferLanguageList.appendChild(listItem);
+
         });
     }
 
@@ -159,6 +188,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Handle input changes for filtering, Event listener for the language input field
     articleLanguageSearchInput.addEventListener("input", () => {
         const query = articleLanguageSearchInput.value.toLowerCase();
+        populateLanguageList(query);
+    });
+
+        // Handle input changes for filtering, Event listener for the language input field
+    articleReferLanguageSearchInput.addEventListener("input", () => {
+        const query = articleReferLanguageSearchInput.value.toLowerCase();
         populateLanguageList(query);
     });
 

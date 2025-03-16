@@ -42,11 +42,11 @@ body {
 
 /* Right container styles */
 .top-right-container {
-    align-items: center; /* Vertically center the content */
+    /*align-items: center; !* Vertically center the content *!*/
     display: flex; /* Align items in a row */
     /*z-index: 1;*/
     margin:20px 5px 5px auto; /* top right bottom left*/
-    padding: 10px 20px; /* Adds padding for spacing */
+    /*padding: 10px 20px; !* Adds padding for spacing *!*/
     /*margin-left: auto; !* Ensures it's pushed to the right *!*/
     flex-direction: column; /* Stack items vertically */
 
@@ -140,13 +140,6 @@ h1 {
     background-color: #e9ebee;
 }
 
-#language-select {
-    padding: 60px 20px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
 /* Search options */
 .search-options {
     display: flex;
@@ -158,20 +151,23 @@ h1 {
 .search-button {
     /*z-index: 100; !* Ensure it's above other elements *!*/
     display: inline-block;
-    background-color: #3366cb;
-    color: #f6f7f8;
+    background-color: #f3f4f5;
+    color: #3366cb;
     font-size: 18px;
-    padding: 10px 20px;
-    margin: 5px 5px 5px 5px;
+    /*padding: 20px 20px 0 5px;*/
+    padding: 10px 10px;
+    margin: 225px 5px 5px 5px;
     text-decoration: none;
     border-radius: 5px;
     transition: background-color 0.3s ease;
     cursor: pointer;
+    border: none; /* Ensures no border is applied */
+
 }
 
 .search-button:hover {
-    background-color: #e9ebee;
-    color: #3366ca;
+    background-color: #a1a8b0;
+    color: #3366cb;
 }
 
 .category-button {
@@ -240,16 +236,25 @@ h1 {
     /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
     border-radius: 1px;
     padding: 5px; /* Add some padding inside the dropdown */
-    /*width: 100%;*/
     width: 200px; /* Adjust width as needed */
     z-index: 1000; /* Ensure it's above other elements */
     transition: opacity 0.2s ease, transform 0.2s ease;
     transform: translateY(-10px); /* Start slightly above */
     opacity: 0;
+    pointer-events: none; /* Prevent clicks when hidden */
+    visibility: hidden; /* Ensures it's not interactable */
+}
+.language-selector.active {
+    visibility: visible; /* Ensures it's not interactable */
+    transform: translateY(0); /* Move to normal position */
+    opacity: 1;
+    display: block;
+    pointer-events: auto; /* Re-enable interactions */
 }
 
 /* Ensure proper positioning of dropdown */
 .language-list {
+    position: relative; /* Ensure the dropdown appears on top */
     list-style: none;
     margin: 0;
     padding: 0;
@@ -299,59 +304,33 @@ h1 {
     box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
 }
 
-
 /* Display list when search input is focused */
 #language-search:focus + .language-list {
     display: block; /* Show the dropdown when the input is focused */
 }
 
-/* Styling for the Languages button */
-#language-search-button {
-    z-index: 100; /* Ensure it's above other elements */
-    display: inline-block;
-    background-color: #3366cb;
-    color: #f6f7f8;
-    font-size: 18px;
-    padding: 10px 20px;
-    margin: 10px 5px 5px 5px;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
-
-#language-search-button:hover {
-    background-color: #e9ebee;
-    color: #3366ca;
-}
-
 .article-language-search {
-    /*width: 100%;*/
     font-size: 16px;
     border: 1px solid #0a39aa;
     border-radius: 4px;
     outline: none;
     display: block;
     transition: box-shadow 0.2s;
+    width: 25%;
+    /*max-width: 700px;*/
 }
 
-#article-language-search:focus {
+.article-language-search:focus {
     box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
 }
 
 /* Display list when search input is focused */
-#article-language-search:focus + .language-list {
+.article-language-search:focus + .language-list {
     display: block; /* Show the dropdown when the input is focused */
 }
 
-.language-selector.active {
-    transform: translateY(0); /* Move to normal position */
-    opacity: 1;
-    display: block;
-}
-
 /* Show dropdown when button is clicked */
-.language-selector.active .language-list {
+.language-list {
     display: block; /* Ensure dropdown is visible when active */
 }
 
@@ -400,8 +379,6 @@ h1 {
     display: block; /* Ensure dropdown is visible when active */
 }
 
-
-
 .portal-search {
     /*width: 100%;*/
     font-size: 16px;
@@ -411,12 +388,12 @@ h1 {
     display: block;
     transition: box-shadow 0.2s;
 }
+
 /* Display list when search input is focused */
-#portal-search:focus {
+.portal-search:focus {
     display: block; /* Show the dropdown when the input is focused */
-}
-#portal-search:focus {
     box-shadow: 0 0 5px rgba(51, 102, 204, 0.5);
+
 }
 
 /* Language Selector */
@@ -496,11 +473,10 @@ h1 {
     color: white;
 }
 
-#language-select, #category-search, #portal-search, #all-category-search, #language-search, #article-language-search {
-    width: 90%;
+#category-search, #portal-search, #all-category-search,
+#language-search, #article-language-search , #article-refer-language-search{
+    width: 97%;
     max-width: 500px;
-    /*margin: 0 auto 20px;*/
-    /*padding: 8px;*/
     font-size: 16px;
 }
 

@@ -50,8 +50,9 @@
     <br>
     <br>
     <form id="missing-articles-form">
-        <label for="language" style="align-content: center">Select Language:</label>
-
+        
+        <label for="language" 
+               style="align-content: center;color: black;font-size: large">Select the language you want to use:</label>
         <!-- Language Search Bar -->
         <div class="article-language-selector" id="article-language-selector" style="align-content: center">
                 <label for="article-language-search"></label>
@@ -66,18 +67,37 @@
                     <!-- Suggestions will be dynamically populated -->
                 </ul>
         </div>
-
-        <div id="article-language-spinner" style="display: none;">
+        
+        <br>
+        <br>
+        
+        <label for="comparing-language" style="align-content: center;color: black;font-size: large">Select the language you want to refer from:</label>
+        <!-- reference Language Search Bar -->
+        <div class="article-language-selector" id="article-refer-language-selector" style="align-content: center">
+                <label for="article-refer-language-search"></label>
+                <input 
+                    type="text" 
+                    id="article-refer-language-search" 
+                    placeholder="Search languages..." 
+                    autocomplete="off"
+                />
+                <ul id="article-refer-language-list" class="article-language-list" role="listbox">
+{#                <ul id="article-language-list" class="article-language-list" role="listitem">#}
+                    <!-- Suggestions will be dynamically populated -->
+                </ul>
+        </div>
+        
+        <div id="article-refer-language-spinner" style="display: none;">
             <img src="/static/images/spinner.gif" alt="language_spinner">
             Loading languages...
         </div>
 
 
-        <p id="the_selected_lang" style="color: #7c0808;"></p>
+        <p id="the_selected_refer_lang" style="color: #7c0808;"></p>
         <br>
         
         <!-- message -->
-        <p id="category-message" style="color: #367ee7; font-weight: bold; margin-top: 10px;"> 
+        <p id="category-message" style="color: #367ee7; font-weight: bold; margin-top: 10px; text-align: center"> 
             you can search the main categories or all categories in the selected language, 
             currently we are working on the second search which search all categories
         </p>
@@ -85,24 +105,24 @@
         <br>
         
         <!-- category Selector -->
-        <label for="category">Select Main Category:</label>
+        <label for="category" style="color: black;font-size: large">Select Main Category:</label>
         <div class="portal-selector" id="category-selector-class">
-            
+
             <div id="category" class="portal-selector">
-                <input 
-                    type="text" 
-                    id="category-search" 
-                    placeholder="Enter category name..." 
+                <input
+                    type="text"
+                    id="category-search"
+                    placeholder="Enter category name..."
                     autocomplete="off"
                 />
                 <ul id="category-list" class="category-list" role="listbox" aria-live="polite">
                     <!-- Suggestions dynamically populated -->
                 </ul>
             </div>
-            
+
 {#            <div id="main-category-spinner" style="display: none;">Loading categories...</div>#}
             <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
-            
+
         <p id="response_data" style="color: #7c0808;"></p>
         </div>
                 
@@ -129,11 +149,11 @@
         <br>
     <br>
         
-        <p id="or-message" style="color: #367ee7; font-weight: bold; margin-top: 10px;"> 
+        <p id="or-message" style="color: #367ee7; font-weight: bold; margin-top: 10px; text-align: center"> 
             OR
         </p>
     <!-- all category Selector -->
-        <label for="all-category">Write a category name:</label>
+        <label for="all-category" style="color: black;font-size: large">Write a category name:</label>
         <div class="portal-selector" id="all-category-selector-class">
             <div id="all-category" class="portal-selector">
                 <input 
