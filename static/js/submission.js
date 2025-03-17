@@ -33,13 +33,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            console.log("Extracted language code:", languageCode);
+            console.log("Extracted language code in submission.js:", languageCode);
 
             // Fetch missing articles
+            // const response = await fetch(
+            //     `/get_missing_articles/${languageCode}/${encodeURIComponent(category)}/${referlanguageCode}/`);
+            //
             const response = await fetch(
-                `/get_missing_articles/${languageCode}/${encodeURIComponent(category)}/${referlanguageCode}/`);
+                `/get_articles_from_other_languages/${languageCode}/${category}/${referlanguageCode}/`);
             const data = await response.json();
-            console.log("json response:", data);
+            // console.log("json response:", data);
 
             // Clear previous results
             articlesList.innerHTML = "";
@@ -47,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.articles && data.articles.length > 0) {
                 data.articles.forEach(article => {
                     const articleLink = document.createElement("li");
-                    const wikiUrl = `https://${languageCode}.wikipedia.org/wiki/${encodeURIComponent(article)}`;
+                    const wikiUrl = `https://${referlanguageCode}.wikipedia.org/wiki/${encodeURIComponent(article)}`;
                     articleLink.innerHTML = `<a href="${wikiUrl}" target="_blank">${article}</a>`;
                     articlesList.appendChild(articleLink);
                 });
