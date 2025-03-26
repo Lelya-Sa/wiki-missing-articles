@@ -7,13 +7,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const articleReferLanguageList = document.getElementById("article-refer-language-list");
     const selectedReferLanguageInput = document.getElementById("article-refer-language-search");
 
-    const categorySelector = document.getElementById("category-selector-class");
-    const categorySearchInput = document.getElementById("category-search");
-    const categoryList = document.getElementById("category-list");
-    const selectedCategoryInput = document.getElementById("category-search");
-    const spinner = document.getElementById("category-spinner");
+    // const categorySearchInput = document.getElementById("category-search");
+    // const categoryList = document.getElementById("category-list");
+    // const selectedCategoryInput = document.getElementById("category-search");
+    // const spinner = document.getElementById("category-spinner");
+    // const feedbackMessage = document.getElementById("feedback-message");
+
     let categories = []; // Store fetched categories
-    const feedbackMessage = document.getElementById("feedback-message");
 
     // const categoryDropdown = document.getElementById("category");
     const theSelectedLang = document.getElementById("the_selected_lang");
@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const submitButton = document.querySelector("button[type='submit']");
     submitButton.disabled = true;
+
     function checkInputs() {
         if(selectedLanguageInput.value.trim() !== ""
             && selectedReferLanguageInput.value.trim() !== ""
@@ -47,9 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedAllCategorySearchInput.addEventListener("input", checkInputs);
 
 
-    categoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
+    // categoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
     allCategoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
-    // all_cat_feedbackMessage.textContent = "Please select a language first.";
 
     // Fetch languages
     async function fetchLanguages() {
@@ -118,72 +118,72 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    async function fetchCategories(languageCode, query = "") {
-        categoryList.innerHTML = "<li><img src='/static/images/spinner.gif' alt='Loading...' /></li>";
-        // spinner.style.display = "inline-block";
-        feedbackMessage.textContent = "";
-        if (!languageCode) return;
+    // async function fetchCategories(languageCode, query = "") {
+    //     categoryList.innerHTML = "<li><img src='/static/images/spinner.gif' alt='Loading...' /></li>";
+    //     // spinner.style.display = "inline-block";
+    //     feedbackMessage.textContent = "";
+    //     if (!languageCode) return;
+    //
+    //     try {
+    //         // const response = await fetch(`/get_categories/${languageCode}/?query=${query}`);
+    //         const response = await fetch(`/get_categories/${languageCode}/`);
+    //         if (!response.ok) throw new Error("Failed to fetch categories.");
+    //
+    //         const data = await response.json();
+    //         console.log("Fetched categories:", data);
+    //
+    //         if (data.categories) {
+    //             // Extract only the titles
+    //             categories = data.categories.map(cat => cat.title);
+    //             console.log("Categories array:", categories);
+    //             populateCategoryList(categories);
+    //         } else {
+    //             feedbackMessage.textContent = "No categories found for this language.";
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching categories:", error);
+    //         feedbackMessage.textContent = "Failed to load categories. Try again.";
+    //     } finally {
+    //         spinner.style.display = "none";
+    //     }
+    // }
 
-        try {
-            // const response = await fetch(`/get_categories/${languageCode}/?query=${query}`);
-            const response = await fetch(`/get_categories/${languageCode}/`);
-            if (!response.ok) throw new Error("Failed to fetch categories.");
-
-            const data = await response.json();
-            console.log("Fetched categories:", data);
-
-            if (data.categories) {
-                // Extract only the titles
-                categories = data.categories.map(cat => cat.title);
-                console.log("Categories array:", categories);
-                populateCategoryList(categories);
-            } else {
-                feedbackMessage.textContent = "No categories found for this language.";
-            }
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-            feedbackMessage.textContent = "Failed to load categories. Try again.";
-        } finally {
-            spinner.style.display = "none";
-        }
-    }
-
-    function populateCategoryList(categories) {
-        categoryList.innerHTML = "";
-
-        if (!categories.length) {
-            categoryList.innerHTML = "<li>No categories available</li>";
-            return;
-        }
-
-        categories.forEach(category => {
-            // console.log(category.title);
-
-            console.log("in populateCategoryList",category) ;
-
-            const listItem = document.createElement("li");
-            listItem.textContent = category;
-            listItem.addEventListener("click", () => {
-                selectedCategoryInput.value = category;
-                categorySearchInput.value = category;
-                categoryList.innerHTML = "";
-            });
-            categoryList.appendChild(listItem);
-        });
-    }
+    // function populateCategoryList(categories) {
+    //     categoryList.innerHTML = "";
+    //
+    //     if (!categories.length) {
+    //         categoryList.innerHTML = "<li>No categories available</li>";
+    //         return;
+    //     }
+    //
+    //     categories.forEach(category => {
+    //         // console.log(category.title);
+    //
+    //         console.log("in populateCategoryList",category) ;
+    //
+    //         const listItem = document.createElement("li");
+    //         listItem.textContent = category;
+    //         listItem.addEventListener("click", () => {
+    //             selectedCategoryInput.value = category;
+    //             categorySearchInput.value = category;
+    //             categoryList.innerHTML = "";
+    //         });
+    //         categoryList.appendChild(listItem);
+    //     });
+    // }
 
     // Category input listener
-    categorySearchInput.addEventListener("input", () => {
-        const query = categorySearchInput.value.toLowerCase();
-        const selectedLanguage = document.getElementById("article-language-search").value;
-        const languageCode = selectedLanguage.match(/\((.*)\)/)?.[1];
-
-        if (languageCode) {
-            fetchCategories(languageCode, query);
-        } else {
-            categoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
-        }
-    });
+    // categorySearchInput.addEventListener("input", () => {
+    //     const query = categorySearchInput.value.toLowerCase();
+    //     const selectedLanguage = document.getElementById("article-language-search").value;
+    //     const languageCode = selectedLanguage.match(/\((.*)\)/)?.[1];
+    //
+    //     if (languageCode) {
+    //         fetchCategories(languageCode, query);
+    //     } else {
+    //         categoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
+    //     }
+    // });
 
     // Handle input changes for filtering, Event listener for the language input field
     articleLanguageSearchInput.addEventListener("input", () => {

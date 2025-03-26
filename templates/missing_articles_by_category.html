@@ -24,8 +24,8 @@
         <div class="top-right-container">  
             <div >
                 <button id="language-search-button" class="search-button">
-                <img src="{% static 'images/language_icon_blue.png' %}" alt="language icon" class="language_icon">
-                Languages
+                <img src="{% static 'images/language_icon_gray.png' %}" alt="language icon" class="language_icon">
+                Page Language
             </button>
             </div>
             
@@ -50,14 +50,18 @@
         
         <p id="general-message" 
            class="info_msg" style="margin-right: 130px">
-            First enter a language then write your category
+            First enter the languages
         </p>
         
         <form id="missing-articles-form" style="display: flex; /* Enables flexbox */">
             
-            <div style="width: 100%;            display: flex;">
+            <div style="width: 100%;display: flex;border: 1px groove #94979e;/*border-radius: 1px;*/
+                        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                         padding-bottom: 20px;
+                         padding-top: 20px;
+                        ">
                 <!-- Language Search Bar -->
-                <div class="article-language-selector" id="article-language-selector">
+                <div class="article-language-selector" id="article-language-selector" style="margin-left: 35px">
                     <label for="language" style="color: black;font-size: large">
                          Select the language you want to use in <b>editing</b>:
                     </label>
@@ -81,7 +85,7 @@
                  <div style=" width: 10%"> </div>
                  
                  <!-- reference Language Search Bar -->
-                 <div class="article-language-selector" id="article-refer-language-selector" style="align-content: center">
+                 <div class="article-language-selector" id="article-refer-language-selector" >
                      <label for="comparing-language" style="color: black;font-size: large">
                          Select the language you want to <b>refer</b> from:
                      </label>
@@ -105,11 +109,11 @@
              </div>   
             
             <div style="width: 100%">
-                     <div id="article-refer-language-spinner" style="display: none;">
-                         <img src="/static/images/spinner.gif" alt="language_spinner">
-                         Loading languages...
-                     </div>
-                     <p id="the_selected_refer_lang" style="color: #7c0808;"></p>
+                <div id="article-refer-language-spinner" style="display: none;">
+                    <img src="/static/images/spinner.gif" alt="language_spinner">
+                    Loading languages...
+                </div>
+                <p id="the_selected_refer_lang" style="color: #7c0808;"></p>
                 <br>
                 <br>
             </div>
@@ -117,59 +121,14 @@
             <div style="width: 100%; margin-left: 0; text-align: center" class="info_msg">
                 <!-- message -->
                 <p id="category-message">
-                    you can search the main categories or all categories in the selected language, 
-                    currently we are working on the second search which search all categories
+                    you can search from all categories in the selected language,
+                    sometimes you need to add space or erase after writing category in order for it to appear 
                 </p>
             </div>
             
             <div style="width: 100%"> <br> </div>
             
-            <div class="the-selector" id="category-selector-class">
-                
-                <!-- category Selector -->
-                <label for="category" style="color: black;font-size: large">Select Main Category:</label>
-                <div id="category" class="the-selector" style="border: none; width: 80%;">
-                    <input
-                        type="text"
-                        id="category-search"
-                        placeholder="Enter category name..."
-                        autocomplete="off"
-                        style="width: 97%"
-                    />
-                    <ul id="category-list" class="category-list" role="listbox" aria-live="polite">
-                        <!-- Suggestions dynamically populated -->
-                    </ul>
-                </div>
-    
-                <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
-                
-                <p id="response_data" style="color: #7c0808;"></p>
-            </div>
-            
-                
-            <!-- Portal Selector -->
-    {#        <label for="portals">Select Portal</label>#}
-    {#        <div class="portal-selector" id="portal-selector-class">#}
-    {#            <div id="portal-selector" class="portal-selector">#}
-    {#                <input #}
-    {#                    type="text" #}
-    {#                    id="portal-search" #}
-    {#                    placeholder="Enter portal name..." #}
-    {#                    autocomplete="off"#}
-    {#                >#}
-    {#                <ul id="portal-list" class="portal-list" role="listbox" aria-live="polite">#}
-    {#                    <!-- Suggestions dynamically populated -->#}
-    {#                </ul>#}
-    {#            </div>#}
-    {#        </div>#}
-            
-            <div style="width: 7%" >
-                <p id="or-message" class="info_msg" style="text-align: center;margin-left: 30px; margin-top: 70px">
-                OR
-                </p>
-            </div>
-            
-            <div class="the-selector" id="all-category-selector-class" style="margin-left: 30px">
+            <div class="the-selector" id="all-category-selector-class" style="margin-left: 0">
                 <!-- all category Selector -->
                 <label for="all-category" style="color: black;font-size: large">Write a category name:</label>
                 <div id="all-category" class="the-selector" style="border: none; width: 80%;">
@@ -191,8 +150,9 @@
                 <br>
                 <p id="all-cat-response_data" style="color: #7c0808;"></p>
             </div>    
-            
-            <div style="width: 98%; text-align: left; margin-left: 10px" >
+            <div style="width: 100%"> <br><br> </div>
+
+            <div style="width: 98%; text-align: center;" >
                 <button type="submit" style="font-size: large">Submit</button>
             </div>
         </form>

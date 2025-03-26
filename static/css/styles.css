@@ -22,14 +22,13 @@ body {
     right: 0;
     padding: 10px 10px 10px; /* Adds padding for spacing */
     background-color: rgb(225, 225, 229); /* Optional: Background color for the top bar */
-    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); !* Optional: Adds a shadow *!*/
     height: 30px; /* Consistent height for layout spacing */
     position: relative;
     z-index: 1000;
     overflow: visible; /* Prevent clipping of dropdowns */
     border: 1px groove #94979e;
     /*border-radius: 1px;*/
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adds a shadow */
 }
 
 /* Left container styles */
@@ -161,8 +160,8 @@ h1 {
     /*z-index: 100; !* Ensure it's above other elements *!*/
     display: inline-block;
     background-color: #e2e2e6;
-    color: #3366cb;
-    font-size: 18px;
+    color: #4d4f53;
+    font-size: 16px;
     /*padding: 20px 20px 0 5px;*/
     padding: 10px 10px;
     margin: 225px 5px 5px 5px;
@@ -270,7 +269,7 @@ h1 {
     max-height: 200px; /* Limit height for scrolling */
     overflow-y: scroll; /* Enable scrolling */
     background-color: #fff;
-    border: 1px solid #ccc;
+    border: 1px groove #ccc;
     border-radius: 4px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -348,16 +347,17 @@ h1 {
     /*min-block-size: 35%;*/
     /*flex: 1; !* Makes both boxes take equal space *!*/
     position: relative;
-    background-color: #f6f7f8;
+    background-color: rgba(170, 170, 174, 0.19);
     width: 40%; /* Adjust width as needed */
     opacity: 1; /* Ensure visible */
     display: block; /* Ensure it is displayed */
     transform: translateY(0); /* Remove hidden transform */
     z-index: 1000; /* Ensure it's above other elements */
     transition: opacity 0.2s ease, transform 0.2s ease;
-    border: groove #b8b3b3;
-    border-radius: 1px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px groove rgb(213, 213, 214);
+    /*border: groove #b8b3b3;*/
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
 }
 
 .article-language-list {
@@ -367,8 +367,8 @@ h1 {
     max-height: 200px; /* Limit the height */
     overflow-y: auto; /* Enable vertical scrolling */
     background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px groove #ccc;
+    /*border: 1px groove #94979e;*/
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     width: 82%;
 }
@@ -410,8 +410,7 @@ h1 {
 .the-selector {
     position: relative;
     background-color: #f6f7f8;
-    border: groove #b8b3b3;
-    border-radius: 1px;
+    border: 1px groove #94979e;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     padding: 5px;
     width: 40%; /* Adjust width as needed */
