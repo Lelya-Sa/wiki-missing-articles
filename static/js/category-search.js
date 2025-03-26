@@ -95,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 articleLanguageList.innerHTML = ""; // Clear the dropdown
 
                 console.log("in populateLanguages: ", lang.code);
-                fetchCategories(lang.code);
                 fetchAllCategories(lang.code); // Fetch all categories for selected language
             });
             articleLanguageList.appendChild(listItem);
@@ -199,9 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Fetch languages on page load
     fetchLanguages();
-    // Fetch categories when the page loads
-    // fetchCategories();
-
 
     // Function to fetch all categories
     async function fetchAllCategories(lang, query = "") {

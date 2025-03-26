@@ -213,58 +213,54 @@ def get_qcode(page_name, lang):
     :return: the universal qcode of the page
     """
     try:
-        # Query Wikidata to get the Q code for the category
-        wikidata_url = f"https://www.wikidata.org/w/api.php?action=wbsearchentities&search={page_name}&language={lang}&limit=1&format=json"
-        response = requests.get(wikidata_url)
+        categoryPrefex = get_category_prefix(lang)
+        page_name = categoryPrefex+":"+page_name
+        wikipedia_url =\
+            f"https://{lang}.wikipedia.org/w/api.php?action=query&titles={page_name}&prop=pageprops&format=json"
+        response = requests.get(wikipedia_url)
         response.raise_for_status()
         data = response.json()
         """
-        example for response to "cat" in english "en"
-          "searchinfo": {
-                          "search": "cat"
-                          },
-                          "search": [
-                            {
-                              "id": "Q7026",
-                              "title": "Q7026",
-                              "pageid": 8160,
-                              "concepturi": "http://www.wikidata.org/entity/Q7026",
-                              "repository": "wikidata",
-                              "url": "//www.wikidata.org/wiki/Q7026",
-                              "display": {
-                                "label": {
-                                  "value": "Catalan",
-                                  "language": "en"
-                                },
-                                "description": {
-                                  "value": "Western Romance language",
-                                  "language": "en"
-                                }
-                              },
-                              "label": "Catalan",
-                              "description": "Western Romance language",
-                              "match": {
-                                "type": "label",
-                                "language": "en",
-                                "text": "Catalan"
-                              }
-                            }
-                          ],
-              "search-continue": 1,
-              "success": 1
+        example for response to "Category:art" in english "en"
+        https://en.wikipedia.org/w/api.php?action=query&titles=Category:art&prop=pageprops&format=json
+        {
+          "batchcomplete": "",
+          "query": {
+            "normalized": [
+              {
+                "from": "Category:art",
+                "to": "Category:Art"
+              }
+            ],
+            "pages": {
+              "5344528": {
+                "pageid": 5344528,
+                "ns": 14,
+                "title": "Category:Art",
+                "pageprops": {
+                  "wikibase_item": "Q9709140"
+                }
+              }
             }
+          }
+        }
         """
-        if data['search']:
-            # Return the Q code of the first search result (should be the correct category)
-            return data['search'][0]['id']
+
+        print("in get_qcode ", data, end="" )
+        if data['query']:
+            # there is only one-pageID
+            pid = next(iter(data['query']['pages']))
+            res_qcode = data['query']['pages'][pid]['pageprops'].get('wikibase_item')
+            print("the res_qcode is", res_qcode)
+            return res_qcode
         else:
-            raise ValueError(f"query {page_name} not found on Wikidata.")
+            raise ValueError(f"query {page_name} not found on wikipedia.")
     except Exception as e:
         print(f"Error fetching Q code for page_name {page_name}: {e}")
         return None
 
 
-def get_page_name_in_refer_lang(qcode, refer_lang):
+def get_page_name_in_refer_lang(qcode, refer_lang, edit_lang=None):
     """
      uses a universal qcode of storing data in wikidata, and retrieve the name of the page if existed
       in refer_lang - reference language.
@@ -277,8 +273,7 @@ def get_page_name_in_refer_lang(qcode, refer_lang):
         # Query Wikidata to get translations for the Q code
         print("in get_page_name... qcode is ", qcode, " refer_lang", refer_lang)
         wikidata_url \
-            = (f"https://www.wikidata.org/w/api.php?action=wbgetentities&ids="
-               f"{qcode}&props=labels&languages={refer_lang}&format=json")
+            = (f"https://www.wikidata.org/w/api.php?action=wbgetentities&ids={qcode}&props=labels&languages={refer_lang}&format=json")
         response = requests.get(wikidata_url)
         response.raise_for_status()
         data = response.json()
@@ -299,11 +294,7 @@ def get_page_name_in_refer_lang(qcode, refer_lang):
         #     "success": 1
         # }
         """
-        # response.encoding = 'utf-8'  # Explicitly set UTF-8 encoding
-        # data = json.loads(response.text)  # Use text instead of content.decode
 
-        # data = json.loads(response.content.decode('utf-8'))
-        # print("in get_category_name_in_refer_lang, data = ", data)
         # Check if the Q-code exists in the response
         entity = data.get("entities", {}).get(qcode, {})
         labels = entity.get("labels", {})
@@ -340,7 +331,7 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
             return JsonResponse({"error": "Category not found in Wikidata"}, status=400)
 
         # Get the localized category names for the selected Q code
-        category_name_in_refer_lang = get_page_name_in_refer_lang(qcode, refer_lang)
+        category_name_in_refer_lang = get_page_name_in_refer_lang(qcode, refer_lang, edit_lang)
         if not category_name_in_refer_lang:
             return JsonResponse({"error": " category names not found"}, status=400)
 
@@ -350,15 +341,10 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
             f"{category_name_in_refer_lang}")  # Debugging
 
         # Add the articles from the selected language (same process as before)
-        category_prefix_in_refer_lang = get_category_prefix(refer_lang)
-        print(
-            f"in get_articles_from_other_languages: "
-            f"Fetching articles from {refer_lang}.wikipedia.org in category: "
-            f"{category_name_in_refer_lang}")  # Debugging
         params = {
             "action": "query",
             "list": "categorymembers",
-            "cmtitle": f"{category_prefix_in_refer_lang}:{category_name_in_refer_lang}",
+            "cmtitle": f"{category_name_in_refer_lang}",
             "cmtype": "page",
             "cmlimit": 50,
             "format": "json",
