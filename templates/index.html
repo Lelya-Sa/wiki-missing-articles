@@ -42,21 +42,32 @@
             </div>
         </div>
     </div>
-    <div class="central-container">
-
-        <!-- Wikipedia Globe -->
-        <img src="{% static 'images/wikipedia-spins.gif' %}" alt="Wikipedia Globe" class="globe" loading="lazy">
-
-        <!-- Heading -->
-        <h1 id="heading">Wikipedia Missing Articles</h1>
-        <p id="tagline" class="tagline">
+    
+    <div class="central-container" style="text-align: center">
+        
+        <div style=" min-block-size: 100%; width: 100%"> 
+            <!-- Wikipedia Globe -->
+            <img src="{% static 'images/wikipedia-spins.gif' %}" alt="Wikipedia Globe" class="globe" loading="lazy">
+        </div>
+        
+        <div style=" min-block-size: 100%; width: 100%">
+            <br>
+        </div>
+        
+        <div style=" min-block-size: 100%; width: 100%"> 
+            <!-- Heading -->
+            <h1 id="heading" align="center">Wikipedia Missing Articles</h1>
+            
+            <p id="tagline" class="tagline">
             Explore missing articles searching by category.
         </p>
-
-        <!-- Search Options -->
-        <div class="search-options">
-{#            <a href="{% url 'search_by_name' %}" class="search-button" id="search-by-name">Search by Name</a>#}
-            <a href="{% url 'missing_articles_by_category' %}" class="category-button" id="search-by-category">Search by Category</a>
+            <br>
+                    <!-- Search Options -->
+            <div class="search-options">
+    {#            <a href="{% url 'search_by_name' %}" class="search-button" id="search-by-name">Search by Name</a>#}
+                <a href="{% url 'missing_articles_by_category' %}" class="category-button" id="search-by-category">Search by Category</a>
+            </div>
+            
         </div>
 
     </div>

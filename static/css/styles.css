@@ -21,19 +21,23 @@ body {
     left: 0;
     right: 0;
     padding: 10px 10px 10px; /* Adds padding for spacing */
-    background-color: #f6f7f8; /* Optional: Background color for the top bar */
+    background-color: rgb(225, 225, 229); /* Optional: Background color for the top bar */
     /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); !* Optional: Adds a shadow *!*/
     height: 30px; /* Consistent height for layout spacing */
     position: relative;
     z-index: 1000;
     overflow: visible; /* Prevent clipping of dropdowns */
+    border: 1px groove #94979e;
+    /*border-radius: 1px;*/
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Left container styles */
-.top-left-container {
+.top-left-container  {
     /* Ensures it's pushed to the left */
     margin: 20px auto 10px 30px; /* top right bottom left*/
     display: flex; /* Align items in a row */
+    flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     align-items: center; /* Vertically center the content */
     /*display: inline-block;*/
     /*text-decoration: none;  !* Ensure there's no underline or unwanted content *!*/
@@ -42,8 +46,9 @@ body {
 
 /* Right container styles */
 .top-right-container {
-    /*align-items: center; !* Vertically center the content *!*/
+    align-items: start;
     display: flex; /* Align items in a row */
+    flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     /*z-index: 1;*/
     margin:20px 5px 5px auto; /* top right bottom left*/
     /*padding: 10px 20px; !* Adds padding for spacing *!*/
@@ -54,19 +59,27 @@ body {
 
 /* Central container styling */
 .central-container {
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     margin-top: 20px; /* Same as .top-bar height */
     padding-top: 10px; /* Adjust this based on the height of .top-bar */
     /*text-align: center; !* Optional: Keep content centered *!*/
     overflow: visible;
     position: relative; /* Ensure container respects its children */
     z-index: 1;
-    width: 100%;
-    max-width: 960px;
-    margin-left: auto;
-    margin-right: auto;
+    /*width: 100%;*/
+    /*max-width: 960px;*/
+    margin-left: 10px;
+    margin-right: 10px;
+    /*max-width: 200px;*/
+    margin-bottom: 20px;
 }
 
-.central-left-container {
+.central-left-container #missing-articles-form {
+    display: flex;
+    /*flex: 1; !* Makes both boxes take equal space *!*/
+    flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     margin-top: 20px; /* Same as .top-bar height */
     padding-top: 10px; /* Adjust this based on the height of .top-bar */
     text-align: left; /* Optional: Keep content  */
@@ -78,13 +91,6 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
-/* Additional styling for the central container */
-.central-container .globe {
-    z-index: 1;
-    max-width: 200px;
-    margin-bottom: 20px;
-    text-align: center;
-}
 
 /* Logo styling */
 .globe {
@@ -92,6 +98,7 @@ body {
     height: auto;
     margin: 20px auto;
     z-index: 1;
+    text-align: center;
 }
 
 .wikipedia_up_left_globe_logo{
@@ -142,6 +149,8 @@ h1 {
 
 /* Search options */
 .search-options {
+    /*flex: 1; !* Makes both boxes take equal space *!*/
+    flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     display: flex;
     justify-content: center;
     /*gap: 15px;*/
@@ -151,7 +160,7 @@ h1 {
 .search-button {
     /*z-index: 100; !* Ensure it's above other elements *!*/
     display: inline-block;
-    background-color: #f3f4f5;
+    background-color: #e2e2e6;
     color: #3366cb;
     font-size: 18px;
     /*padding: 20px 20px 0 5px;*/
@@ -316,7 +325,7 @@ h1 {
     outline: none;
     display: block;
     transition: box-shadow 0.2s;
-    width: 25%;
+    /*width: 80%;*/
     /*max-width: 700px;*/
 }
 
@@ -336,14 +345,19 @@ h1 {
 
 /* Language Selector */
 .article-language-selector {
+    /*min-block-size: 35%;*/
+    /*flex: 1; !* Makes both boxes take equal space *!*/
     position: relative;
     background-color: #f6f7f8;
-    width: 25%; /* Adjust width as needed */
+    width: 40%; /* Adjust width as needed */
     opacity: 1; /* Ensure visible */
     display: block; /* Ensure it is displayed */
     transform: translateY(0); /* Remove hidden transform */
     z-index: 1000; /* Ensure it's above other elements */
     transition: opacity 0.2s ease, transform 0.2s ease;
+    border: groove #b8b3b3;
+    border-radius: 1px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .article-language-list {
@@ -356,13 +370,9 @@ h1 {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    width: 82%;
 }
 
-.article-language-selector.active {
-    transform: translateY(0); /* Move to normal position */
-    opacity: 1;
-    display: block;
-}
 .article-language-list li {
     padding: 10px;
     font-size: 14px;
@@ -397,14 +407,14 @@ h1 {
 }
 
 /* Language Selector */
-.portal-selector {
+.the-selector {
     position: relative;
     background-color: #f6f7f8;
-    /*border: 1px solid #a1a8b0;*/
-    /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
-    /*border-radius: 4px;*/
+    border: groove #b8b3b3;
+    border-radius: 1px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     padding: 5px;
-    width: 50%; /* Adjust width as needed */
+    width: 40%; /* Adjust width as needed */
     z-index: 1000;
     opacity: 1; /* Ensure visible */
     display: block !important; /* Ensure it is displayed */
@@ -423,7 +433,7 @@ h1 {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-.portal-selector.active {
+.the-selector.active {
     transform: translateY(0); /* Move to normal position */
     opacity: 1;
     display: block;
@@ -440,7 +450,7 @@ h1 {
     background-color: #f6f7f8;
 }
 /* Show dropdown when button is clicked */
-.portal-selector.active .portal-list {
+.the-selector.active .portal-list {
     display: block; /* Ensure dropdown is visible when active */
 }
 
@@ -475,12 +485,10 @@ h1 {
 
 #category-search, #portal-search, #all-category-search,
 #language-search, #article-language-search , #article-refer-language-search{
-    width: 97%;
-    max-width: 500px;
     font-size: 16px;
 }
 
-.language-selector, .portal-selector, .article-language-selector {
+.language-selector, .the-selector, .article-language-selector {
     position: relative;
     background-color: #f6f7f8;
     padding: 5px;
@@ -488,4 +496,16 @@ h1 {
     display: block;
     transform: translateY(0);
     transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.info_msg{
+    color: #367ee7;
+    font-weight: bold;
+    /*margin-top: 10px;*/
+    margin-left: 150px;
+    text-align: center;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    border: double #97b7e4;
+
 }

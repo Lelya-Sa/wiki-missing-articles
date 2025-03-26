@@ -1,93 +1,48 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("missing-articles-form");
-    const articlesList = document.getElementById("articles");
     const referArticlesList = document.getElementById("referArticles");
-    // let localReferArticlesList = []
+    const articlesList = document.getElementById("articles");
+    const all_res_spinner = document.getElementById("all_res_spinner");
+    const ranked_res_spinner = document.getElementById("ranked_res_spinner");
 
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const edit_lang = document.getElementById("article-language-search").value.trim();
-        const refer_lang = document.getElementById("article-refer-language-search").value.trim();
-        const category = document.getElementById("all-category-search").value.trim();
-
-        if (!edit_lang || !category || !refer_lang ) {
-            alert("Please select both a language and a category.");
-            return;
+    /**
+     * Normalize an array of scores using min–max normalization.
+     * @param {number[]} scores - Array of scores to normalize.
+     * @returns {number[]} - Normalized scores ranging from 0 to 1.
+     */
+    function normalizeScores(scores) {
+        const minScore = Math.min(...scores);
+        const maxScore = Math.max(...scores);
+        // Avoid division by zero if all scores are equal.
+        if (maxScore === minScore) {
+            return scores.map(() => 0);
         }
+        return scores.map(score => (score - minScore) / (maxScore - minScore));
+    }
 
-        referArticlesList.innerHTML = "<li>Loading missing articles...</li>";
-        articlesList.innerHTML = "<li>Loading missing articles...</li>";
-
-        try {
-            console.log("Submitting request: edit_lang:", edit_lang,
-                        ", refer_lang", refer_lang, "category:", category);
-
-            // Extract language code (inside parentheses)
-            const languageCode = edit_lang.match(/\((.*?)\)/)?.[1];
-            if (!languageCode) {
-                alert("Invalid language selection. Please select a valid language.");
-                return;
-            }
-            // Extract language code (inside parentheses)
-            const referLanguageCode = refer_lang.match(/\((.*?)\)/)?.[1];
-            if (!referLanguageCode) {
-                alert("Invalid language selection. Please select a valid language.");
-                return;
-            }
-
-            console.log("Extracted language codes in submission.js:",'edit:', languageCode,
-                ' , refer',referLanguageCode);
-
-            // Fetch missing articles
-            const response = await fetch(
-                `/get_articles_from_other_languages/${languageCode}/${category}/${referLanguageCode}/`);
-            const data = await response.json();
-
-            // Clear previous results
-            articlesList.innerHTML = "";
-            referArticlesList.innerHTML= "";
-            // localReferArticlesList= [];
-
-            // list the articles of reference language in the selected category
-            if (data.articles && data.articles.length > 0) {
-                data.articles.forEach(article => {
-                    const articleLink = document.createElement("li");
-                    const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(article)}`;
-                    articleLink.innerHTML = `<a href="${wikiUrl}" target="_blank">${article}</a>`;
-                    referArticlesList.appendChild(articleLink);
-                    // localReferArticlesList.push(article)
-                });
-            } else {
-                referArticlesList.innerHTML = "<li>No missing articles found.</li>";
-            }
-
-            /** Debugging **/
-            // console.log("in submission.js: localReferenceArticlesList = ",localReferArticlesList);
-
-            /** check if each page exists in edit-lage by using the MediaWiki API with the action=query
-            and prop=langlinks parameters.
-            for example if we asked this : https://ar.wikipedia.org/w/api.php?action=query&titles=%D8%B5%D8%AD%D8%A9&prop=langlinks&format=json&origin=*
-            we will get:
-            {
-              "continue": {
-                "llcontinue": "1846|bcl",
-                "continue": "||"
-              },
-              "query": {
-                "pages": {
-                  "1846": {
-                    "pageid": 1846,
-                    "ns": 0,
-                    "title": "صحة",
-                    "langlinks": [
-                      {
-                        "lang": "af",
-                        "*": "Gesondheid"
-                      },
-                      {
-                        "lang": "als",
-                        "*": "Gesundheit"
+    /** check if each page exists in edit-lage by using the MediaWiki API with the action=query
+     and prop=langlinks parameters.
+     for example if we asked this : https://ar.wikipedia.org/w/api.php?action=query&titles=%D8%B5%D8%AD%D8%A9&prop=langlinks&format=json&origin=*
+     we will get:
+     {
+     "continue": {
+     "llcontinue": "1846|bcl",
+     "continue": "||"
+     },
+     "query": {
+        "pages": {
+            "1846": {
+                 "pageid": 1846,
+                 "ns": 0,
+                 "title": "صحة",
+                 "langlinks": [
+                         {
+                         "lang": "af",
+                         "*": "Gesondheid"
+                         },
+                     {
+                     "lang": "als",
+                     "*": "Gesundheit"
                       },
                       {
                         "lang": "am",
@@ -127,376 +82,276 @@ document.addEventListener("DOMContentLoaded", function () {
               }
             }
              **/
-
-            async function checkPageInLanguage(title, sourceLang, targetLang) {
-                const apiUrl =
+    async function checkPageInLanguage(title, sourceLang, targetLang) {
+        const apiUrl =
                     `https://${sourceLang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=langlinks&lllang=${targetLang}&format=json&origin=*`;
-                try {
-                    const response = await fetch(apiUrl);
-                    const data = await response.json();
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
 
-                    const pageId = Object.keys(data.query.pages)[0];  // Get the page ID
-                    const page = data.query.pages[pageId];
+            const pageId = Object.keys(data.query.pages)[0];  // Get the page ID
+            const page = data.query.pages[pageId];
 
-                    if (page.langlinks) {
-                        return [1,page.langlinks[0]["*"]]; // page exists
-                    } else {
-                        return [0, `Page does NOT exist in ${targetLang}`]; // page does not exist
+            if (page.langlinks) {
+                return [1,page.langlinks[0]["*"]]; // page exists
+            } else {
+                return [0, `Page does NOT exist in ${targetLang}`]; // page does not exist
+            }
+        } catch (error) {
+            console.error("Error checking Wikipedia page:", error);
+            return [-1,'Err'] // Error occurred
+        }
+    }
+
+    async function fetchAllBacklinks(title, lang = 'en') {
+        const baseUrl = `https://${lang}.wikipedia.org/w/api.php`;
+        let backlinks = [];
+        let continueToken = null;
+
+        do {
+            let url = `${baseUrl}?action=query&list=backlinks&bltitle=${encodeURIComponent(title)}&bllimit=max&format=json&origin=*`;
+            if (continueToken) {
+                url += `&blcontinue=${encodeURIComponent(continueToken)}`;
+            }
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.query && data.query.backlinks) {
+                backlinks = backlinks.concat(data.query.backlinks);
+            }
+
+            // Check if there's a continuation token.
+            continueToken = data.continue ? data.continue.blcontinue : null;
+        } while (continueToken);
+        return backlinks;
+    }
+
+    // Function to fetch metadata for ranking
+    async function getArticleMetadata(title, lang) {
+        const apiUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=info|pageviews|revisions|langlinks|templates&rvprop=ids|user|content&rvlimit=50&rvslots=main&format=json&origin=*`;
+
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            const pageId = Object.keys(data.query.pages)[0];
+
+            if (pageId === "-1") {
+                return null;
+            }
+
+            const page = data.query.pages[pageId];
+
+            // Count <ref> tags to estimate references
+            const revisionContent = page.revisions?.[0]["*"] || "";
+            const referenceCount = (revisionContent.match(/<ref>/g) || []).length;
+
+            // Dispute detection (edit wars): Count frequent edits by same users
+            const editUsers = page.revisions?.map(rev => rev.user) || [];
+            const userEditCounts = editUsers.reduce((acc, user) => {
+                acc[user] = (acc[user] || 0) + 1;
+                return acc;
+                }, {});
+            const maxEditsByOneUser = Math.max(...Object.values(userEditCounts), 0);
+
+            // Check for quality-related WikiProject templates
+            const qualityIndicators = page.templates ? page.templates.length : 0;
+
+
+            let backlinks = {};
+            let backlinksCount = 0;
+            // Now, fetch backlinks count
+            try{
+                fetchAllBacklinks(title, lang).then(thebacklinks => {
+                    backlinks = thebacklinks;
+                    console.log("Total backlinks fetched:", backlinks.length);
+                    console.log(backlinks);
+                })
+                backlinksCount = backlinks.length;
+            }
+            catch(error) {
+                console.error("Error fetching backlinks:", error);
+                // backlinksCount = 0;
+            }
+
+            return {
+                title: title,
+                views: page.pageviews ? Object.values(page.pageviews).reduce((a, b) => a + (b || 0), 0) : 0,
+                langlinks: page.langlinks ? page.langlinks.length : 0,
+                editCount: page.revisions ? page.revisions.length : 0,
+                firstEdit: page.revisions ? page.revisions[page.revisions.length - 1].revid : null,
+                references: referenceCount,
+                editWars: maxEditsByOneUser,
+                quality: qualityIndicators,
+                templates: page.templates ? page.templates.length : 0,
+                backlinks: backlinks,
+                backlinksCount: backlinksCount,
+                pageRank: 0,
+            };
+        } catch (error) {
+            console.error("Error fetching article metadata:", error);
+            return null;
+        }
+    }
+
+    // Function to compute ranking score
+    function computeRankingScore(metadata, weights) {
+        return (
+            metadata.normViews * weights.views +
+            metadata.normLanglinks * weights.langlinks +
+            metadata.normEditCount * weights.editCount +
+            metadata.normReferences * weights.references +
+            metadata.normEditWars * weights.editWars +
+            metadata.normQuality * weights.quality +
+            metadata.normTemplates * weights.templates +
+            metadata.normBacklinksCount * weights.backlinksCount +
+            metadata.pageRank * weights.pageRank
+        );
+    }
+
+    function computePageRank(articlesData, articlesBacklinksData, articlesLinksData){
+        // edge data
+        const linksData = {
+            // article title : [titles of articles it links to]
+            "ArticleA": ["ArticleB", "ArticleC"],
+            "ArticleB": ["ArticleC"],
+            "ArticleC": ["ArticleA"]
+        };
+
+        const backlinksData = {
+            // article title : [titles of articles that link to it]
+            "ArticleA": ["ArticleC"],
+            "ArticleB": ["ArticleA"],
+            "ArticleC": ["ArticleA", "ArticleB"]
+        };
+
+        // Create a mapping from article title to index
+        const indexMap = {};
+        articlesData.forEach((title, idx) => { indexMap[title] = idx; });
+
+        // Build the graph: For each article, combine its outgoing links and backlinks
+        const N = articlesData.length;
+        // Using an array of sets for unique outgoing edges
+        const graph = Array.from({ length: N }, () => new Set());
+
+        // Helper: add edge if both nodes are in our dataset
+        function addEdge(from, to) {
+            if (indexMap.hasOwnProperty(from) && indexMap.hasOwnProperty(to)) {
+                graph[indexMap[from]].add(indexMap[to]);
+            }
+        }
+
+        // Process outgoing links (linksData)
+        for (let [article, outLinks] of Object.entries(linksData)) {
+            outLinks.forEach(target => addEdge(article, target));
+        }
+
+        // Process backlinks (backlinksData)
+        for (let [article, inLinks] of Object.entries(backlinksData)) {
+            // For each backlink, create an edge from the linking article to this article.
+            inLinks.forEach(source => addEdge(source, article));
+        }
+
+        // Convert graph sets to arrays for easier processing
+        const adjacencyList = graph.map(neighbors => Array.from(neighbors));
+
+        // Compute outdegree for each node
+        const outDegrees = adjacencyList.map(neighbors => neighbors.length);
+
+        // PageRank's computation using power iteration
+        const dampingFactor = 0.85;
+        const tolerance = 1.0e-6;
+        const maxIterations = 100;
+        let rank = new Array(N).fill(1 / N);
+
+        for (let iter = 0; iter < maxIterations; iter++) {
+            let newRank = new Array(N).fill((1 - dampingFactor) / N);
+
+            // Distribute rank from each node
+            for (let j = 0; j < N; j++) {
+                if (outDegrees[j] > 0) {
+                    const contribution = dampingFactor * rank[j] / outDegrees[j];
+                    // For each neighbor of node j, add the contribution
+                    adjacencyList[j].forEach(i => {
+                        newRank[i] += contribution;
+                    });
+                } else {
+                    // Dangling nodes: distribute uniformly to all nodes
+                    const contribution = dampingFactor * rank[j] / N;
+                    for (let i = 0; i < N; i++) {
+                        newRank[i] += contribution;
                     }
-                } catch (error) {
-                    console.error("Error checking Wikipedia page:", error);
-                    return [-1,'Err'] // Error occurred
                 }
             }
 
-            // Function to fetch metadata for ranking
-            /**
-             * example of response of صحتي (تطبيق) in arabic
-             * https://ar.wikipedia.org/w/api.php?action=query&titles=%D8%B5%D8%AD%D8%AA%D9%8A%20(%D8%AA%D8%B7%D8%A8%D9%8A%D9%82)&prop=info|pageviews|revisions|langlinks|templates|linkshere&rvprop=ids|user|content&rvlimit=100&format=json&origin=*
-             * {
-             *   "continue": {
-             *     "tlcontinue": "8661408|10|بذرة_السعودية",
-             *     "continue": "||info|pageviews|revisions|langlinks|linkshere"
-             *   },
-             *   "warnings": {
-             *     "main": {
-             *       "*": "Subscribe to the mediawiki-api-announce mailing list at \u003Chttps://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/\u003E for notice of API deprecations and breaking changes. Use [[Special:ApiFeatureUsage]] to see usage of deprecated features by your application."
-             *     },
-             *     "revisions": {
-             *       "*": "The value \"100\" for parameter \"rvlimit\" must be between 1 and 50.\nBecause \"rvslots\" was not specified, a legacy format has been used for the output. This format is deprecated, and in the future the new format will always be used."
-             *     }
-             *   },
-             *   "query": {
-             *     "pages": {
-             *       "8661408": {
-             *         "pageid": 8661408,
-             *         "ns": 0,
-             *         "title": "صحتي (تطبيق)",
-             *         "contentmodel": "wikitext",
-             *         "pagelanguage": "ar",
-             *         "pagelanguagehtmlcode": "ar",
-             *         "pagelanguagedir": "rtl",
-             *         "touched": "2025-03-16T22:52:41Z",
-             *         "lastrevid": 69165841,
-             *         "length": 5779,
-             *         "pageviews": {
-             *           "2025-01-18": 13,
-             *           "2025-01-19": 25,
-             *           "2025-01-20": 26,
-             *           "2025-01-21": 24,
-             *           "2025-01-22": 24,
-             *           "2025-01-23": 13,
-             *           "2025-01-24": 15,
-             *           "2025-01-25": 10,
-             *           "2025-01-26": 22,
-             *           "2025-01-27": 26,
-             *           "2025-01-28": 30,
-             *           "2025-01-29": 16,
-             *           "2025-01-30": 18,
-             *           "2025-01-31": 9,
-             *           "2025-02-01": 14,
-             *           "2025-02-02": 15,
-             *           "2025-02-03": 26,
-             *           "2025-02-04": 24,
-             *           "2025-02-05": 8,
-             *           "2025-02-06": 12,
-             *           "2025-02-07": 5,
-             *           "2025-02-08": 5,
-             *           "2025-02-09": 17,
-             *           "2025-02-10": 12,
-             *           "2025-02-11": 14,
-             *           "2025-02-12": 13,
-             *           "2025-02-13": 13,
-             *           "2025-02-14": 5,
-             *           "2025-02-15": 6,
-             *           "2025-02-16": 22,
-             *           "2025-02-17": 7,
-             *           "2025-02-18": 22,
-             *           "2025-02-19": 7,
-             *           "2025-02-20": 10,
-             *           "2025-02-21": 4,
-             *           "2025-02-22": 11,
-             *           "2025-02-23": 10,
-             *           "2025-02-24": 16,
-             *           "2025-02-25": 19,
-             *           "2025-02-26": 15,
-             *           "2025-02-27": 8,
-             *           "2025-02-28": 11,
-             *           "2025-03-01": 7,
-             *           "2025-03-02": 35,
-             *           "2025-03-03": 10,
-             *           "2025-03-04": 13,
-             *           "2025-03-05": 16,
-             *           "2025-03-06": 13,
-             *           "2025-03-07": 33,
-             *           "2025-03-08": 10,
-             *           "2025-03-09": 18,
-             *           "2025-03-10": 7,
-             *           "2025-03-11": 11,
-             *           "2025-03-12": 13,
-             *           "2025-03-13": 16,
-             *           "2025-03-14": 10,
-             *           "2025-03-15": 7,
-             *           "2025-03-16": 10,
-             *           "2025-03-17": 7,
-             *           "2025-03-18": 9
-             *         },
-             *         "revisions": [
-             *           {
-             *             "revid": 69165841,
-             *             "parentid": 62603255,
-             *             "user": "MenoBot",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = شعار تطبيق صحتي.png\n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد بويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n* خدمة الشهادة الإلكترونية لتطعيمات الأطفال\u003Cref\u003E{{استشهاد بويب\n| مسار = https://www.spa.gov.sa/viewstory.php?lang=ar&newsid=2421734\n| عنوان = عام / \"الصحة\" تطلق خدمة الشهادة الإلكترونية لتطعيمات الأطفال وكالة الأنباء السعودية\n| موقع = www.spa.gov.sa\n| تاريخ الوصول = 2023-01-30\n|مسار أرشيف= https://web.archive.org/web/20230130193107/https://www.spa.gov.sa/viewstory.php?lang=ar&newsid=2421734|تاريخ أرشيف=2023-01-30}}\u003C/ref\u003E\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد بويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n|مسار أرشيف= https://web.archive.org/web/20230220215146/https://nabd.com/s/99281340-a850a3/%D8%AF%D9%85%D8%AC-%D8%AC%D9%85%D9%8A%D8%B9-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B5%D8%AD%D8%A9-%D9%81%D9%8A-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82-%D8%B5%D8%AD%D8%AA%D9%8A|تاريخ أرشيف=2023-02-20\n|حالة المسار=live}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 62603255,
-             *             "parentid": 61250477,
-             *             "user": "أحمد 04",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = شعار تطبيق صحتي.png\n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n* خدمة الشهادة الإلكترونية لتطعيمات الأطفال\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.spa.gov.sa/viewstory.php?lang=ar&newsid=2421734\n| عنوان = عام / \"الصحة\" تطلق خدمة الشهادة الإلكترونية لتطعيمات الأطفال وكالة الأنباء السعودية\n| موقع = www.spa.gov.sa\n| تاريخ الوصول = 2023-01-30\n|مسار أرشيف= https://web.archive.org/web/20230130193107/https://www.spa.gov.sa/viewstory.php?lang=ar&newsid=2421734|تاريخ أرشيف=2023-01-30}}\u003C/ref\u003E\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n|مسار أرشيف= https://web.archive.org/web/20230220215146/https://nabd.com/s/99281340-a850a3/%D8%AF%D9%85%D8%AC-%D8%AC%D9%85%D9%8A%D8%B9-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B5%D8%AD%D8%A9-%D9%81%D9%8A-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82-%D8%B5%D8%AD%D8%AA%D9%8A|تاريخ أرشيف=2023-02-20\n|حالة المسار=live}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 61250477,
-             *             "parentid": 60999222,
-             *             "user": "Mr.Ibrahembot",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n* خدمة الشهادة الإلكترونية لتطعيمات الأطفال\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.spa.gov.sa/viewstory.php?lang=ar&newsid=2421734\n| عنوان = عام / \"الصحة\" تطلق خدمة الشهادة الإلكترونية لتطعيمات الأطفال وكالة الأنباء السعودية\n| موقع = www.spa.gov.sa\n| تاريخ الوصول = 2023-01-30\n|مسار أرشيف= https://web.archive.org/web/20230130193107/https://www.spa.gov.sa/viewstory.php?lang=ar&newsid=2421734|تاريخ أرشيف=2023-01-30}}\u003C/ref\u003E\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n|مسار أرشيف= https://web.archive.org/web/20230220215146/https://nabd.com/s/99281340-a850a3/%D8%AF%D9%85%D8%AC-%D8%AC%D9%85%D9%8A%D8%B9-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B5%D8%AD%D8%A9-%D9%81%D9%8A-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82-%D8%B5%D8%AD%D8%AA%D9%8A|تاريخ أرشيف=2023-02-20\n|حالة المسار=live}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 60999222,
-             *             "parentid": 60861065,
-             *             "user": "M7md1405",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n* خدمة الشهادة الإلكترونية لتطعيمات الأطفال\u003Cref\u003E{{استشهاد ويب\n| url = https://www.spa.gov.sa/viewstory.php?lang=ar&newsid=2421734\n| title = عام / \"الصحة\" تطلق خدمة الشهادة الإلكترونية لتطعيمات الأطفال وكالة الأنباء السعودية\n| website = www.spa.gov.sa\n| accessdate = 2023-01-30\n}}\u003C/ref\u003E\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 60861065,
-             *             "parentid": 60859545,
-             *             "user": "فاطمة الزهراء",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 60859545,
-             *             "parentid": 57570695,
-             *             "user": "M7md1405",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E\n\n== وصلات خارجية ==\n[https://www.moh.gov.sa/Pages/Default.aspx الموقع الرسمي لوزارة الصحة السعودية]\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 57570695,
-             *             "parentid": 57570691,
-             *             "user": "Ajwaan",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 57570691,
-             *             "parentid": 57224813,
-             *             "user": "Tatbi9",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]]. يمكنك [https://www.tatbi9.com/sehhaty/ تحميل تطبيق صحتي] من خلال موقع وزارة الصحة او عبر موقع تطبيق كوم.\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 57224813,
-             *             "parentid": 56990817,
-             *             "user": "JarBot",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار أرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ أرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار «كل الصحة في صحتي» وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 56990817,
-             *             "parentid": 56886062,
-             *             "user": "MenoBot",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار الأرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ الأرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار \"كل الصحة في صحتي\" وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 56886062,
-             *             "parentid": 56881461,
-             *             "user": "علاء",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار الأرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ الأرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار \"كل الصحة في صحتي\" وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E.\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة السعودية}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 56881461,
-             *             "parentid": 56881274,
-             *             "user": "JarBot",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n| مسار الأرشيف = https://web.archive.org/web/20220217062129/https://www.moh.gov.sa/Pages/Default.aspx | تاريخ الأرشيف = 17 فبراير 2022 }}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار \"كل الصحة في صحتي\" وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E.\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n== وصلات خارجية ==\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 56881274,
-             *             "parentid": 56879891,
-             *             "user": "JarBot",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{يتيمة|تاريخ=فبراير 2022}}\n{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| مسار = https://www.moh.gov.sa/Pages/Default.aspx\n| عنوان = وزارة الصحة السعودية\n| موقع = وزارة الصحة السعودية\n| لغة = ar-sa\n| تاريخ الوصول = 2022-02-19\n| الأخير = الصحة\n| الأول = فريق بوابة وزارة\n}}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار \"كل الصحة في صحتي\" وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة\u003Cref\u003E{{استشهاد ويب\n| مسار = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| عنوان = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| موقع = موقع نبض\n| تاريخ الوصول = 2022-02-19\n}}\u003C/ref\u003E.\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n== وصلات خارجية ==\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n{{بذرة}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:صحة]]\n[[تصنيف:طب]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 56879891,
-             *             "parentid": 56879687,
-             *             "user": "Dr. Mohammed",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]]، [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = [[خدمات صحية]]\n| الترخيص = \n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| url = https://www.moh.gov.sa/Pages/Default.aspx\n| title = وزارة الصحة السعودية\n| website = وزارة الصحة السعودية\n| language = ar-sa\n| accessdate = 2022-02-19\n| last = الصحة\n| first = فريق بوابة وزارة\n}}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار \"كل الصحة في صحتي\" وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة\u003Cref\u003E{{استشهاد ويب\n| url = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| title = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| website = موقع نبض\n| accessdate = 2022-02-19\n}}\u003C/ref\u003E.\n\n== انظر أيضًا ==\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== مراجع ==\n{{مراجع}}\n\n== وصلات خارجية ==\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:طب]]\n[[تصنيف:صحة]]\n[[تصنيف:وزارة الصحة السعودية]]"
-             *           },
-             *           {
-             *             "revid": 56879687,
-             *             "parentid": 56879648,
-             *             "user": "أحمد 04",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة]] – [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = خدمات صحية\n| الترخيص = مجاني\n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| url = https://www.moh.gov.sa/Pages/Default.aspx\n| title = وزارة الصحة السعودية\n| website = وزارة الصحة السعودية\n| language = ar-sa\n| accessdate = 2022-02-19\n| last = الصحة\n| first = فريق بوابة وزارة\n}}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي [[5 فبراير]] من عام [[2022]] أعلنت [[وزارة الصحة (السعودية)|وزارة الصحة السعودية]] دمج كل من التطبيقات: صحة، [[تطمن]]، موعد داخل تطبيق صحتي تحت شعار \"كل الصحة في صحتي\" وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة\u003Cref\u003E{{استشهاد ويب\n| url = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| title = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| website = موقع نبض\n| accessdate = 2022-02-19\n}}\u003C/ref\u003E.\n\n== انظر أيضًا ==\n\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== وصلات خارجية ==\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:طب]]\n[[تصنيف:صحة]]\n[[تصنيف:وزارة الصحة السعودية]]\n\u003Creferences /\u003E"
-             *           },
-             *           {
-             *             "revid": 56879648,
-             *             "parentid": 0,
-             *             "user": "أحمد 04",
-             *             "contentformat": "text/x-wiki",
-             *             "contentmodel": "wikitext",
-             *             "*": "{{بطاقة برمجية\n| الاسم = صحتي\n| الشعار = \n| لقطة = \n| تعليق = \n| المطور = [[وزارة الصحة]] – [[لين لخدمات الأعمال]]\n| الإصدار = [[2020]]\n| آخر إصدار = [[ديسمبر]]، [[2020]]\n| لغات = العربية – الإنكليزية\n| الحالة = نشط\n| النوعية = خدمات صحية\n| الترخيص = مجاني\n}}\n\n'''صحتي''' هو تطبيق أطلقته [[وزارة الصحة (السعودية)|وزارة  الصحة السعودية]] لتقديم الخدمات الصحية للأفراد في [[السعودية|المملكة العربية السعودية]]. يتيح للمستخدم إمكانية الوصول إلى المعلومات الصحية والحصول على عدد من الخدمات الصحية المقدمة من الجهات المختلفة في القطاع الصحي في السعودية.\u003Cref\u003E{{استشهاد ويب\n| url = https://www.moh.gov.sa/Pages/Default.aspx\n| title = وزارة الصحة السعودية\n| website = وزارة الصحة السعودية\n| language = ar-sa\n| accessdate = 2022-02-19\n| last = الصحة\n| first = فريق بوابة وزارة\n}}\u003C/ref\u003E ويعد تطبيق صحتي من أبرز التطبيقات التي أطلقت خلال [[جائحة فيروس كورونا|جائحة كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n\n== خدمات تطبيق صحتي ==\n\n* يتيح التطبيق حجز مواعيد واستعراض تقرير [[لقاح كوفيد-19|لقاح فيروس كورونا]] [[مرض فيروس كورونا 2019|كوفيد-19]].\n* حجز مواعيد واستعراض نتائج [[اختبار كوفيد-19|فحوصات كورونا]] كوفيد-19.\n* '''طبيبي:''' وهي خدمة تتيح التسجيل مع فريق طبي مسؤول عن تقديم [[رعاية صحية أولية|الرعاية الصحية الأولية]] للفرد وللأسرة بشكل مستمر.\n* '''الاستشارة الفورية:''' تقدم خدمة [[استشاري (طب)|استشارية طبية]] [[اتصال عن بعد|عن بعد]] من أطباء معتمدين من وزارة الصحة.\n* حجز مواعيد [[تطعيم (توضيح)|تطعيمات]] عبر أقرب مركز صحي.\n* يتيح التطبيق طلب واستعراض بيانات [[إجازة مرضية|الإجازة المرضية]] الخاصة بالمستخدم.\n* طلب المساعدة والتسجيل في حالة المخالطة لمصاب بفيروس كورونا.\n* متابعة [[علامات حيوية|المؤشرات الحيوية]].\n* '''رصد:''' نظام تابع [[الهيئة العامة للغذاء والدواء|للهيئة العامة للغذاء والدواء]] لتتبع وتعقب جميع الأدوية المسجلة.\n* استعراض قائمة [[دواء|الأدوية]] الخاصة بالمستخدم.\n* محفظة صحتي.\n\n== دمج تطبيقات صحية مع صحتي ==\nفي 5 فبراير من عام 2022 أعلنت وزارة الصحة السعودية دمج كل من التطبيقات: صحة، تطمن، موعد داخل تطبيق صحتي تحت شعار \"كل الصحة في صحتي\" وذلك لتسهيل الحصول على الخدمات الصحية دون الحاجة لتنزيل جميع التطبيقات الثلاثة\u003Cref\u003E{{استشهاد ويب\n| url = https://nabd.com/s/99281340-a850a3/دمج-جميع-تطبيقات-الصحة-في-تطبيق-صحتي\n| title = صحيفة تواصل {{!}} دمج جميع تطبيقات الصحة في تطبيق «صحتي» (الصحة) (صحتي) (المملكة) (تطبيق) (تطمن)\n| website = موقع نبض\n| accessdate = 2022-02-19\n}}\u003C/ref\u003E.\n\n== انظر أيضًا ==\n\n* [[توكلنا]].\n* [[تباعد]].\n* [[أبشر]].\n\n== وصلات خارجية ==\n{{مواقع التواصل الاجتماعي\n| العنوان = صحتي\n| تويتر = SehhatyApp\n}}\n{{شريط بوابات|اتصال عن بعد|السعودية|علم الحاسوب|تقنية المعلومات|طب|صحة}}\n{{ضبط استنادي}}\n[[تصنيف:استجابات لجائحة فيروس كورونا]]\n[[تصنيف:برمجيات الجوال]]\n[[تصنيف:تطبيقات المحمول]]\n[[تصنيف:طب]]\n[[تصنيف:صحة]]\n[[تصنيف:وزارة الصحة السعودية]]\n\u003Creferences /\u003E"
-             *           }
-             *         ],
-             *         "templates": [
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:PAGENAMEU"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:Plainlist/styles.css"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:Str index/getchar"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:Str index any"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:Str left"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:Str len"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:Str rightc"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:Str sub long"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:Str ≥ len"
-             *           },
-             *           {
-             *             "ns": 10,
-             *             "title": "قالب:استشهاد بويب"
-             *           }
-             *         ],
-             *         "linkshere": [
-             *           {
-             *             "pageid": 2800842,
-             *             "ns": 4,
-             *             "title": "ويكيبيديا:مشروع ويكي الصيانة/بدون إنترويكي/ص"
-             *           },
-             *           {
-             *             "pageid": 8475960,
-             *             "ns": 2,
-             *             "title": "مستخدم:أحمد 04"
-             *           },
-             *           {
-             *             "pageid": 8602816,
-             *             "ns": 100,
-             *             "title": "بوابة:السعودية/مقالات جديدة/2022"
-             *           },
-             *           {
-             *             "pageid": 8605311,
-             *             "ns": 100,
-             *             "title": "بوابة:طب/مقالات جديدة/2022"
-             *           },
-             *           {
-             *             "pageid": 8643316,
-             *             "ns": 4,
-             *             "title": "ويكيبيديا:طلبات مراجعة المقالات/أرشيف/2022/فبراير"
-             *           },
-             *           {
-             *             "pageid": 8661827,
-             *             "ns": 1,
-             *             "title": "نقاش:صحتي (تطبيق)"
-             *           }
-             *         ]
-             *       }
-             *     }
-             *   }
-             * }
-             *
-             * **/
-            async function getArticleMetadata(title, lang) {
-                const apiUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=info|pageviews|revisions|langlinks|templates|linkshere&rvprop=ids|user|content&rvlimit=100&format=json&origin=*`;
+            // Check convergence (using L1 norm)
+            let diff = newRank.reduce((sum, r, i) => sum + Math.abs(r - rank[i]), 0);
+            rank = newRank;
+            if (diff < tolerance) break;
+        }
+        return rank;
+    }
 
-                try {
-                    const response = await fetch(apiUrl);
-                    const data = await response.json();
-                    const pageId = Object.keys(data.query.pages)[0];
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-                    if (pageId === "-1") {
-                        return null;
-                    }
+        const edit_lang = document.getElementById("article-language-search").value.trim();
+        const refer_lang = document.getElementById("article-refer-language-search").value.trim();
+        const category = document.getElementById("all-category-search").value.trim();
 
-                    const page = data.query.pages[pageId];
 
-                    // Count <ref> tags to estimate references
-                    const revisionContent = page.revisions?.[0]["*"] || "";
-                    const referenceCount = (revisionContent.match(/<ref>/g) || []).length;
+        if (!edit_lang || !category || !refer_lang ) {
+            alert("Please select both a language and a category.");
+            return;
+        }
 
-                    // Dispute detection (edit wars): Count frequent edits by same users
-                    const editUsers = page.revisions?.map(rev => rev.user) || [];
-                    const userEditCounts = editUsers.reduce((acc, user) => {
-                        acc[user] = (acc[user] || 0) + 1;
-                        return acc;
-                    }, {});
-                    const maxEditsByOneUser = Math.max(...Object.values(userEditCounts), 0);
+        referArticlesList.innerHTML = "<li>Loading missing articles...</li>";
+        ranked_res_spinner.style.display = "inline-block";
+        all_res_spinner.style.display = "inline-block";
 
-                    // Check for quality-related WikiProject templates
-                    const qualityIndicators = page.templates ? page.templates.length : 0;
+        articlesList.innerHTML = "<li>Loading missing articles...</li>";
 
-                    return {
-                        title: title,
-                        views: page.pageviews ? Object.values(page.pageviews).reduce((a, b) => a + (b || 0), 0) : 0,
-                        langlinks: page.langlinks ? page.langlinks.length : 0,
-                        editCount: page.revisions ? page.revisions.length : 0,
-                        firstEdit: page.revisions ? page.revisions[page.revisions.length - 1].revid : null,
-                        references: referenceCount,
-                        editWars: maxEditsByOneUser,
-                        quality: qualityIndicators,
-                        templates: page.templates ? page.templates.length : 0,
-                        wikilinks: page.linkshere ? page.linkshere.length : 0,
-                    };
-                } catch (error) {
-                    console.error("Error fetching article metadata:", error);
-                    return null;
-                }
+        try {
+            console.log("Submitting request: edit_lang:", edit_lang,
+                        ", refer_lang", refer_lang, "category:", category);
+
+            // Extract language code (inside parentheses)
+            const languageCode = edit_lang.match(/\((.*?)\)/)?.[1];
+            if (!languageCode) {
+                alert("Invalid language selection. Please select a valid language.");
+                return;
             }
+            // Extract language code (inside parentheses)
+            const referLanguageCode = refer_lang.match(/\((.*?)\)/)?.[1];
+            if (!referLanguageCode) {
+                alert("Invalid language selection. Please select a valid language.");
+                return;
+            }
+
+            console.log("Extracted language codes in submission.js:",'edit:', languageCode,
+                ' , refer',referLanguageCode);
+
+            // Fetch missing articles
+            const response = await fetch(
+                `/get_articles_from_other_languages/${languageCode}/${category}/${referLanguageCode}/`);
+            const data = await response.json();
+
+            // Clear previous results
+            articlesList.innerHTML = "";
+            referArticlesList.innerHTML= "";
+
+            // list the articles of reference language in the selected category
+            if (data.articles && data.articles.length > 0) {
+                data.articles.forEach(article => {
+                    const articleLink = document.createElement("li");
+                    const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(article)}`;
+                    articleLink.innerHTML = `<a href="${wikiUrl}" target="_blank">${article}</a>`;
+                    referArticlesList.appendChild(articleLink);
+                });
+            } else {
+                referArticlesList.innerHTML = "<li>No missing articles found.</li>";
+            }
+            all_res_spinner.style.display = "none";
 
             // Define weight values
             const weights = {
@@ -507,22 +362,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 editWars: 0.025,
                 quality: 0.05,
                 templates: 0.025,
-                wikilinks: 0.05,
+                backlinksCount: 0.05,
+                pageRank: 0,
             };
 
-            // Function to compute ranking score
-            function computeRankingScore(metadata) {
-                return (
-                    metadata.views * weights.views +
-                    metadata.langlinks * weights.langlinks +
-                    metadata.editCount * weights.editCount +
-                    metadata.references * weights.references +
-                    metadata.editWars * weights.editWars +
-                    metadata.quality * weights.quality +
-                    metadata.templates * weights.templates +
-                    metadata.wikilinks * weights.wikilinks
-                );
-            }
+            // articlesData is an array of article titles to rank.
+            const articlesData = []
 
             // Check if each reference article exists in the edit language and rank them
             if (data.articles.length > 0) {
@@ -533,24 +378,58 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log(`Page exists in ${languageCode}:`, translatedTitle);
                     } else {
                         console.log(`Page does NOT exist in ${languageCode}:`, article);
+                        articlesData.push(article);
                         return getArticleMetadata(article, referLanguageCode);
-                        // const articleLink = document.createElement("li");
-                        // const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(article)}`;
-                        // articleLink.innerHTML = `<a href="${wikiUrl}" target="_blank">${article}</a>`;
-                        // articlesList.appendChild(articleLink);
                     }
                 });
 
                 // Filter out nulls (existing pages)
-                const metadataList = (await Promise.all(checkPromises)).filter(Boolean);
+                const filteredMetadataList = (await Promise.all(checkPromises)).filter(Boolean);
+                console.log(" the metadataList is ", filteredMetadataList);
+
+                // const rank = computePageRank(articlesData);
+                // const normalizedPageRank = normalizeScores(rank);
+                // console.log("Normalized PageRank:", normalizedPageRank);
+                // // At this point, 'rank' holds the PageRank scores for articles
+                // // and normalizedPageRank hold the normalized.
+                // console.log("PageRank scores:");
+                // articlesData.forEach((title, i) => {
+                //   console.log(title, normalizedPageRank[i]);
+                //   metadataList[title].pageRank = normalizedPageRank[i];
+                // });
+
+                // Compute maximum values for each metric across all articles
+                const maxValues = {
+                  views: Math.max(...filteredMetadataList.map(m => m.views)),
+                  langlinks: Math.max(...filteredMetadataList.map(m => m.langlinks)),
+                  editCount: Math.max(...filteredMetadataList.map(m => m.editCount)),
+                  references: Math.max(...filteredMetadataList.map(m => m.references)),
+                  editWars: Math.max(...filteredMetadataList.map(m => m.editWars)),
+                  quality: Math.max(...filteredMetadataList.map(m => m.quality)),
+                  templates: Math.max(...filteredMetadataList.map(m => m.templates)),
+                  backlinksCount: Math.max(...filteredMetadataList.map(m => m.backlinksCount))
+                };
+
+                // Normalize each metric for every article
+                filteredMetadataList.forEach(m => {
+                  m.normViews = maxValues.views ? m.views / maxValues.views : 0;
+                  m.normLanglinks = maxValues.langlinks ? m.langlinks / maxValues.langlinks : 0;
+                  m.normEditCount = maxValues.editCount ? m.editCount / maxValues.editCount : 0;
+                  m.normReferences = maxValues.references ? m.references / maxValues.references : 0;
+                  m.normEditWars = maxValues.editWars ? m.editWars / maxValues.editWars : 0;
+                  // If higher quality should lower the score:
+                  m.normQuality = maxValues.quality ? 1 - (m.quality / maxValues.quality) : 0;
+                  m.normTemplates = maxValues.templates ? m.templates / maxValues.templates : 0;
+                  m.normBacklinksCount = maxValues.backlinksCount ? m.backlinksCount / maxValues.backlinksCount : 0;
+                });
 
                 // Compute scores and sort
-                metadataList.forEach(meta => meta.score = computeRankingScore(meta));
-                metadataList.sort((a, b) => b.score - a.score);
+                filteredMetadataList.forEach(meta => meta.score = computeRankingScore(meta, weights));
+                filteredMetadataList.sort((a, b) => b.score - a.score);
 
                 // Display sorted missing articles
                 articlesList.innerHTML = "";
-                metadataList.forEach((meta) => {
+                filteredMetadataList.forEach((meta) => {
                     const articleLink = document.createElement("li");
                     const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(meta.title)}`;
                     articleLink.innerHTML = `<a href="${wikiUrl}" target="_blank">${meta.title}</a> - Score: ${meta.score.toFixed(2)}`;
@@ -559,37 +438,14 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 articlesList.innerHTML = "<li>No missing articles found.</li>";
             }
+            ranked_res_spinner.style.display = "none";
+
 
         } catch (error) {
             console.error("Error fetching articles:", error);
             referArticlesList.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
         }
-
-
-        // async function checkPageExists(title, lang) {
-        //     const apiUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=info&format=json&origin=*`;
-        //
-        //     try {
-        //         const response = await fetch(apiUrl);
-        //         const data = await response.json();
-        //
-        //         const pageId = Object.keys(data.query.pages)[0];
-        //         if (pageId !== "-1") {
-        //             return `Page "${title}" exists in ${lang}.wikipedia.org`;
-        //         } else {
-        //             return `Page "${title}" does NOT exist in ${lang}.wikipedia.org`;
-        //         }
-        //     } catch (error) {
-        //         console.error("Error checking Wikipedia page:", error);
-        //         return "Error occurred";
-        //     }
-        // }
-
-        // // Example: Check if "Terre" exists in French Wikipedia
-        // checkPageExists("Terre", "fr").then(console.log);
-
     }
-
     );
 });
 

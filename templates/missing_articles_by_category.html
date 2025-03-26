@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
     <div class="top-bar">
         <div class="top-left-container">
@@ -42,156 +44,188 @@
             </div>
         </div>
     </div>
-
-<div class="central-left-container">
-    <h2 align="center">Select Language and Category</h2>
-    <p id="general-message" style="color: #367ee7; font-weight: bold; margin-top: 10px;">First enter a language then write your category</p>
-
-    <br>
-    <br>
-    <form id="missing-articles-form">
-
-        <label for="language"
-               style="align-content: center;color: black;font-size: large">Select the language you want to use:</label>
-        <!-- Language Search Bar -->
-        <div class="article-language-selector" id="article-language-selector" style="align-content: center">
-                <label for="article-language-search"></label>
-                <input 
-                    type="text" 
-                    id="article-language-search" 
-                    placeholder="Search languages..." 
-                    autocomplete="off"
-                />
-                <ul id="article-language-list" class="article-language-list" role="listbox">
-{#                <ul id="article-language-list" class="article-language-list" role="listitem">#}
-                    <!-- Suggestions will be dynamically populated -->
-                </ul>
-        </div>
-
-        <br>
-        <br>
-
-        <label for="comparing-language" style="align-content: center;color: black;font-size: large">Select the language you want to refer from:</label>
-        <!-- reference Language Search Bar -->
-        <div class="article-language-selector" id="article-refer-language-selector" style="align-content: center">
-                <label for="article-refer-language-search"></label>
-                <input
-                    type="text"
-                    id="article-refer-language-search"
-                    placeholder="Search languages..."
-                    autocomplete="off"
-                />
-                <ul id="article-refer-language-list" class="article-language-list" role="listbox">
-{#                <ul id="article-language-list" class="article-language-list" role="listitem">#}
-                    <!-- Suggestions will be dynamically populated -->
-                </ul>
-        </div>
-
-        <div id="article-refer-language-spinner" style="display: none;">
-            <img src="/static/images/spinner.gif" alt="language_spinner">
-            Loading languages...
-        </div>
-
-
-        <p id="the_selected_refer_lang" style="color: #7c0808;"></p>
-        <br>
+    
+    <div class="central-left-container">
+        <h2 style="text-align: center;">Select Language and Category</h2>
         
-        <!-- message -->
-        <p id="category-message" style="color: #367ee7; font-weight: bold; margin-top: 10px; text-align: center">
-            you can search the main categories or all categories in the selected language, 
-            currently we are working on the second search which search all categories
+        <p id="general-message" 
+           class="info_msg" style="margin-right: 130px">
+            First enter a language then write your category
         </p>
         
-        <br>
-        
-        <!-- category Selector -->
-        <label for="category" style="color: black;font-size: large">Select Main Category:</label>
-        <div class="portal-selector" id="category-selector-class">
-
-            <div id="category" class="portal-selector">
-                <input
-                    type="text"
-                    id="category-search"
-                    placeholder="Enter category name..."
-                    autocomplete="off"
-                />
-                <ul id="category-list" class="category-list" role="listbox" aria-live="polite">
-                    <!-- Suggestions dynamically populated -->
-                </ul>
+        <form id="missing-articles-form" style="display: flex; /* Enables flexbox */">
+            
+            <div style="width: 100%;            display: flex;">
+                <!-- Language Search Bar -->
+                <div class="article-language-selector" id="article-language-selector">
+                    <label for="language" style="color: black;font-size: large">
+                         Select the language you want to use in <b>editing</b>:
+                    </label>
+                    
+                    <br>
+                    
+                    <label for="article-language-search" ></label>
+                    <input 
+                             type="text" 
+                             id="article-language-search" 
+                             placeholder="Search languages..." 
+                             autocomplete="off"
+                             style="width: 80%"
+                    />
+                    <ul id="article-language-list" class="article-language-list" role="listbox">
+    {#                <ul id="article-language-list" class="article-language-list" role="listitem">#}
+                        <!-- Suggestions will be dynamically populated -->
+                    </ul>
+                </div>
+                 
+                 <div style=" width: 10%"> </div>
+                 
+                 <!-- reference Language Search Bar -->
+                 <div class="article-language-selector" id="article-refer-language-selector" style="align-content: center">
+                     <label for="comparing-language" style="color: black;font-size: large">
+                         Select the language you want to <b>refer</b> from:
+                     </label>
+                     <br>
+                     <label for="article-refer-language-search"></label>
+                     <input
+                            type="text"
+                            id="article-refer-language-search"
+                            placeholder="Search languages..."
+                            autocomplete="off"
+                            style="width: 80%"
+                     />
+                     <ul id="article-refer-language-list" class="article-language-list" role="listbox">
+        {#                <ul id="article-language-list" class="article-language-list" role="listitem">#}
+                            <!-- Suggestions will be dynamically populated -->
+                     </ul>
+                     <br>
+                     <br>
+                 </div>
+                 
+             </div>   
+            
+            <div style="width: 100%">
+                     <div id="article-refer-language-spinner" style="display: none;">
+                         <img src="/static/images/spinner.gif" alt="language_spinner">
+                         Loading languages...
+                     </div>
+                     <p id="the_selected_refer_lang" style="color: #7c0808;"></p>
+                <br>
+                <br>
             </div>
 
-{#            <div id="main-category-spinner" style="display: none;">Loading categories...</div>#}
-            <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
-
-        <p id="response_data" style="color: #7c0808;"></p>
-        </div>
+            <div style="width: 100%; margin-left: 0; text-align: center" class="info_msg">
+                <!-- message -->
+                <p id="category-message">
+                    you can search the main categories or all categories in the selected language, 
+                    currently we are working on the second search which search all categories
+                </p>
+            </div>
+            
+            <div style="width: 100%"> <br> </div>
+            
+            <div class="the-selector" id="category-selector-class">
                 
-        <br>
-        <br>
-            
-        <!-- Portal Selector -->
-{#        <label for="portals">Select Portal</label>#}
-{#        <div class="portal-selector" id="portal-selector-class">#}
-{#            <div id="portal-selector" class="portal-selector">#}
-{#                <input #}
-{#                    type="text" #}
-{#                    id="portal-search" #}
-{#                    placeholder="Enter portal name..." #}
-{#                    autocomplete="off"#}
-{#                >#}
-{#                <ul id="portal-list" class="portal-list" role="listbox" aria-live="polite">#}
-{#                    <!-- Suggestions dynamically populated -->#}
-{#                </ul>#}
-{#            </div>#}
-{#        </div>#}
-        
-        <br>
-        <br>
-    <br>
-        
-        <p id="or-message" style="color: #367ee7; font-weight: bold; margin-top: 10px; text-align: center">
-            OR
-        </p>
-    <!-- all category Selector -->
-        <label for="all-category" style="color: black;font-size: large">Write a category name:</label>
-        <div class="portal-selector" id="all-category-selector-class">
-            <div id="all-category" class="portal-selector">
-                <input 
-                    type="text" 
-                    id="all-category-search" 
-                    placeholder="Enter category name..." 
-                    autocomplete="off"
-                />
-                <ul id="all-category-list" class="portal-list">
-                    <!-- Suggestions dynamically populated -->
-                </ul>
+                <!-- category Selector -->
+                <label for="category" style="color: black;font-size: large">Select Main Category:</label>
+                <div id="category" class="the-selector" style="border: none; width: 80%;">
+                    <input
+                        type="text"
+                        id="category-search"
+                        placeholder="Enter category name..."
+                        autocomplete="off"
+                        style="width: 97%"
+                    />
+                    <ul id="category-list" class="category-list" role="listbox" aria-live="polite">
+                        <!-- Suggestions dynamically populated -->
+                    </ul>
+                </div>
+    
+                <div id="feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+                
+                <p id="response_data" style="color: #7c0808;"></p>
             </div>
             
-            <div id="all-category-spinner" style="display: none;">Loading categories...</div>
-            <p id="all-cat-feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></p>
-        
-        <br>
-
-        <p id="all-cat-response_data" style="color: #7c0808;"></p>
-        </div>    
-        
-        
-        <button type="submit">Submit</button>
-    </form>
+                
+            <!-- Portal Selector -->
+    {#        <label for="portals">Select Portal</label>#}
+    {#        <div class="portal-selector" id="portal-selector-class">#}
+    {#            <div id="portal-selector" class="portal-selector">#}
+    {#                <input #}
+    {#                    type="text" #}
+    {#                    id="portal-search" #}
+    {#                    placeholder="Enter portal name..." #}
+    {#                    autocomplete="off"#}
+    {#                >#}
+    {#                <ul id="portal-list" class="portal-list" role="listbox" aria-live="polite">#}
+    {#                    <!-- Suggestions dynamically populated -->#}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+            
+            <div style="width: 7%" >
+                <p id="or-message" class="info_msg" style="text-align: center;margin-left: 30px; margin-top: 70px">
+                OR
+                </p>
+            </div>
+            
+            <div class="the-selector" id="all-category-selector-class" style="margin-left: 30px">
+                <!-- all category Selector -->
+                <label for="all-category" style="color: black;font-size: large">Write a category name:</label>
+                <div id="all-category" class="the-selector" style="border: none; width: 80%;">
+                    <input 
+                        type="text" 
+                        id="all-category-search" 
+                        placeholder="Enter category name..." 
+                        autocomplete="off"
+                        style="width: 97%"
+                    />
+                    <ul id="all-category-list" class="portal-list">
+                        <!-- Suggestions dynamically populated -->
+                    </ul>
+                </div>
+                
+                <div id="all-category-spinner" style="display: none;">Loading categories...</div>
+                <p id="all-cat-feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></p>
+                
+                <br>
+                <p id="all-cat-response_data" style="color: #7c0808;"></p>
+            </div>    
+            
+            <div style="width: 98%; text-align: left; margin-left: 10px" >
+                <button type="submit" style="font-size: large">Submit</button>
+            </div>
+        </form>
+                
+        <div style="width: 98%" >
+            <h2 style="margin-left: 150px; text-align: left;">
+                all Articles in Selected Category in reference Language:
+            </h2>
+            <div id="all_res_spinner" style="display: none;">
+                <img src='/static/images/spinner.gif' alt='Loading Res...'>
+                Loading results...
+            </div>
+            <ul id="referArticles"></ul>
+            
+            <br>
+            <br>
+            
+            <h2 style="margin-left: 150px; text-align: left;">
+                Articles Missing in Selected Language:
+            </h2>
+            <div id="ranked_res_spinner" style="display: none;">
+                <img src='/static/images/spinner.gif' alt='Loading Ranked...'>
+                Loading results...
+            </div>
+            <ul id="articles"></ul>
     
-<br>
-    
-    <h2>all Articles in Selected Category in reference Language:</h2>
-    <ul id="referArticles"></ul>
-    <br>
-    <br>
-    <h2>Articles Missing in Selected Language:</h2>
-    <ul id="articles"></ul>
-
-    <br>
-    <br>
-    <br>
-</div>
+            <br>
+            <br>
+            <br>
+        
+        </div>
+        
+    </div>
 
 <script src="{% static 'js/category-search.js' %}" defer></script>
 <script src="{% static 'js/language-selector.js' %}" defer></script>

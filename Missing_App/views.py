@@ -473,44 +473,6 @@ the functions below are not in use right now!!!!!
 """
 
 
-def get_missing_articles_in_edit_lang(request, edit_lang, category, refer_lang):
-    """
-
-    :param request:
-    :param edit_lang:  the selected language of interest
-    :param category: the selected category of interest
-    :param refer_lang:  the reference language we want to get articles from
-
-    :return:  articles from the selected lang under selected category
-    """
-    try:
-        # Fetch missing articles using the Wikimedia API (adjust API call as needed)
-
-        # find if category exist in refer lang and get its name
-        # Step 2: Fetch the Q-code for the category
-        articles = get_articles_from_other_languages(edit_lang, category, refer_lang)
-
-        # fetch the articles in this category in refer language
-        # url = f"https://{refer_lang}.wikipedia.org/w/api.php"
-        # params = {
-        #     "action": "query",
-        #     "list": "categorymembers",
-        #     "cmtitle": f"Category:{category}",
-        #     "cmtype": "page",
-        #     "cmlimit": 500,  # Adjust limit as needed
-        #     "format": "json"
-        # }
-
-        # response = requests.get(url, params=params)
-        # data = response.json()
-        # articles = [page["title"] for page in data.get("query", {}).get("categorymembers", [])]
-
-        return JsonResponse({articles})
-
-    except requests.RequestException as e:
-        return JsonResponse({"error": f"Failed to fetch categories: {str(e)}"}, status=500)
-
-
 def get_portals(request, lang):
     """
     Fetch portals for a given language and optional query.
@@ -546,54 +508,6 @@ def get_portals(request, lang):
     except requests.RequestException as e:
         print(f"Error fetching portals: {e}")
         return JsonResponse({"error": "Failed to fetch portals"}, status=500)
-
-
-def search_by_q(request):
-    if request.method == 'POST':
-        language = request.POST.get('language')  # Example: 'he' for Hebrew
-        q_value = request.POST.get('q_value')  # Example: 'Q1235487'
-
-        # Query the Wikidata API for the given Q-value
-        api_url = f"https://www.wikidata.org/wiki/Special:EntityData/{q_value}.json"
-
-        try:
-            response = requests.get(api_url)
-            response.raise_for_status()  # Raise exception for HTTP errors
-
-            # Parse the JSON data
-            data = response.json()
-            entity_data = data.get('entities', {}).get(q_value, {})
-            sitelinks = entity_data.get('sitelinks', {})
-
-            # Construct the expected key for the sitelink
-            sitelink_key = f"{language}wiki"
-
-            # Check if the sitelink exists
-            is_found = sitelink_key in sitelinks
-
-            # Prepare the result message
-            if is_found:
-                result_message = f"The Q-value '{q_value}' is already found in the '{language}' language."
-            else:
-                result_message = f"The Q-value '{q_value}' is NOT found in the '{language}' language."
-
-        except requests.exceptions.RequestException as e:
-            # Handle API request errors
-            result_message = f"An error occurred while fetching data for Q-value '{q_value}': {e}"
-
-        except Exception as e:
-            # Handle any other exceptions
-            result_message = f"An unexpected error occurred: {e}"
-
-        # Pass the result to the context
-        context = {
-            'q_value': q_value,
-            'language': language,
-            'result_message': result_message,
-        }
-        return context
-
-    return None
 
 
 def custom_404(request, exception):
