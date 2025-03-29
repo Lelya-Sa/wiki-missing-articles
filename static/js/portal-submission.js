@@ -1,9 +1,24 @@
+// TODO implementing to portal
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("missing-articles-form");
     const referArticlesList = document.getElementById("referArticles");
     const articlesList = document.getElementById("articles");
     const all_res_spinner = document.getElementById("all_res_spinner");
     const ranked_res_spinner = document.getElementById("ranked_res_spinner");
+
+    // Define weight values
+    const weights = {
+        views: 0.35,
+        langlinks: 0.35,
+        editCount: 0.1,
+        references: 0.05,
+        editWars: 0.025,
+        quality: 0.05,
+        templates: 0.025,
+        backlinksCount: 0.05,
+        wikiLinksCount: 0,
+        pageRank: 0,
+    };
 
     /**
      * Normalize an array of scores using min–max normalization.
@@ -129,6 +144,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to fetch metadata for ranking
     async function getArticleMetadata(title, lang) {
+        // TODO check each one by using a relevant function that insures fetching all
+        //  the data using continue.
+        // for example: functions like: getviews(), getrivisions, getlanglinks(), gettemplate(),
         const apiUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=info|pageviews|revisions|langlinks|templates&rvprop=ids|user|content&rvlimit=50&rvslots=main&format=json&origin=*`;
 
         try {
@@ -328,13 +346,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            console.log("Extracted language codes in submission.js:",'edit:', languageCode,
+            console.log("Extracted language codes in category-submission.js:",'edit:', languageCode,
                 ' , refer',referLanguageCode);
 
             // Fetch missing articles
             const response = await fetch(
                 `/get_articles_from_other_languages/${languageCode}/${category}/${referLanguageCode}/`);
             const data = await response.json();
+
+            console.log( data);
+
+            if(Object.keys(data).includes("noCatError")){
+                throw data;
+            }
+            if(Object.keys(data).includes("noQcode")){
+                throw data;
+            }
 
             // Clear previous results
             articlesList.innerHTML = "";
@@ -353,21 +380,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             all_res_spinner.style.display = "none";
 
-            // Define weight values
-            const weights = {
-                views: 0.35,
-                langlinks: 0.35,
-                editCount: 0.1,
-                references: 0.05,
-                editWars: 0.025,
-                quality: 0.05,
-                templates: 0.025,
-                backlinksCount: 0.05,
-                pageRank: 0,
-            };
-
             // articlesData is an array of article titles to rank.
-            const articlesData = []
+            // const articlesData = []
 
             // Check if each reference article exists in the edit language and rank them
             if (data.articles.length > 0) {
@@ -378,7 +392,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log(`Page exists in ${languageCode}:`, translatedTitle);
                     } else {
                         console.log(`Page does NOT exist in ${languageCode}:`, article);
-                        articlesData.push(article);
+                        // articlesData.push(article);
                         return getArticleMetadata(article, referLanguageCode);
                     }
                 });
@@ -413,13 +427,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Normalize each metric for every article
                 filteredMetadataList.forEach(m => {
                   m.normViews = maxValues.views ? m.views / maxValues.views : 0;
+
                   m.normLanglinks = maxValues.langlinks ? m.langlinks / maxValues.langlinks : 0;
+
                   m.normEditCount = maxValues.editCount ? m.editCount / maxValues.editCount : 0;
-                  m.normReferences = maxValues.references ? m.references / maxValues.references : 0;
+
+                  // If higher references should lower the score because it needs more editing
+                  m.normReferences = maxValues.references ? 1- (m.references / maxValues.references) : 0;
+
                   m.normEditWars = maxValues.editWars ? m.editWars / maxValues.editWars : 0;
-                  // If higher quality should lower the score:
+
+                  // If higher quality should lower the score because it needs more editing
                   m.normQuality = maxValues.quality ? 1 - (m.quality / maxValues.quality) : 0;
-                  m.normTemplates = maxValues.templates ? m.templates / maxValues.templates : 0;
+
+                  // If higher template usage then should lower the score because it needs more editing
+                  m.normTemplates = maxValues.templates ? 1- (m.templates / maxValues.templates) : 0;
+
                   m.normBacklinksCount = maxValues.backlinksCount ? m.backlinksCount / maxValues.backlinksCount : 0;
                 });
 
@@ -443,7 +466,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } catch (error) {
             console.error("Error fetching articles:", error);
-            referArticlesList.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
+
+            if (Object.keys(error).includes("noCatError")){
+                    referArticlesList.innerHTML = "<li>category not found in reference language.</li>";
+                    articlesList.innerHTML = "<li>category not found in reference language.</li>";
+                    all_res_spinner.style.display = "none";
+                    ranked_res_spinner.style.display = "none";
+
+            }
+            else if (Object.keys(error).includes("noQCode")){
+                    referArticlesList.innerHTML = "<li>there are no pages under this category</li>";
+                    articlesList.innerHTML = "<li>there are no pages under this category</li>";
+                    all_res_spinner.style.display = "none";
+                    ranked_res_spinner.style.display = "none";
+
+            }
+            else{
+                referArticlesList.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
+                articlesList.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
+                ranked_res_spinner.style.display = "none";
+
+            }
         }
     }
     );

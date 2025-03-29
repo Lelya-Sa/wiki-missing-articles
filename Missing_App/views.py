@@ -64,9 +64,10 @@ def translated_page(request):  # TODO (not mandatory) currently redirects into l
     return redirect(wikipedia_url)
 
 
-def get_category_prefix(lang="en"):
+def get_prefix(lang="en", type="category"):
     """
     Get the correct category namespace prefix for a given Wikipedia language.
+    example : https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces&format=json
 
     :param lang: Wikipedia's language code (default: 'en' for English)
     :return: Category namespace prefix (e.g., 'Category:', 'تصنيف:', 'Kategorie:')
@@ -84,10 +85,13 @@ def get_category_prefix(lang="en"):
     response.raise_for_status()
     data = response.json()
 
-    # Namespace ID for categories is always 14
-    category_prefix = data["query"]["namespaces"]["14"]["*"]
+    if (type == "category"):
+        # Namespace ID for categories is always 14
+        prefix = data["query"]["namespaces"]["14"]["*"]
+    else:
+        prefix = data["query"]["namespaces"]["100"]["*"]
 
-    return category_prefix
+    return prefix
 
 
 # Fetch supported languages (with caching)
@@ -129,7 +133,6 @@ def get_categories_with_query(request, lang, query):
     """
     Fetch categories dynamically based on query, filtering directly in the API request.
     """
-    # query = request.GET.get("query", "").strip()
 
     if not query:
         # If no query is provided, return there is no query
@@ -205,7 +208,7 @@ def get_main_categories(request, lang=None):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-def get_qcode(page_name, lang):
+def get_qcode(page_name, lang, type="category"):
     """ retrieves the universal qcode of the page from wikidata api
 
     :param page_name: the page you want its qcode
@@ -213,8 +216,13 @@ def get_qcode(page_name, lang):
     :return: the universal qcode of the page
     """
     try:
-        categoryPrefex = get_category_prefix(lang)
-        page_name = categoryPrefex+":"+page_name
+        if type == "category":
+            categoryPrefix = get_prefix(lang, "category")
+            page_name = categoryPrefix+":"+page_name
+        else:
+            portalPrefix = get_prefix(lang,"portal")
+            page_name = portalPrefix+":"+page_name
+
         wikipedia_url =\
             f"https://{lang}.wikipedia.org/w/api.php?action=query&titles={page_name}&prop=pageprops&format=json"
         response = requests.get(wikipedia_url)
@@ -244,6 +252,18 @@ def get_qcode(page_name, lang):
             }
           }
         }
+        """
+
+        """ 
+        example for response to "تصنيف:الصحة" in arabic "ar" that does not have a wikipedia pages in any language
+        {'batchcomplete': '',
+         'query': 
+         {'pages':
+          {'1056957':
+           {'pageid':1056957,
+            'ns': 14,
+             'title': 'ØªØµÙ†ÙŠÙ�:Ø§Ù„ØµØ­Ø©',
+             'pageprops': {'expectunusedcategory': '', 'unexpectedUnconnectedPage': '-14'}}}}}
         """
 
         print("in get_qcode ", data, end="" )
@@ -328,12 +348,12 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
         # Get the Q code for the category from Wikidata
         qcode = get_qcode(category, edit_lang)
         if not qcode:
-            return JsonResponse({"error": "Category not found in Wikidata"}, status=400)
+            return JsonResponse({"noQCode": "Category not found in wikipedia"})
 
         # Get the localized category names for the selected Q code
         category_name_in_refer_lang = get_page_name_in_refer_lang(qcode, refer_lang, edit_lang)
         if not category_name_in_refer_lang:
-            return JsonResponse({"error": " category names not found"}, status=400)
+            return JsonResponse({"noCatError": " category names not found"}, status=400)
 
         print(
             f"in get_articles_from_other_languages: "
@@ -442,8 +462,6 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-
-
 #
 #
 #
@@ -452,7 +470,7 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
 "
 "
 "
-the functions below are not in use right now!!!!! 
+the functions below are not in use right now but maybe will in the future!!!!! 
 "
 "
 "
@@ -470,7 +488,7 @@ def get_portals(request, lang):
         "action": "query",
         "list": "search",
         "srnamespace": 100,  # Namespace 100 is for portals
-        "srlimit": 10,       # Limit the number of results
+        "srlimit": 50,       # Limit the number of results
         "srsearch": query,   # Add search query if provided
         "format": "json",
     }
@@ -499,3 +517,159 @@ def get_portals(request, lang):
 def custom_404(request, exception):
     # The requested resource could not be found.
     return render(request, '404.html', status=404)
+
+
+def missing_articles_by_portals(request):
+    """
+        page used for: searching for missing articles by entering portal and language.
+        uses get_articles_from_other_languages function
+    :param request:
+    :return:
+    """
+
+    if request.method == "POST":
+        edit_lang = request.POST.get("article-language-search")  # Get the selected language
+        refer_lang = request.POST.get("article-refer-language-search")  # Get the selected language
+
+        if not edit_lang or not refer_lang:
+            return render(
+                request,
+                "missing_articles_by_portal.html",
+                {"error": "Please select both a language and a portal."},
+            )
+
+        get_portals(edit_lang)
+        portal = request.POST.get("all-portal-search")  # Get the selected category
+
+        if not edit_lang or not portal or not refer_lang:
+            return render(
+                request,
+                "missing_articles_by_portal.html",
+                {"error": "Please select both a language and a portal."},
+            )
+
+        print("in missing_articles_by_portal language: ", edit_lang, ", portal:", portal)
+        get_articles_from_languages_by_portal(edit_lang, portal, refer_lang)
+
+    return render(request, "missing_articles_by_portal.html")
+
+
+def get_articles_from_languages_by_portal(request, edit_lang, portal, refer_lang):
+    articles = []
+    print("in get_articles_from_other_languages")
+    try:
+        # Get the Q code for the category from Wikidata
+        qcode = get_qcode(portal, edit_lang)
+        if not qcode:
+            return JsonResponse({"noQCode": "portal not found in wikipedia"})
+
+        # Get the localized category names for the selected Q code
+        category_name_in_refer_lang = get_page_name_in_refer_lang(qcode, refer_lang, edit_lang)
+        if not category_name_in_refer_lang:
+            return JsonResponse({"noCatError": " category names not found"}, status=400)
+
+        print(
+            f"in get_articles_from_other_languages: "
+            f"Fetching articles from {refer_lang}.wikipedia.org in category: "
+            f"{category_name_in_refer_lang}")  # Debugging
+
+        # Add the articles from the selected language (same process as before)
+        params = {
+            "action": "query",
+            "list": "categorymembers",
+            "cmtitle": f"{category_name_in_refer_lang}",
+            "cmtype": "page",
+            "cmlimit": 50,
+            "format": "json",
+        }
+        url = WIKI_API_URL.format(lang=refer_lang)
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        """ 
+            example of a response for تصنيف:صحة for arabic (ar) language: 
+            {
+              "batchcomplete": "",
+              "continue": {
+                "cmcontinue": 
+                "page|d8a7d984d8a5d8afd8a7d8b1d8a920d8a7d984d8b9d8a7d985d8a920d984d984d8b5d8add8a920d8a7d984d8b9d8b3d983d8b1d98ad8a9|3368070",
+                "continue": "-||"
+              },
+              "query": {
+                "categorymembers": [
+                  {
+                    "pageid": 1846,
+                    "ns": 0,
+                    "title": "صحة"
+                  },
+                  {
+                    "pageid": 8687431,
+                    "ns": 2,
+                    "title": "مستخدم:2marwa musa/ملعب"
+                  },
+                  {
+                    "pageid": 9424998,
+                    "ns": 2,
+                    "title": "مستخدم:Haton123th/4ملعب"
+                  },
+                  {
+                    "pageid": 8970486,
+                    "ns": 2,
+                    "title": "مستخدم:RAHMA MOHAMMED SALAHUDDIN/ملعب"
+                  },
+                  {
+                    "pageid": 5725344,
+                    "ns": 0,
+                    "title": "إصحاح بيئي"
+                  },
+                  {
+                    "pageid": 6493745,
+                    "ns": 0,
+                    "title": "اختلال الميكروبيوم"
+                  },
+                  {
+                    "pageid": 6560302,
+                    "ns": 0,
+                    "title": "استرات ايثيل حمض أوميجا 3"
+                  },
+                  {
+                    "pageid": 9254410,
+                    "ns": 0,
+                    "title": "الأثر النفسي للتمييز على الصحة"
+                  },
+                  {
+                    "pageid": 9371273,
+                    "ns": 0,
+                    "title": "الأخبار الطبية اليوم (موقع)"
+                  },
+                  {
+                    "pageid": 9365188,
+                    "ns": 0,
+                    "title": "الأسبوع الوطني لعدم التدخين"
+                  }
+                ]
+              }
+            }            
+        """
+        print("in get_articles_from_other_languages, data:", data)
+
+        # Add the articles to the list
+        articles.extend(article["title"] for article in data["query"]["categorymembers"])
+
+        # Check if there's more data (pagination)
+        while "continue" in data:
+            print("in get_articles_from_other_languages, continue?: ", data["continue"]["cmcontinue"])
+            params["cmcontinue"] = data["continue"]["cmcontinue"]
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            # Add more articles to the list
+            articles.extend(article["title"] for article in data["query"]["categorymembers"])
+
+        return JsonResponse({"articles": articles})
+
+    except Exception as e:
+        # logger.error(f"Error fetching articles from other languages: {str(e)}")
+        return JsonResponse({"error": str(e)}, status=500)

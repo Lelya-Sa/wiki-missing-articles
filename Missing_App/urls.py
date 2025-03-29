@@ -14,5 +14,6 @@ urlpatterns = [
     path('get_portals/<str:lang>/', views.get_portals, name='get_portals'),
     path('get_categories_with_query/<str:lang>/<str:query>/', views.get_categories_with_query,
          name='get_categories_with_query'),
+    path('missing_articles_by_portal/', views.missing_articles_by_portals, name='missing_articles_by_portal'),
 
 ]
