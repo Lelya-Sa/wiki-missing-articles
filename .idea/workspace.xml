@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="added search by portal or by category &#10;and listed articles with a url&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language">
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="deleted search by naem&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language">
+      <change beforePath="$PROJECT_DIR$/.idea/finalproject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/finalproject.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Missing_App/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/category-search.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/missing_articles.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/category-submission.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-submission.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_category.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles_by_category.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_portal.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles_by_portal.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +105,8 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
-    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
+    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: [
+    ]
   }
 }</component>
   <component name="RecentsManager">
@@ -116,13 +119,12 @@
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static\css" />
     </key>
   </component>
-  <component name="RunManager" selected="Django Server.fp">
+  <component name="RunManager" selected="Django Server.FinalProject">
     <configuration name="search_by_q.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/malak/templates/search_by_q.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
     <configuration name="FinalProject" type="Python.DjangoServer" factoryName="Django server">
       <module name="finalproject" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -157,7 +159,6 @@
     </configuration>
     <configuration name="fp" type="Python.DjangoServer" factoryName="Django server">
       <module name="finalproject" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -165,7 +166,6 @@
         <env name="DJANGO_SETTINGS_MODULE" value="finalproject.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.10 (djangoProject)" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -243,8 +243,11 @@
       <workItem from="1737665459124" duration="27241000" />
       <workItem from="1737748498425" duration="13889000" />
       <workItem from="1737805171829" duration="16437000" />
-      <workItem from="1737894695500" duration="50277000" />
-      <workItem from="1738155013243" duration="2189000" />
+      <workItem from="1737894695500" duration="49518000" />
+      <workItem from="1738233408563" duration="5000" />
+      <workItem from="1743679935997" duration="28000" />
+      <workItem from="1743679975864" duration="5130000" />
+      <workItem from="1743696016262" duration="4233000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -424,15 +427,7 @@
       <option name="project" value="LOCAL" />
       <updated>1738082011122</updated>
     </task>
-    <task id="LOCAL-00024" summary="added search by portal or by category &#10;and listed articles with a url&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language">
-      <option name="closed" value="true" />
-      <created>1738127548839</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1738127548839</updated>
-    </task>
-    <option name="localTasksCounter" value="25" />
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -476,7 +471,25 @@
     <MESSAGE value="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="fixed bugs in category page and redesigned&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="deleted search by naem&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
-    <MESSAGE value="added search by portal or by category &#10;and listed articles with a url&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
-    <option name="LAST_COMMIT_MESSAGE" value="added search by portal or by category &#10;and listed articles with a url&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
+    <option name="LAST_COMMIT_MESSAGE" value="deleted search by naem&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/static/js/category-search.js</url>
+          <line>229</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Missing_App/views.py</url>
+          <line>462</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/finalproject$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1737159218509" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

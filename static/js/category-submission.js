@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } while (continueToken);
         return backlinks;
     }
-
+/**
     // Function to fetch metadata for ranking
     async function getArticleMetadata(title, lang) {
         // TODO check each one by using a relevant function that insures fetching all
@@ -209,7 +209,174 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error fetching article metadata:", error);
             return null;
         }
+    }*/
+
+
+    async function fetchAllFromApi(baseUrl, params, dataKey) {
+    let results = [];
+    let continueParams = {};
+    let shouldContinue = true;
+
+    while (shouldContinue) {
+        const queryParams = new URLSearchParams({ ...params, ...continueParams, origin: '*' });
+        const response = await fetch(`${baseUrl}?${queryParams}`);
+        const data = await response.json();
+
+        if (data?.query?.pages) {
+            const page = Object.values(data.query.pages)[0];
+            if (page[dataKey]) {
+                results = results.concat(page[dataKey]);
+            }
+        }
+
+        if (data.continue) {
+            continueParams = data.continue;
+        } else {
+            shouldContinue = false;
+        }
     }
+
+    return results;
+}
+
+async function fetchAllBacklinks(title, lang) {
+    const baseUrl = `https://${lang}.wikipedia.org/w/api.php`;
+    let results = [];
+    let continueParams = {};
+    let shouldContinue = true;
+
+    while (shouldContinue) {
+        const params = new URLSearchParams({
+            action: "query",
+            list: "backlinks",
+            bltitle: title,
+            bllimit: "50",
+            format: "json",
+            ...continueParams,
+            origin: "*"
+        });
+
+        const response = await fetch(`${baseUrl}?${params}`);
+        const data = await response.json();
+
+        if (data?.query?.backlinks) {
+            results = results.concat(data.query.backlinks);
+        }
+
+        if (data.continue) {
+            continueParams = data.continue;
+        } else {
+            shouldContinue = false;
+        }
+    }
+
+    return results;
+}
+
+async function getArticleMetadata(title, lang) {
+    const baseUrl = `https://${lang}.wikipedia.org/w/api.php`;
+
+    try {
+        // Step 1: Basic info
+        const infoParams = new URLSearchParams({
+            action: "query",
+            prop: "info|pageviews",
+            titles: title,
+            format: "json",
+            origin: "*"
+        });
+
+        const infoResponse = await fetch(`${baseUrl}?${infoParams}`);
+        const infoData = await infoResponse.json();
+        const pageId = Object.keys(infoData.query.pages)[0];
+        if (pageId === "-1") return null;
+
+        const page = infoData.query.pages[pageId];
+
+        // Step 2: Fetch revisions
+        const revisions = await fetchAllFromApi(baseUrl, {
+            action: "query",
+            prop: "revisions",
+            titles: title,
+            rvprop: "ids|user|content",
+            rvslots: "main",
+            rvlimit: "50",
+            format: "json"
+        }, "revisions");
+
+        const revisionContent = revisions?.[0]?.slots?.main?.["*"] || "";
+        const referenceCount = (revisionContent.match(/<ref>/g) || []).length;
+
+        const editUsers = revisions.map(rev => rev.user);
+        const userEditCounts = editUsers.reduce((acc, user) => {
+            acc[user] = (acc[user] || 0) + 1;
+            return acc;
+        }, {});
+        const maxEditsByOneUser = Math.max(...Object.values(userEditCounts), 0);
+
+        // Step 3: Fetch langlinks
+        const langlinks = await fetchAllFromApi(baseUrl, {
+            action: "query",
+            prop: "langlinks",
+            titles: title,
+            lllimit: "50",
+            format: "json"
+        }, "langlinks");
+
+        // Step 4: Fetch templates
+        const templates = await fetchAllFromApi(baseUrl, {
+            action: "query",
+            prop: "templates",
+            titles: title,
+            tllimit: "50",
+            format: "json"
+        }, "templates");
+
+        // Step 5: Fetch backlinks
+        const backlinks = await fetchAllBacklinks(title, lang);
+
+        return {
+            title: title,
+
+
+            views: (() => {
+    if (!page.pageviews) return 0;
+    const last30 = Object.entries(page.pageviews)
+        .filter(([, v]) => v !== null)
+        .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA)) // tri décroissant
+        .slice(0, 30) // on garde les 30 derniers
+        .map(([, v]) => v);
+    return last30.reduce((a, b) => a + b, 0);
+    })(),
+
+
+
+            //views: page.pageviews ? Object.values(page.pageviews).reduce((a, b) => a + (b || 0), 0) : 0,
+            langlinks: langlinks.length,
+            editCount: revisions.length,
+            firstEdit: revisions.length > 0 ? revisions[revisions.length - 1].revid : null,
+            references: referenceCount,
+            editWars: maxEditsByOneUser,
+            quality: templates.length,
+            templates: templates.length,
+            backlinks: backlinks,
+            backlinksCount: backlinks.length,
+            pageRank: 0, // still placeholder
+        };
+    } catch (error) {
+        console.error("Error fetching article metadata:", error);
+        return null;
+    }
+}
+
+
+
+
+
+
+
+
+
 
     // Function to compute ranking score
     function computeRankingScore(metadata, weights) {
