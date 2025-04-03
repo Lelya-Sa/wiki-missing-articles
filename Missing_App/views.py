@@ -2,8 +2,6 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')  # Ensures proper encoding for print output
 
 import json
-from django.db import connection
-from django.http import HttpResponse
 from django.http import JsonResponse
 import requests
 from django.core.cache import cache  # Import Django's caching framework

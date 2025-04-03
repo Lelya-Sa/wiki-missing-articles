@@ -11,12 +11,12 @@ document.addEventListener("DOMContentLoaded", function () {
         langlinks: 0.35,
         editCount: 0.1,
         references: 0.05,
-        editWars: 0.025,
+        editWars: 0.025, //TODO
         quality: 0.05,
         templates: 0.025,
         backlinksCount: 0.05,
-        wikiLinksCount: 0,
-        pageRank: 0,
+        wikiLinksCount: 0, // TODO
+        pageRank: 0, //TODO
     };
 
     /**
@@ -175,9 +175,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const qualityIndicators = page.templates ? page.templates.length : 0;
 
 
+            // fetching backlinks
             let backlinks = {};
             let backlinksCount = 0;
-            // Now, fetch backlinks count
             try{
                 fetchAllBacklinks(title, lang).then(thebacklinks => {
                     backlinks = thebacklinks;
