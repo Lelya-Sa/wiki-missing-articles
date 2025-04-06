@@ -143,9 +143,6 @@ document.addEventListener("DOMContentLoaded", function () {
 /**
     // Function to fetch metadata for ranking
     async function getArticleMetadata(title, lang) {
-        // TODO check each one by using a relevant function that insures fetching all
-        //  the data using continue.
-        // for example: functions like: getviews(), getrivisions, getlanglinks(), gettemplate(),
         const apiUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=info|pageviews|revisions|langlinks|templates&rvprop=ids|user|content&rvlimit=50&rvslots=main&format=json&origin=*`;
 
         try {
@@ -153,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
             const pageId = Object.keys(data.query.pages)[0];
 
-            if (pageId === "-1") {
+            if (pageId === "-1") { // it is not a page. (it could be category)
                 return null;
             }
 
@@ -319,7 +316,7 @@ async function getArticleMetadata(title, lang) {
             action: "query",
             prop: "langlinks",
             titles: title,
-            lllimit: "50",
+            // lllimit: "50",
             format: "json"
         }, "langlinks");
 
@@ -337,20 +334,17 @@ async function getArticleMetadata(title, lang) {
 
         return {
             title: title,
-
-
             views: (() => {
-    if (!page.pageviews) return 0;
-    const last30 = Object.entries(page.pageviews)
-        .filter(([, v]) => v !== null)
-        .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA)) // tri décroissant
-        .slice(0, 30) // on garde les 30 derniers
-        .map(([, v]) => v);
-    return last30.reduce((a, b) => a + b, 0);
-    })(),
+                if (!page.pageviews)
+                    return 0;
+                const last30 = Object.entries(page.pageviews)
+                    .filter(([, v]) => v !== null)
+                    .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA)) // tri décroissant
+                    .slice(0, 30) // on garde les 30 derniers
+                    .map(([, v]) => v);
 
-
-
+                return last30.reduce((a, b) => a + b, 0);
+            })(),
             //views: page.pageviews ? Object.values(page.pageviews).reduce((a, b) => a + (b || 0), 0) : 0,
             langlinks: langlinks.length,
             editCount: revisions.length,
@@ -363,20 +357,12 @@ async function getArticleMetadata(title, lang) {
             backlinksCount: backlinks.length,
             pageRank: 0, // still placeholder
         };
+
     } catch (error) {
         console.error("Error fetching article metadata:", error);
         return null;
     }
 }
-
-
-
-
-
-
-
-
-
 
     // Function to compute ranking score
     function computeRankingScore(metadata, weights) {
