@@ -668,5 +668,3 @@ async function getArticleMetadata(title, lang) {
     }
     );
 });
-
-
