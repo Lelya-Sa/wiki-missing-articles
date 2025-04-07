@@ -529,12 +529,11 @@ async function getArticleMetadata(title, lang) {
 
             console.log("", data);
 
-            // if(Object.keys(data).includes("noCatError")){
             if(data.noCatError){
                 console.log("noCatError");
                 throw new Error("noCatError");
             }
-            // else if(Object.keys(data).includes("noQCode")){
+
             else if(data.noQCode){
                 console.log("noQCode");
                 throw new Error("noQCode");
@@ -574,7 +573,6 @@ async function getArticleMetadata(title, lang) {
                     `;
                     tableBody.appendChild(row);
                 });
-
 
                 // console.log(" the metadataList is ", filteredMetadataList);
 
@@ -631,15 +629,23 @@ async function getArticleMetadata(title, lang) {
                 tableBody.innerHTML = "";  // Clear previous rows
 
                 filteredMetadataList.forEach((meta,index) => {
-                    const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(meta.title)}`;
-                    console.log("meta is :",meta)
+                    const encodedTitle = encodeURIComponent(meta.title);
+
+                    const referenceWikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(meta.title)}`;
+                    const wikiUrl =
+                        `https://${languageCode}.wikipedia.org/w/index.php?title=${encodedTitle}&action=edit`;
+
                     const row = document.createElement("tr");
                     row.innerHTML = `
                                     <td style="border: 1px solid #ccc; padding: 8px;">${index + 1}</td>
-                                    <td style="border: 1px solid #ccc; padding: 8px;">${meta.title}</td>
+                                    <td style="border: 1px solid #ccc; padding: 8px;">${meta.title} 
+                                    - Score: ${meta.score.toFixed(2)} 
+                                    </td>
                                     <td style="border: 1px solid #ccc; padding: 8px;">
-                                        <a href="${wikiUrl}" target="_blank">View Article</a>
-                                            - Score: ${meta.score.toFixed(2)}
+                                        <a href="${referenceWikiUrl}" target="_blank">View Article</a> 
+                                        - 
+                                        <a href="${wikiUrl}" target="_blank">Edit Article</a>
+                                            
                                     </td>
                     `;
                     tableBody.appendChild(row);

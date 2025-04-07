@@ -508,3 +508,14 @@ h1 {
     border: double #97b7e4;
 
 }
+.articles-table th {
+    background-color: #f5f5f5;
+    text-align: left;
+}
+.articles-table td, .articles-table th {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+.articles-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
