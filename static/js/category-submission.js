@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("missing-articles-form");
-    // const referArticlesList = document.getElementById("referArticles");
-    const articlesList = document.getElementById("articles");
-    // const all_res_spinner = document.getElementById("all_res_spinner");
+
     const ranked_res_spinner = document.getElementById("ranked_res_spinner");
+
+    const articles_msg = document.getElementById("articles_msg");
+
+    const tableBody = document.getElementById("articles-table-body");
 
     // Define weight values
     const weights = {
@@ -370,8 +372,8 @@ async function getArticleMetadata(title, lang) {
             words_bytes_ratio: words_bytes_ratio,
             // quality: assessment,
             templates: templates.length,
-            in_links: linkData.links_in_count + linkData.links_ext_count,
-            out_links: linkData.links_out_count,
+            in_links: links_in + links_ext_count,
+            out_links: links_out,
             secs_since_last_edit: secs_since_last_edit,
             // backlinks: backlinks,
             pageRank: 0, // TODO still placeholder
@@ -485,6 +487,7 @@ async function getArticleMetadata(title, lang) {
 
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
+        tableBody.innerHTML = "";
 
         const edit_lang = document.getElementById("article-language-search").value.trim();
         const refer_lang = document.getElementById("article-refer-language-search").value.trim();
@@ -495,10 +498,8 @@ async function getArticleMetadata(title, lang) {
             return;
         }
 
-        // referArticlesList.innerHTML = "<li>Loading missing articles...</li>";
-        // all_res_spinner.style.display = "inline-block";
+        articles_msg.innerHTML = "Loading missing articles...";  // Clear previous rows
 
-        articlesList.innerHTML = "<li>Loading missing articles...</li>";
         ranked_res_spinner.style.display = "inline-block";
 
         try {
@@ -539,28 +540,10 @@ async function getArticleMetadata(title, lang) {
                 throw new Error("noQCode");
             }
 
-            // Clear previous results
-            articlesList.innerHTML = "";
-            // referArticlesList.innerHTML= "";
-
-            // list the articles of reference language in the selected category
-            // if (data.articles && data.articles.length > 0) {
-            //     data.articles.forEach(article => {
-            //         const articleLink = document.createElement("li");
-            //         const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(article)}`;
-            //         articleLink.innerHTML = `<a href="${wikiUrl}" target="_blank">${article}</a>`;
-            //         referArticlesList.appendChild(articleLink);
-            //     });
-            // } else {
-            //     referArticlesList.innerHTML = "<li>No missing articles found.</li>";
-            // }
-            // all_res_spinner.style.display = "none";
-
-            // articlesData is an array of article titles to rank.
-            // const articlesData = []
-
             // Check if each reference article exists in the edit language and rank them
             if (data.articles && data.articles.length > 0) {
+                articles_msg.innerHTML = "found articles, now fetching metadata...";
+
                 const checkPromises = data.articles.map(async (article) => {
                     const [exists, translatedTitle] = await checkPageInLanguage(article, referLanguageCode, languageCode);
 
@@ -575,6 +558,24 @@ async function getArticleMetadata(title, lang) {
 
                 // Filter out nulls (existing pages)
                 const filteredMetadataList = (await Promise.all(checkPromises)).filter(Boolean);
+
+                articles_msg.innerHTML = "Ranking...";
+                tableBody.innerHTML = "";
+                filteredMetadataList.forEach((meta,index) => {
+                    const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(meta.title)}`;
+
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                                    <td style="border: 1px solid #ccc; padding: 8px;">${index + 1}</td>
+                                    <td style="border: 1px solid #ccc; padding: 8px;">${meta.title}</td>
+                                    <td style="border: 1px solid #ccc; padding: 8px;">
+                                        <a href="${wikiUrl}" target="_blank">View Article</a>
+                                    </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+
                 // console.log(" the metadataList is ", filteredMetadataList);
 
                 // const rank = computePageRank(articlesData);
@@ -627,22 +628,32 @@ async function getArticleMetadata(title, lang) {
                 filteredMetadataList.sort((a, b) => b.score - a.score);
 
                 // Display sorted missing articles
-                articlesList.innerHTML = "";
-                filteredMetadataList.forEach((meta) => {
-                    const articleLink = document.createElement("li");
+                tableBody.innerHTML = "";  // Clear previous rows
+
+                filteredMetadataList.forEach((meta,index) => {
                     const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(meta.title)}`;
-                    articleLink.innerHTML = `<a href="${wikiUrl}" target="_blank">${meta.title}</a> - Score: ${meta.score.toFixed(2)}`;
-                    articlesList.appendChild(articleLink);
+                    console.log("meta is :",meta)
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                                    <td style="border: 1px solid #ccc; padding: 8px;">${index + 1}</td>
+                                    <td style="border: 1px solid #ccc; padding: 8px;">${meta.title}</td>
+                                    <td style="border: 1px solid #ccc; padding: 8px;">
+                                        <a href="${wikiUrl}" target="_blank">View Article</a>
+                                            - Score: ${meta.score.toFixed(2)}
+                                    </td>
+                    `;
+                    tableBody.appendChild(row);
                 });
+                articles_msg.innerHTML = "";
+
             } else {
-                articlesList.innerHTML = "<li>No missing articles found.</li>";
+                tableBody.innerHTML = "<li>No missing articles found.</li>";
             }
             ranked_res_spinner.style.display = "none";
 
         } catch (error) {
             if (error.message === "noCatError"){
-                    // referArticlesList.innerHTML = "<li>category not found in reference language.</li>";
-                    articlesList.innerHTML = "<li>category not found in reference language.</li>";
+                    tableBody.innerHTML = "<li>category not found in reference language.</li>";
                     // all_res_spinner.style.display = "none";
                     ranked_res_spinner.style.display = "none";
                     console.error("category not found in reference language.: ", error);
@@ -650,8 +661,7 @@ async function getArticleMetadata(title, lang) {
             }
 
             else if (error.message === "noQCode"){
-                    // referArticlesList.innerHTML = "<li>there are no pages under this category</li>";
-                    articlesList.innerHTML = "<li>there are no pages under this category,or this is a red link</li>";
+                    tableBody.innerHTML = "<li>there are no pages under this category,or this is a red link</li>";
                     // all_res_spinner.style.display = "none";
                     ranked_res_spinner.style.display = "none";
                     console.error("this category is a redlink:", error);
@@ -659,8 +669,7 @@ async function getArticleMetadata(title, lang) {
             }
 
             else{
-                // referArticlesList.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
-                articlesList.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
+                tableBody.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
                 ranked_res_spinner.style.display = "none";
                 console.error("Error fetching articles:", error);
             }

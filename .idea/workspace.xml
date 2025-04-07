@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="fixed error handling issue&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/category-submission.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-submission.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_category.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles_by_category.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -256,7 +257,7 @@
       <workItem from="1742459367541" duration="15563000" />
       <workItem from="1742827322948" duration="68021000" />
       <workItem from="1743695329426" duration="9741000" />
-      <workItem from="1743956972838" duration="33237000" />
+      <workItem from="1743956972838" duration="36677000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -556,7 +557,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744048475266</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="fixed error handling issue&#10;TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1744058504814</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1744058504814</updated>
+    </task>
+    <task id="LOCAL-00040" summary="fixed error handling issue&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1744058652864</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1744058652864</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -586,8 +603,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="&#10;views.py&#10;search_by_q.html" />
-    <MESSAGE value="&#10;views.py&#10;search_by_name.html&#10;urls.py" />
     <MESSAGE value="Search in main categories is Done&#10;TODO : search by subcategories&#10;exclude articles in selected language" />
     <MESSAGE value="added navigation to main page&#10;TODO : search by subcategories&#10;exclude articles in selected language" />
     <MESSAGE value="added navigation to main page&#10;restyled main page&#10;TODO : search by subcategories&#10;exclude articles in selected language" />
@@ -611,6 +626,8 @@
     <MESSAGE value="TODO : &#10;-correct fetching info functions&#10;-fix portal search&#10;-discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
     <MESSAGE value="TODO : &#10;-correct fetching info functions&#10;-fix portal search&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
     <MESSAGE value="TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
-    <option name="LAST_COMMIT_MESSAGE" value="TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <MESSAGE value="fixed error handling issue&#10;TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <MESSAGE value="fixed error handling issue&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed error handling issue&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)" />
   </component>
 </project>

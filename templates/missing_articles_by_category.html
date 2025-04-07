@@ -49,8 +49,11 @@
         <h2 style="text-align: center;">Search Missing Articles by Category</h2>
         
         <p id="general-message" 
-           class="info_msg" style="margin-right: 150px">
-            First enter the edit language on the left, and the reference language on the right
+           class="info_msg" style="    width: 100%;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;">
+            First enter the language you want to contribute to on the left, and the reference language on the right
         </p>
         
         <form id="missing-articles-form" style="display: flex; /* Enables flexbox */">
@@ -63,7 +66,7 @@
                 <!-- Language Search Bar -->
                 <div class="article-language-selector" id="article-language-selector" style="margin-left: 35px">
                     <label for="language" style="color: black;font-size: large">
-                         Select the language you want to <b>edit</b>:
+                         Select the language you want to <b>contribute</b> to:
                     </label>
                     
                     <br>
@@ -121,7 +124,7 @@
             <div style="width: 100%; margin-left: 0;margin-right:0; text-align: center" class="info_msg">
                 <!-- message -->
                 <p id="category-message">
-                    you can search from all categories in the selected editing language
+                    you can search from all categories in the selected contribution language
                 </p>
             </div>
             
@@ -129,7 +132,7 @@
             
             <div class="the-selector" id="all-category-selector-class" style="margin-left: 0">
                 <!-- all category Selector -->
-                <label for="all-category" style="color: black;font-size: large">Write a category name:</label>
+                <label for="all-category" style="color: black;font-size: large">Write a category name in contribute language:</label>
                 <div id="all-category" class="the-selector" style="border: none; width: 80%;">
                     <input 
                         type="text" 
@@ -157,36 +160,50 @@
             </div>
         </form>
                 
+        <br>
         <div style="width: 76%; margin-left: 150px;" class="info_msg">
                 <!-- message -->
-                <p id="articles-message">
-                    below is all the articles in reference language,
-                    scroll down more to see the missing articles in edit language
-                </p>
+            <p id="articles-message">
+                below are the missing articles in the language you want to contribute to
+            </p>
         </div>
         
         <div style="width: 98%" >
-{#            <h2 style="margin-left: 150px; text-align: left;">#}
-{#                all Articles in Selected Category in reference Language:#}
-{#            </h2>#}
-{#            <div id="all_res_spinner" style="display: none;">#}
-{#                <img src='/static/images/spinner.gif' alt='Loading Res...'>#}
-{#                Loading results...#}
-{#            </div>#}
-{#            <ul id="referArticles"></ul>#}
-{#            #}
-{#            <br>#}
-{#            <br>#}
             
             <h2 style="margin-left: 150px; text-align: left;">
-                Articles Missing in Selected Language:
+                Articles Missing in Selected Contribute Language:
             </h2>
+            
             <div id="ranked_res_spinner" style="display: none;">
                 <img src='/static/images/spinner.gif' alt='Loading Ranked...'>
 {#                Loading results...#}
             </div>
-            <ul id="articles"></ul>
-    
+            
+            <p id="articles_msg", style="
+                                    {#width: 100%;#}
+                                    text-align: center"> </p>
+
+            <br>
+            
+            <table id="articles-table" class="articles-table" style="
+                                            width: 78%;
+                                            text-align: center;
+                                            {#max-width: 1100px;#}
+                                            margin-left: 150px;
+                                            {#margin-right: 800px;#}
+                                         border-collapse: collapse;">
+                <thead>
+                <tr>
+                    <th style="border: 1px solid #ccc; padding: 8px;"> </th>
+                    <th style="border: 1px solid #ccc; padding: 8px;">Title</th>
+                    <th style="border: 1px solid #ccc; padding: 8px;">Link</th>
+                </tr>
+                </thead>
+                <tbody id="articles-table-body">
+                <!-- Rows will be inserted here dynamically -->
+                </tbody>
+            </table>
+            
             <br>
             <br>
             <br>
