@@ -50,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch languages
     async function fetchLanguages() {
         articleLanguageList.innerHTML = "<li>Loading languages...</li>";
-        articleReferLanguageList.innerHTML = "<li>Loading languages...</li>";
 
         try {
             const response = await fetch("/api/supported_languages/");
@@ -61,6 +60,19 @@ document.addEventListener("DOMContentLoaded", () => {
             populateLanguageList(""); // Populate list initially
         } catch (error) {
             articleLanguageList.innerHTML = "<li style='color: red;'>Failed to load languages.</li>";
+            console.error("Error fetching languages:", error);
+        }
+    }
+    async function fetchReferLanguages() {
+        articleReferLanguageList.innerHTML = "<li>Loading languages...</li>";
+        try {
+            const response = await fetch("/api/supported_languages/");
+            if (!response.ok) throw new Error("Failed to fetch languages");
+            const data = await response.json();
+            languages = data.languages;
+
+            populateReferLanguageList(""); // Populate list initially
+        } catch (error) {
             articleReferLanguageList.innerHTML = "<li style='color: red;'>Failed to load languages.</li>";
             console.error("Error fetching languages:", error);
         }
@@ -73,11 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         articleLanguageList.innerHTML = ""; // Clear the list
-        articleReferLanguageList.innerHTML = ""; // Clear the list
 
         if (!filteredLanguages.length) {
             articleLanguageList.innerHTML = "<li>No results found</li>";
-            articleReferLanguageList.innerHTML = "<li>No results found</li>";
             return;
         }
 
@@ -94,8 +104,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 fetchAllCategories(lang.code); // Fetch all categories for selected language
             });
             articleLanguageList.appendChild(listItem);
-
         });
+    }
+
+    function populateReferLanguageList(query = "") {
+        const filteredLanguages = languages.filter((lang) =>
+            lang.name.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
+        );
+
+        articleReferLanguageList.innerHTML = ""; // Clear the list
+
+        if (!filteredLanguages.length) {
+            articleReferLanguageList.innerHTML = "<li>No results found</li>";
+            return;
+        }
+
         filteredLanguages.forEach((lang) => {
             const listItem = document.createElement("li");
             listItem.textContent = `${lang.name} (${lang.code})`;
@@ -109,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             });
             articleReferLanguageList.appendChild(listItem);
-
         });
     }
 
@@ -122,11 +144,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Handle input changes for filtering, Event listener for the language input field
     articleReferLanguageSearchInput.addEventListener("input", () => {
         const query = articleReferLanguageSearchInput.value.toLowerCase();
-        populateLanguageList(query);
+        populateReferLanguageList(query);
     });
 
     // Fetch languages on page load
     fetchLanguages();
+    fetchReferLanguages();
 
     // Function to fetch all categories
     async function fetchAllCategories(lang, query = "") {

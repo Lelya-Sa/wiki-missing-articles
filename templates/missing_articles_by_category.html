@@ -166,17 +166,17 @@
         </div>
         
         <div style="width: 98%" >
-            <h2 style="margin-left: 150px; text-align: left;">
-                all Articles in Selected Category in reference Language:
-            </h2>
-            <div id="all_res_spinner" style="display: none;">
-                <img src='/static/images/spinner.gif' alt='Loading Res...'>
+{#            <h2 style="margin-left: 150px; text-align: left;">#}
+{#                all Articles in Selected Category in reference Language:#}
+{#            </h2>#}
+{#            <div id="all_res_spinner" style="display: none;">#}
+{#                <img src='/static/images/spinner.gif' alt='Loading Res...'>#}
 {#                Loading results...#}
-            </div>
-            <ul id="referArticles"></ul>
-            
-            <br>
-            <br>
+{#            </div>#}
+{#            <ul id="referArticles"></ul>#}
+{#            #}
+{#            <br>#}
+{#            <br>#}
             
             <h2 style="margin-left: 150px; text-align: left;">
                 Articles Missing in Selected Language:
@@ -195,28 +195,9 @@
         
     </div>
 
-<script src="{% static 'js/category-search.js' %}" defer></script>
-<script src="{% static 'js/language-selector.js' %}" defer></script>
-<script src="{% static 'js/category-submission.js' %}" defer></script>
-    
-    <script>
-        
-        $(document).ready(function () {
-    const portalSearch = $("#portal-search");
-
-    // Check if the portal search field is visible
-    console.log("Portal Search Visible:", portalSearch.is(":visible"));
-
-    // Add a focus handler for debugging
-    portalSearch.focus(function () {
-        console.log("Portal search input is focused.");
-    });
-
-    // Example test log to ensure JS runs correctly
-    console.log("Portal Selector Initialized!");
-});
-
-    </script>
+    <script src="{% static 'js/category-search.js' %}" defer></script>
+    <script src="{% static 'js/language-selector.js' %}" defer></script>
+    <script src="{% static 'js/category-submission.js' %}" defer></script>
 
 </body>
 </html>
