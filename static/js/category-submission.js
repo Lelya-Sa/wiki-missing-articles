@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("missing-articles-form");
     // const referArticlesList = document.getElementById("referArticles");
     const articlesList = document.getElementById("articles");
-    const all_res_spinner = document.getElementById("all_res_spinner");
+    // const all_res_spinner = document.getElementById("all_res_spinner");
     const ranked_res_spinner = document.getElementById("ranked_res_spinner");
 
     // Define weight values
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
         editCount: 0.1,
         references: 0.05,
         editWars: 0.025, //TODO
-        quality: 0.05,
+        // quality: 0.05,
         templates: 0.025,
         backlinksCount: 0.05,
         wikiLinksCount: 0, // TODO
@@ -242,20 +242,20 @@ async function getArticleMetadata(title, lang) {
          *
          * **/
         const pageviews =  infoData.pageviews? infoData.pageviews : 0;
-        console.log("Pageviews (1 months):", pageviews);
+        // console.log("Pageviews (1 months):", pageviews);
 
         // Step 2: Fetch revisions
         const revisions = infoData.revisions? infoData.revisions : 0;
-        console.log("revisions count:", revisions);
+        // console.log("revisions count:", revisions);
 
         const editors = infoData.editors ? infoData.editors : 0;
-        console.log("editors count:", editors);
+        // console.log("editors count:", editors);
 
         const created_at = infoData.created_at ? infoData.created_at : 0;
-        console.log("created_at :", created_at); // ex. 2017-08-05T07:28:48Z
+        // console.log("created_at :", created_at); // ex. 2017-08-05T07:28:48Z
 
         const secs_since_last_edit = infoData.secs_since_last_edit ? infoData.secs_since_last_edit : 0;
-        console.log("secs_since_last_edit", secs_since_last_edit);
+        // console.log("secs_since_last_edit", secs_since_last_edit);
 
         // TODO under development
         // const assessmentsResponse = await fetch(xToolInfoUrl);
@@ -278,20 +278,20 @@ async function getArticleMetadata(title, lang) {
         //     const assessment = 0;
         // }
         const assessment = infoData.assessment ? infoData.assessment.value : 0;
-        console.log("assessment", assessment);
+        // console.log("assessment", assessment);
 
         const proseResponse = await fetch(xToolProseStatisticsUrl);
         if (!proseResponse.ok) throw new Error("proseResponse API request failed");
         const proseData = await proseResponse.json();
 
         const references = proseData.references ? proseData.references : 0;
-        console.log(title , " Page references :", references);
+        // console.log(title , " Page references :", references);
 
         const words = proseData.words ? proseData.words : 0;
-        console.log(title , " Page word count:", words);
+        // console.log(title , " Page word count:", words);
 
         const bytesSize = proseData.bytes ? proseData.bytes : 0;
-        console.log(title , " Page size:", bytesSize);
+        // console.log(title , " Page size:", bytesSize);
 
         let words_bytes_ratio;
         if(bytesSize!==0){
@@ -300,7 +300,7 @@ async function getArticleMetadata(title, lang) {
         else{
             words_bytes_ratio = 0;
         }
-        console.log(title , " words_bytes_ratio :", words_bytes_ratio);
+        // console.log(title , " words_bytes_ratio :", words_bytes_ratio);
 
         // Step 3: Basic info
         const infoParams = new URLSearchParams({
@@ -319,7 +319,7 @@ async function getArticleMetadata(title, lang) {
          * */
 
         if (pageId === "-1") {
-            console.log(title, " pageID = -1")
+            // console.log(title, " pageID = -1")
             return null;
         }
         // Step 4: Fetch langlinks
@@ -330,7 +330,7 @@ async function getArticleMetadata(title, lang) {
             lllimit: "50",
             format: "json"
         }, "langlinks");
-        console.log(title, "  langlinks=", langlinks );
+        // console.log(title, "  langlinks=", langlinks );
 
         // Step 5: Fetch templates
         const templates = await fetchAllFromApi(baseUrl, {
@@ -340,7 +340,7 @@ async function getArticleMetadata(title, lang) {
             tllimit: "50",
             format: "json"
         }, "templates");
-        console.log(title, "  templates=", templates );
+        // console.log(title, "  templates=", templates );
 
         // Step 5: Fetch in links and out links
         const linkResponse = await fetch(xToolLinksUrl);
@@ -348,16 +348,16 @@ async function getArticleMetadata(title, lang) {
         const linkData = await linkResponse.json();
 
         const links_in = linkData.links_in ? linkData.links_in : 0;
-        console.log(title,"links_in to page:", links_in);
+        // console.log(title,"links_in to page:", links_in);
 
         const links_ext_count = linkData.links_ext_count ? linkData.links_ext_count : 0;
-        console.log(title,"links_ext_count to page:", links_ext_count);
+        // console.log(title,"links_ext_count to page:", links_ext_count);
 
         const links_out = linkData.links_out ? linkData.links_out : 0;
-        console.log(title,"links_out from page:", links_out);
+        // console.log(title,"links_out from page:", links_out);
 
         const redirects = linkData.redirects ? linkData.redirects : 0;
-        console.log(title,"Redirects:", redirects);
+        // console.log(title,"Redirects:", redirects);
 
         return {
             title: title,
@@ -368,7 +368,7 @@ async function getArticleMetadata(title, lang) {
             references: references,
             editWars: revisions / editors,
             words_bytes_ratio: words_bytes_ratio,
-            quality: assessment,
+            // quality: assessment,
             templates: templates.length,
             in_links: linkData.links_in_count + linkData.links_ext_count,
             out_links: linkData.links_out_count,
@@ -380,8 +380,8 @@ async function getArticleMetadata(title, lang) {
     } catch (error) {
         console.error("Error fetching article metadata:", error);
         return {
-
-        };
+        }
+        ;
     }
 }
 
@@ -393,7 +393,7 @@ async function getArticleMetadata(title, lang) {
             metadata.normEditCount * weights.editCount +
             metadata.normReferences * weights.references +
             metadata.normEditWars * weights.editWars +
-            metadata.normQuality * weights.quality +
+            // metadata.normQuality * weights.quality +
             metadata.normTemplates * weights.templates +
             metadata.normBacklinksCount * weights.backlinksCount +
             metadata.pageRank * weights.pageRank
@@ -490,7 +490,6 @@ async function getArticleMetadata(title, lang) {
         const refer_lang = document.getElementById("article-refer-language-search").value.trim();
         const category = document.getElementById("all-category-search").value.trim();
 
-
         if (!edit_lang || !category || !refer_lang ) {
             alert("Please select both a language and a category.");
             return;
@@ -503,8 +502,8 @@ async function getArticleMetadata(title, lang) {
         ranked_res_spinner.style.display = "inline-block";
 
         try {
-            console.log("Submitting request: edit_lang:", edit_lang,
-                        ", refer_lang", refer_lang, "category:", category);
+            // console.log("Submitting request: edit_lang:", edit_lang,
+            //             ", refer_lang", refer_lang, "category:", category);
 
             // Extract language code (inside parentheses)
             const languageCode = edit_lang.match(/\((.*?)\)/)?.[1];
@@ -519,8 +518,8 @@ async function getArticleMetadata(title, lang) {
                 return;
             }
 
-            console.log("Extracted language codes in category-submission.js:",'edit:', languageCode,
-                ' , refer',referLanguageCode);
+            // console.log("Extracted language codes in category-submission.js:",'edit:', languageCode,
+            //     ' , refer',referLanguageCode);
 
             // Fetch missing articles
             const response = await fetch(
@@ -529,11 +528,15 @@ async function getArticleMetadata(title, lang) {
 
             console.log("", data);
 
-            if(Object.keys(data).includes("noCatError")){
+            // if(Object.keys(data).includes("noCatError")){
+            if(data.noCatError){
+                console.log("noCatError");
                 throw new Error("noCatError");
             }
-            else if(Object.keys(data).includes("noQcode")){
-                throw new Error("noQcode");
+            // else if(Object.keys(data).includes("noQCode")){
+            else if(data.noQCode){
+                console.log("noQCode");
+                throw new Error("noQCode");
             }
 
             // Clear previous results
@@ -557,14 +560,14 @@ async function getArticleMetadata(title, lang) {
             // const articlesData = []
 
             // Check if each reference article exists in the edit language and rank them
-            if (data.articles.length > 0) {
+            if (data.articles && data.articles.length > 0) {
                 const checkPromises = data.articles.map(async (article) => {
                     const [exists, translatedTitle] = await checkPageInLanguage(article, referLanguageCode, languageCode);
 
                     if (exists === 1) {
-                        console.log(`Page exists in ${languageCode}:`, translatedTitle);
+                        // console.log(`Page exists in ${languageCode}:`, translatedTitle);
                     } else {
-                        console.log(`Page does NOT exist in ${languageCode}:`, article);
+                        // console.log(`Page does NOT exist in ${languageCode}:`, article);
                         // articlesData.push(article);
                         return getArticleMetadata(article, referLanguageCode);
                     }
@@ -572,7 +575,7 @@ async function getArticleMetadata(title, lang) {
 
                 // Filter out nulls (existing pages)
                 const filteredMetadataList = (await Promise.all(checkPromises)).filter(Boolean);
-                console.log(" the metadataList is ", filteredMetadataList);
+                // console.log(" the metadataList is ", filteredMetadataList);
 
                 // const rank = computePageRank(articlesData);
                 // const normalizedPageRank = normalizeScores(rank);
@@ -592,7 +595,7 @@ async function getArticleMetadata(title, lang) {
                   editCount: Math.max(...filteredMetadataList.map(m => m.editCount)),
                   references: Math.max(...filteredMetadataList.map(m => m.references)),
                   editWars: Math.max(...filteredMetadataList.map(m => m.editWars)),
-                  quality: Math.max(...filteredMetadataList.map(m => m.quality)),
+                  // quality: Math.max(...filteredMetadataList.map(m => m.quality)),
                   templates: Math.max(...filteredMetadataList.map(m => m.templates)),
                   backlinksCount: Math.max(...filteredMetadataList.map(m => m.backlinksCount))
                 };
@@ -611,7 +614,7 @@ async function getArticleMetadata(title, lang) {
                   m.normEditWars = maxValues.editWars ? m.editWars / maxValues.editWars : 0;
 
                   // If higher quality should lower the score because it needs more editing
-                  m.normQuality = maxValues.quality ? 1 - (m.quality / maxValues.quality) : 0;
+                  // m.normQuality = maxValues.quality ? 1 - (m.quality / maxValues.quality) : 0;
 
                   // If higher template usage then should lower the score because it needs more editing
                   m.normTemplates = maxValues.templates ? 1- (m.templates / maxValues.templates) : 0;
@@ -636,29 +639,30 @@ async function getArticleMetadata(title, lang) {
             }
             ranked_res_spinner.style.display = "none";
 
-
         } catch (error) {
-            console.error("Error fetching articles:", error);
-
-            if (Object.keys(error).includes("noCatError")){
+            if (error.message === "noCatError"){
                     // referArticlesList.innerHTML = "<li>category not found in reference language.</li>";
                     articlesList.innerHTML = "<li>category not found in reference language.</li>";
                     // all_res_spinner.style.display = "none";
                     ranked_res_spinner.style.display = "none";
+                    console.error("category not found in reference language.: ", error);
 
             }
-            else if (Object.keys(error).includes("noQCode")){
+
+            else if (error.message === "noQCode"){
                     // referArticlesList.innerHTML = "<li>there are no pages under this category</li>";
-                    articlesList.innerHTML = "<li>there are no pages under this category, this is a red link</li>";
-                    all_res_spinner.style.display = "none";
+                    articlesList.innerHTML = "<li>there are no pages under this category,or this is a red link</li>";
+                    // all_res_spinner.style.display = "none";
                     ranked_res_spinner.style.display = "none";
+                    console.error("this category is a redlink:", error);
 
             }
+
             else{
                 // referArticlesList.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
                 articlesList.innerHTML = "<li>Error loading missing articles. Please try again later.</li>";
                 ranked_res_spinner.style.display = "none";
-
+                console.error("Error fetching articles:", error);
             }
         }
     }

@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="deleted search by naem&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language">
-      <change beforePath="$PROJECT_DIR$/.idea/finalproject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/finalproject.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/category-submission.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-submission.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_category.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles_by_category.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_portal.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles_by_portal.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,8 +21,8 @@
       <list>
         <option value="HTML File" />
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="Python Script" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -94,37 +90,39 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
     &quot;git-widget-placeholder&quot;: &quot;lelya&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/lelya/Desktop/py/finalproject/templates&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/lelya/Desktop/py/finalproject&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ssh.settings&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
-    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: [
-    ]
+    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\lelya\Desktop\py\finalproject" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\templates" />
       <recent name="D:\Technion\FifthYear\semester9\malak\templates" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\lelya\Desktop\py\finalproject\static" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static\images\not used" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static\css" />
     </key>
   </component>
-  <component name="RunManager" selected="Django Server.FinalProject">
+  <component name="RunManager" selected="Django Server.fp">
     <configuration name="search_by_q.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/malak/templates/search_by_q.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
     <configuration name="FinalProject" type="Python.DjangoServer" factoryName="Django server">
       <module name="finalproject" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -159,6 +157,7 @@
     </configuration>
     <configuration name="fp" type="Python.DjangoServer" factoryName="Django server">
       <module name="finalproject" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -166,6 +165,7 @@
         <env name="DJANGO_SETTINGS_MODULE" value="finalproject.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.10 (djangoProject)" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -211,6 +211,9 @@
     </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\lelya\AppData\Roaming\Subversion</configuration>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="" />
@@ -243,11 +246,17 @@
       <workItem from="1737665459124" duration="27241000" />
       <workItem from="1737748498425" duration="13889000" />
       <workItem from="1737805171829" duration="16437000" />
-      <workItem from="1737894695500" duration="49518000" />
-      <workItem from="1738233408563" duration="5000" />
-      <workItem from="1743679935997" duration="28000" />
-      <workItem from="1743679975864" duration="5130000" />
-      <workItem from="1743696016262" duration="4233000" />
+      <workItem from="1737894695500" duration="50277000" />
+      <workItem from="1738155013243" duration="2366000" />
+      <workItem from="1738172610420" duration="2495000" />
+      <workItem from="1741132389867" duration="15545000" />
+      <workItem from="1741337456311" duration="556000" />
+      <workItem from="1741966712170" duration="484000" />
+      <workItem from="1742021311658" duration="58790000" />
+      <workItem from="1742459367541" duration="15563000" />
+      <workItem from="1742827322948" duration="68021000" />
+      <workItem from="1743695329426" duration="9741000" />
+      <workItem from="1743956972838" duration="33237000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -427,7 +436,127 @@
       <option name="project" value="LOCAL" />
       <updated>1738082011122</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="added search by portal or by category &#10;and listed articles with a url&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language">
+      <option name="closed" value="true" />
+      <created>1738127548839</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1738127548839</updated>
+    </task>
+    <task id="LOCAL-00025" summary="hided portal and added use message&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language">
+      <option name="closed" value="true" />
+      <created>1738157393995</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1738157393995</updated>
+    </task>
+    <task id="LOCAL-00026" summary="design&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language">
+      <option name="closed" value="true" />
+      <created>1741157211886</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1741157211886</updated>
+    </task>
+    <task id="LOCAL-00027" summary="design&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language">
+      <option name="closed" value="true" />
+      <created>1741233380126</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1741233380126</updated>
+    </task>
+    <task id="LOCAL-00028" summary="design and added the reference language selection&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language">
+      <option name="closed" value="true" />
+      <created>1742114127370</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1742114127370</updated>
+    </task>
+    <task id="LOCAL-00029" summary="listed the retrieved articles from refer lang&#10;TODO : &#10;list missing articles in edit lang&#10;exclude articles in selected language&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1742234058838</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1742234058838</updated>
+    </task>
+    <task id="LOCAL-00030" summary="listed missing articles fron edit_lang in refer lang&#10;TODO : &#10;list missing articles in edit lang not in refer&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1742397050524</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1742397050524</updated>
+    </task>
+    <task id="LOCAL-00031" summary="listed missing articles with ranking.&#10;TODO : &#10;discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1742415441292</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1742415441292</updated>
+    </task>
+    <task id="LOCAL-00032" summary=" working on ranking.&#10; improved design&#10;TODO : &#10;discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;adding portal search">
+      <option name="closed" value="true" />
+      <created>1742996593227</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1742996593227</updated>
+    </task>
+    <task id="LOCAL-00033" summary="improved design&#10;TODO : &#10;discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;adding portal search">
+      <option name="closed" value="true" />
+      <created>1743005053729</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1743005053729</updated>
+    </task>
+    <task id="LOCAL-00034" summary="fixed api bug (in get category)&#10;TODO : &#10;discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;adding portal search">
+      <option name="closed" value="true" />
+      <created>1743012608215</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1743012608215</updated>
+    </task>
+    <task id="LOCAL-00035" summary="TODO : &#10;-correct fetching info functions&#10;-fix portal search&#10;-discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1743216728959</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1743216728959</updated>
+    </task>
+    <task id="LOCAL-00036" summary="TODO : &#10;-correct fetching info functions&#10;-fix portal search&#10;-discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1743699473752</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1743699473752</updated>
+    </task>
+    <task id="LOCAL-00037" summary="TODO : &#10;-correct fetching info functions&#10;-fix portal search&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1743960951535</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1743960951535</updated>
+    </task>
+    <task id="LOCAL-00038" summary="TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1744048475266</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1744048475266</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -457,8 +586,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)" />
-    <MESSAGE value="&#10;views.py" />
     <MESSAGE value="&#10;views.py&#10;search_by_q.html" />
     <MESSAGE value="&#10;views.py&#10;search_by_name.html&#10;urls.py" />
     <MESSAGE value="Search in main categories is Done&#10;TODO : search by subcategories&#10;exclude articles in selected language" />
@@ -471,25 +598,19 @@
     <MESSAGE value="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="fixed bugs in category page and redesigned&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="deleted search by naem&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
-    <option name="LAST_COMMIT_MESSAGE" value="deleted search by naem&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/static/js/category-search.js</url>
-          <line>229</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Missing_App/views.py</url>
-          <line>462</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
-  <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/finalproject$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1737159218509" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <MESSAGE value="added search by portal or by category &#10;and listed articles with a url&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
+    <MESSAGE value="hided portal and added use message&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
+    <MESSAGE value="design&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
+    <MESSAGE value="design and added the reference language selection&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
+    <MESSAGE value="listed the retrieved articles from refer lang&#10;TODO : &#10;list missing articles in edit lang&#10;exclude articles in selected language&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <MESSAGE value="listed missing articles fron edit_lang in refer lang&#10;TODO : &#10;list missing articles in edit lang not in refer&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <MESSAGE value="listed missing articles with ranking.&#10;TODO : &#10;discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <MESSAGE value=" working on ranking.&#10; improved design&#10;TODO : &#10;discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;adding portal search" />
+    <MESSAGE value="improved design&#10;TODO : &#10;discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;adding portal search" />
+    <MESSAGE value="fixed api bug (in get category)&#10;TODO : &#10;discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;adding portal search" />
+    <MESSAGE value="TODO : &#10;-correct fetching info functions&#10;-fix portal search&#10;-discuss if ranking is the best, try examples...&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <MESSAGE value="TODO : &#10;-correct fetching info functions&#10;-fix portal search&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <MESSAGE value="TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+    <option name="LAST_COMMIT_MESSAGE" value="TODO : &#10;-fix portal search ( not mandatory)&#10;make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
   </component>
 </project>
