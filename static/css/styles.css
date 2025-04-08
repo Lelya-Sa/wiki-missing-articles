@@ -519,3 +519,9 @@ h1 {
 .articles-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+
+#articles_msg{
+    color: black;
+    font-weight: bold;
+    text-align: center;
+}

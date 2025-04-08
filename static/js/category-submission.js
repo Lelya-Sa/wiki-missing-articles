@@ -7,18 +7,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const tableBody = document.getElementById("articles-table-body");
 
-    // Define weight values
+    // weight values of the metrics
     const weights = {
-        views: 0.35,
-        langlinks: 0.35,
-        editCount: 0.1,
-        references: 0.05,
-        editWars: 0.025, //TODO
-        // quality: 0.05,
-        templates: 0.025,
-        backlinksCount: 0.05,
-        wikiLinksCount: 0, // TODO
-        pageRank: 0, //TODO
+        views: 0.35, // how many people watched the page in 30 days
+        langlinks: 0.35, // how many languages that has this article
+        editCount: 0.025, // how many times this article was edited (including reversed edits)
+        references: 0.025, // number of references in this page
+        editWars: 0.025, // how many edits per editor, avg edit_count for each editor
+        templates: 0.025, // number of templates used
+        in_links_Count: 0.1, // number of pages link to this page
+        out_Links_count: 0.1, //  number of pages link out from page
+        secs_since_last_edit: 0, // TODO time since last edit
+        pageRank: 0, //TODO simple pageRank algorithm
     };
 
     /**
@@ -109,13 +109,16 @@ document.addEventListener("DOMContentLoaded", function () {
             const page = data.query.pages[pageId];
 
             if (page.langlinks) {
-                return [1,page.langlinks[0]["*"]]; // page exists
+                // return [1,page.langlinks[0]["*"]]; // page exists
+                return 1; // page exists
             } else {
-                return [0, `Page does NOT exist in ${targetLang}`]; // page does not exist
+                // return [0, `Page does NOT exist in ${targetLang}`]; // page does not exist
+                return 0; // page does not exist
             }
         } catch (error) {
             console.error("Error checking Wikipedia page:", error);
-            return [-1,'Err'] // Error occurred
+            // return [-1,'Err'] // Error occurred
+            return -1; // Error occurred
         }
     }
 
@@ -146,246 +149,213 @@ document.addEventListener("DOMContentLoaded", function () {
     return results;
 }
 
-async function fetchAllBacklinks(title, lang) {
-    const baseUrl = `https://${lang}.wikipedia.org/w/api.php`;
-    let results = [];
-    let continueParams = {};
-    let shouldContinue = true;
 
-    while (shouldContinue) {
-        const params = new URLSearchParams({
-            action: "query",
-            list: "backlinks",
-            bltitle: title,
-            bllimit: "50",
-            format: "json",
-            ...continueParams,
-            origin: "*"
-        });
+    async function getArticleMetadata(title, lang) {
+        const baseUrl = `https://${lang}.wikipedia.org/w/api.php`;
+        const wiki = `${lang}.wikipedia.org`; // language + project
 
-        const response = await fetch(`${baseUrl}?${params}`);
-        const data = await response.json();
+        // "Basic information about the page."
+        const xToolInfoUrl = `https://xtools.wmcloud.org/api/page/pageinfo/${wiki}/${encodeURIComponent(title)}`;
 
-        if (data?.query?.backlinks) {
-            results = results.concat(data.query.backlinks);
-        }
+        // "Get statistics about the prose (characters, word count, etc.) and referencing of a page."
+        // (more info in xToolPage wikimedia cloud).
+        const xToolProseStatisticsUrl = `https://xtools.wmcloud.org/api/page/prose/${wiki}/${encodeURIComponent(title)}`;
 
-        if (data.continue) {
-            continueParams = data.continue;
-        } else {
-            shouldContinue = false;
+        // "Get assessment data of the given pages, including the overall quality classifications, along with a list of the
+        // WikiProjects and their classifications and importance levels."
+        // const xToolAssessmentsUrl = `https://xtools.wmcloud.org/api/page/assessments/${wiki}/${encodeURIComponent(title)}`;
+
+        // Counts of in and outgoing links, external links, and redirects.
+        const xToolLinksUrl = `https://xtools.wmcloud.org/api/page/links/${wiki}/${encodeURIComponent(title)}`;
+
+        // Get the XTools Page Assessments configuration:
+        // const xToolAssessmentUrl = `https://xtools.wmcloud.org/api/project/assessments`;
+
+        try {
+            // Step 1: Basic info
+            const infoResponse = await fetch(xToolInfoUrl);
+            if (!infoResponse.ok) throw new Error("infoResponse API request failed");
+            const infoData = await infoResponse.json();
+            /**
+             * https://xtools.wmcloud.org/api/page/articleinfo/ar.wikipedia.org/%D8%A8%D9%88%D8%A7%D8%A8%D8%A9%3A%D8%B5%D8%AD%D8%A9
+             * {
+             *   "warning": [
+             *     "In XTools 3.21, the last_edit_id property will be removed. Use the modified_rev_id property instead.",
+             *     "In XTools 3.21, the author and author_editcount properties will be removed. Instead, use creator and creator_editcount, respectively.",
+             *     "In XTools 3.21, the ip_edits property will be removed. Use the anon_edits property instead."
+             *   ],
+             *   "project": "ar.wikipedia.org",
+             *   "page": "بوابة:صحة",
+             *   "watchers": null,
+             *   "pageviews": 64,
+             *   "pageviews_offset": 30,
+             *   "revisions": 11,
+             *   "editors": 8,
+             *   "anon_edits": 0,
+             *   "minor_edits": 6,
+             *   "creator": "محمد القنة",
+             *   "creator_editcount": 16354,
+             *   "created_at": "2017-08-05T07:28:48Z",
+             *   "created_rev_id": 24054701,
+             *   "modified_at": "2024-09-20T16:18:01Z",
+             *   "secs_since_last_edit": 17133578,
+             *   "modified_rev_id": 67905581,
+             *   "assessment": {
+             *     "badge": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Symbol_question.svg",
+             *     "color": "",
+             *     "category": "تصنيف:مقالات غير مقيمة",
+             *     "value": "???"
+             *   },
+             *   "last_edit_id": 67905581,
+             *   "author": "محمد القنة",
+             *   "author_editcount": 16354,
+             *   "ip_edits": 0,
+             *   "elapsed_time": 0.152
+             *
+             * **/
+            const pageviews =  infoData.pageviews? infoData.pageviews : 0;
+            // console.log("Pageviews (1 months):", pageviews);
+
+            // Step 2: Fetch revisions
+            const revisions = infoData.revisions? infoData.revisions : 0;
+            // console.log("revisions count:", revisions);
+
+            const editors = infoData.editors ? infoData.editors : 0;
+            // console.log("editors count:", editors);
+
+            const created_at = infoData.created_at ? infoData.created_at : 0;
+            // console.log("created_at :", created_at); // ex. 2017-08-05T07:28:48Z
+
+            const secs_since_last_edit = infoData.secs_since_last_edit ? infoData.secs_since_last_edit : 0;
+            // console.log("secs_since_last_edit", secs_since_last_edit);
+
+            // TODO under development
+            // const assessmentsResponse = await fetch(xToolInfoUrl);
+            // if (!assessmentsResponse.ok) throw new Error("API request failed");
+            // const assessmentsData = await assessmentsResponse.json();
+            // if(Object.keys(infoData).includes("assessment")){
+            //     if(Object.keys(infoData.assessment).includes("value")){
+            //         if (infoData.assessment.value){
+            //             const value = infoData.assessment.value;
+            //             switch(value){
+            //                 case "???":{
+            //                     const assessment = 0;
+            //                 }
+            //                 case ""
+            //             }
+            //         }
+            //     }
+            // }
+            // else {
+            //     const assessment = 0;
+            // }
+            // const assessment = infoData.assessment ? infoData.assessment.value : 0;
+            // console.log("assessment", assessment);
+
+            const proseResponse = await fetch(xToolProseStatisticsUrl);
+            if (!proseResponse.ok) throw new Error("proseResponse API request failed");
+            const proseData = await proseResponse.json();
+
+            const references = proseData.references ? proseData.references : 0;
+            // console.log(title , " Page references :", references);
+
+            const words = proseData.words ? proseData.words : 0;
+            // console.log(title , " Page word count:", words);
+
+            const bytesSize = proseData.bytes ? proseData.bytes : 0;
+            // console.log(title , " Page size:", bytesSize);
+
+            let words_bytes_ratio;
+            if(bytesSize!==0){
+                words_bytes_ratio = words / bytesSize;
+            }
+            else{
+                words_bytes_ratio = 0;
+            }
+            // console.log(title , " words_bytes_ratio :", words_bytes_ratio);
+
+            // Step 3: Basic info
+            const infoParams = new URLSearchParams({
+                action: "query",
+                prop: "info|pageviews",
+                titles: title,
+                format: "json",
+                origin: "*"
+            });
+
+            const baseInfoResponse = await fetch(`${baseUrl}?${infoParams}`);
+            const baseInfoData = await baseInfoResponse.json();
+            const pageId = Object.keys(baseInfoData.query.pages)[0];
+            /**
+            * https://ar.wikipedia.org/w/api.php?action=query&titles=%D8%A7%D9%84%D9%84%D9%88%D8%B2+%D8%A7%D9%84%D9%85%D8%B1&prop=info
+             * */
+
+            if (pageId === "-1") {
+                // console.log(title, " pageID = -1")
+                return null;
+            }
+            // Step 4: Fetch langlinks
+            const langlinks = await fetchAllFromApi(baseUrl, {
+                action: "query",
+                prop: "langlinks",
+                titles: title,
+                lllimit: "50",
+                format: "json"
+            }, "langlinks");
+            // console.log(title, "  langlinks=", langlinks );
+
+            // Step 5: Fetch templates
+            const templates = await fetchAllFromApi(baseUrl, {
+                action: "query",
+                prop: "templates",
+                titles: title,
+                tllimit: "50",
+                format: "json"
+            }, "templates");
+            // console.log(title, "  templates=", templates );
+
+            // Step 5: Fetch in links and out links
+            const linkResponse = await fetch(xToolLinksUrl);
+            if (!linkResponse.ok) throw new Error(" linkResponse API request failed");
+            const linkData = await linkResponse.json();
+
+            const links_in = linkData.links_in ? linkData.links_in : 0;
+            // console.log(title,"links_in to page:", links_in);
+
+            const links_ext_count = linkData.links_ext_count ? linkData.links_ext_count : 0;
+            // console.log(title,"links_ext_count to page:", links_ext_count);
+
+            const links_out = linkData.links_out ? linkData.links_out : 0;
+            // console.log(title,"links_out from page:", links_out);
+
+            // const redirects = linkData.redirects ? linkData.redirects : 0;
+            // console.log(title,"Redirects:", redirects);
+
+            return {
+                title: title,
+                views: pageviews,
+                langlinks: langlinks.length,
+                editCount: revisions,
+                firstEdit: created_at,
+                references: references,
+                editWars: revisions / editors,
+                words_bytes_ratio: words_bytes_ratio,
+                // quality: assessment,
+                templates: templates.length,
+                in_links_Count: links_in + links_ext_count,
+                out_links_count: links_out,
+                secs_since_last_edit: secs_since_last_edit,
+                // backlinks: backlinks,
+                pageRank: 0, // TODO still placeholder
+            };
+
+        } catch (error) {
+            console.error("Error fetching article metadata:", error);
+            return {
+            }
+            ;
         }
     }
-
-    return results;
-}
-
-async function getArticleMetadata(title, lang) {
-    const baseUrl = `https://${lang}.wikipedia.org/w/api.php`;
-    const wiki = `${lang}.wikipedia.org`; // language + project
-
-    // "Basic information about the page."
-    const xToolInfoUrl = `https://xtools.wmcloud.org/api/page/pageinfo/${wiki}/${encodeURIComponent(title)}`;
-
-    // "Get statistics about the prose (characters, word count, etc.) and referencing of a page."
-    // (more info in xToolPage wikimedia cloud).
-    const xToolProseStatisticsUrl = `https://xtools.wmcloud.org/api/page/prose/${wiki}/${encodeURIComponent(title)}`;
-
-    // "Get assessment data of the given pages, including the overall quality classifications, along with a list of the
-    // WikiProjects and their classifications and importance levels."
-    const xToolAssessmentsUrl = `https://xtools.wmcloud.org/api/page/assessments/${wiki}/${encodeURIComponent(title)}`;
-
-    // Counts of in and outgoing links, external links, and redirects.
-    const xToolLinksUrl = `https://xtools.wmcloud.org/api/page/links/${wiki}/${encodeURIComponent(title)}`;
-
-    // Get the XTools Page Assessments configuration:
-    const xToolAssessmentUrl = `https://xtools.wmcloud.org/api/project/assessments`;
-
-    try {
-        // Step 1: Basic info
-        const infoResponse = await fetch(xToolInfoUrl);
-        if (!infoResponse.ok) throw new Error("infoResponse API request failed");
-        const infoData = await infoResponse.json();
-        /**
-         * https://xtools.wmcloud.org/api/page/articleinfo/ar.wikipedia.org/%D8%A8%D9%88%D8%A7%D8%A8%D8%A9%3A%D8%B5%D8%AD%D8%A9
-         * {
-         *   "warning": [
-         *     "In XTools 3.21, the last_edit_id property will be removed. Use the modified_rev_id property instead.",
-         *     "In XTools 3.21, the author and author_editcount properties will be removed. Instead, use creator and creator_editcount, respectively.",
-         *     "In XTools 3.21, the ip_edits property will be removed. Use the anon_edits property instead."
-         *   ],
-         *   "project": "ar.wikipedia.org",
-         *   "page": "بوابة:صحة",
-         *   "watchers": null,
-         *   "pageviews": 64,
-         *   "pageviews_offset": 30,
-         *   "revisions": 11,
-         *   "editors": 8,
-         *   "anon_edits": 0,
-         *   "minor_edits": 6,
-         *   "creator": "محمد القنة",
-         *   "creator_editcount": 16354,
-         *   "created_at": "2017-08-05T07:28:48Z",
-         *   "created_rev_id": 24054701,
-         *   "modified_at": "2024-09-20T16:18:01Z",
-         *   "secs_since_last_edit": 17133578,
-         *   "modified_rev_id": 67905581,
-         *   "assessment": {
-         *     "badge": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Symbol_question.svg",
-         *     "color": "",
-         *     "category": "تصنيف:مقالات غير مقيمة",
-         *     "value": "???"
-         *   },
-         *   "last_edit_id": 67905581,
-         *   "author": "محمد القنة",
-         *   "author_editcount": 16354,
-         *   "ip_edits": 0,
-         *   "elapsed_time": 0.152
-         *
-         * **/
-        const pageviews =  infoData.pageviews? infoData.pageviews : 0;
-        // console.log("Pageviews (1 months):", pageviews);
-
-        // Step 2: Fetch revisions
-        const revisions = infoData.revisions? infoData.revisions : 0;
-        // console.log("revisions count:", revisions);
-
-        const editors = infoData.editors ? infoData.editors : 0;
-        // console.log("editors count:", editors);
-
-        const created_at = infoData.created_at ? infoData.created_at : 0;
-        // console.log("created_at :", created_at); // ex. 2017-08-05T07:28:48Z
-
-        const secs_since_last_edit = infoData.secs_since_last_edit ? infoData.secs_since_last_edit : 0;
-        // console.log("secs_since_last_edit", secs_since_last_edit);
-
-        // TODO under development
-        // const assessmentsResponse = await fetch(xToolInfoUrl);
-        // if (!assessmentsResponse.ok) throw new Error("API request failed");
-        // const assessmentsData = await assessmentsResponse.json();
-        // if(Object.keys(infoData).includes("assessment")){
-        //     if(Object.keys(infoData.assessment).includes("value")){
-        //         if (infoData.assessment.value){
-        //             const value = infoData.assessment.value;
-        //             switch(value){
-        //                 case "???":{
-        //                     const assessment = 0;
-        //                 }
-        //                 case ""
-        //             }
-        //         }
-        //     }
-        // }
-        // else {
-        //     const assessment = 0;
-        // }
-        const assessment = infoData.assessment ? infoData.assessment.value : 0;
-        // console.log("assessment", assessment);
-
-        const proseResponse = await fetch(xToolProseStatisticsUrl);
-        if (!proseResponse.ok) throw new Error("proseResponse API request failed");
-        const proseData = await proseResponse.json();
-
-        const references = proseData.references ? proseData.references : 0;
-        // console.log(title , " Page references :", references);
-
-        const words = proseData.words ? proseData.words : 0;
-        // console.log(title , " Page word count:", words);
-
-        const bytesSize = proseData.bytes ? proseData.bytes : 0;
-        // console.log(title , " Page size:", bytesSize);
-
-        let words_bytes_ratio;
-        if(bytesSize!==0){
-            words_bytes_ratio = words / bytesSize;
-        }
-        else{
-            words_bytes_ratio = 0;
-        }
-        // console.log(title , " words_bytes_ratio :", words_bytes_ratio);
-
-        // Step 3: Basic info
-        const infoParams = new URLSearchParams({
-            action: "query",
-            prop: "info|pageviews",
-            titles: title,
-            format: "json",
-            origin: "*"
-        });
-
-        const baseInfoResponse = await fetch(`${baseUrl}?${infoParams}`);
-        const baseInfoData = await baseInfoResponse.json();
-        const pageId = Object.keys(baseInfoData.query.pages)[0];
-        /**
-        * https://ar.wikipedia.org/w/api.php?action=query&titles=%D8%A7%D9%84%D9%84%D9%88%D8%B2+%D8%A7%D9%84%D9%85%D8%B1&prop=info
-         * */
-
-        if (pageId === "-1") {
-            // console.log(title, " pageID = -1")
-            return null;
-        }
-        // Step 4: Fetch langlinks
-        const langlinks = await fetchAllFromApi(baseUrl, {
-            action: "query",
-            prop: "langlinks",
-            titles: title,
-            lllimit: "50",
-            format: "json"
-        }, "langlinks");
-        // console.log(title, "  langlinks=", langlinks );
-
-        // Step 5: Fetch templates
-        const templates = await fetchAllFromApi(baseUrl, {
-            action: "query",
-            prop: "templates",
-            titles: title,
-            tllimit: "50",
-            format: "json"
-        }, "templates");
-        // console.log(title, "  templates=", templates );
-
-        // Step 5: Fetch in links and out links
-        const linkResponse = await fetch(xToolLinksUrl);
-        if (!linkResponse.ok) throw new Error(" linkResponse API request failed");
-        const linkData = await linkResponse.json();
-
-        const links_in = linkData.links_in ? linkData.links_in : 0;
-        // console.log(title,"links_in to page:", links_in);
-
-        const links_ext_count = linkData.links_ext_count ? linkData.links_ext_count : 0;
-        // console.log(title,"links_ext_count to page:", links_ext_count);
-
-        const links_out = linkData.links_out ? linkData.links_out : 0;
-        // console.log(title,"links_out from page:", links_out);
-
-        const redirects = linkData.redirects ? linkData.redirects : 0;
-        // console.log(title,"Redirects:", redirects);
-
-        return {
-            title: title,
-            views: pageviews,
-            langlinks: langlinks.length,
-            editCount: revisions,
-            firstEdit: created_at,
-            references: references,
-            editWars: revisions / editors,
-            words_bytes_ratio: words_bytes_ratio,
-            // quality: assessment,
-            templates: templates.length,
-            in_links: links_in + links_ext_count,
-            out_links: links_out,
-            secs_since_last_edit: secs_since_last_edit,
-            // backlinks: backlinks,
-            pageRank: 0, // TODO still placeholder
-        };
-
-    } catch (error) {
-        console.error("Error fetching article metadata:", error);
-        return {
-        }
-        ;
-    }
-}
 
     // Function to compute ranking score
     function computeRankingScore(metadata, weights) {
@@ -395,99 +365,103 @@ async function getArticleMetadata(title, lang) {
             metadata.normEditCount * weights.editCount +
             metadata.normReferences * weights.references +
             metadata.normEditWars * weights.editWars +
-            // metadata.normQuality * weights.quality +
             metadata.normTemplates * weights.templates +
-            metadata.normBacklinksCount * weights.backlinksCount +
+            metadata.norm_in_links_Count * weights.in_links_Count +
+            metadata.norm_out_links_Count * weights.out_Links_count +
+            // metadata.secs_since_last_edit * weights.secs_since_last_edit +
             metadata.pageRank * weights.pageRank
         );
     }
 
-    function computePageRank(articlesData, articlesBacklinksData, articlesLinksData){
-        // edge data
-        const linksData = {
-            // article title : [titles of articles it links to]
-            "ArticleA": ["ArticleB", "ArticleC"],
-            "ArticleB": ["ArticleC"],
-            "ArticleC": ["ArticleA"]
-        };
 
-        const backlinksData = {
-            // article title : [titles of articles that link to it]
-            "ArticleA": ["ArticleC"],
-            "ArticleB": ["ArticleA"],
-            "ArticleC": ["ArticleA", "ArticleB"]
-        };
+    // function computePageRank(articlesData, articlesBacklinksData, articlesLinksData){
+    //     // edge data
+    //     const linksData = {
+    //         // article title : [titles of articles it links to]
+    //         "ArticleA": ["ArticleB", "ArticleC"],
+    //         "ArticleB": ["ArticleC"],
+    //         "ArticleC": ["ArticleA"]
+    //     };
+    //
+    //     const backlinksData = {
+    //         // article title : [titles of articles that link to it]
+    //         "ArticleA": ["ArticleC"],
+    //         "ArticleB": ["ArticleA"],
+    //         "ArticleC": ["ArticleA", "ArticleB"]
+    //     };
+    //
+    //     // Create a mapping from article title to index
+    //     const indexMap = {};
+    //     articlesData.forEach((title, idx) => { indexMap[title] = idx; });
+    //
+    //     // Build the graph: For each article, combine its outgoing links and backlinks
+    //     const N = articlesData.length;
+    //     // Using an array of sets for unique outgoing edges
+    //     const graph = Array.from({ length: N }, () => new Set());
+    //
+    //     // Helper: add edge if both nodes are in our dataset
+    //     function addEdge(from, to) {
+    //         if (indexMap.hasOwnProperty(from) && indexMap.hasOwnProperty(to)) {
+    //             graph[indexMap[from]].add(indexMap[to]);
+    //         }
+    //     }
+    //
+    //     // Process outgoing links (linksData)
+    //     for (let [article, outLinks] of Object.entries(linksData)) {
+    //         outLinks.forEach(target => addEdge(article, target));
+    //     }
+    //
+    //     // Process backlinks (backlinksData)
+    //     for (let [article, inLinks] of Object.entries(backlinksData)) {
+    //         // For each backlink, create an edge from the linking article to this article.
+    //         inLinks.forEach(source => addEdge(source, article));
+    //     }
+    //
+    //     // Convert graph sets to arrays for easier processing
+    //     const adjacencyList = graph.map(neighbors => Array.from(neighbors));
+    //
+    //     // Compute outdegree for each node
+    //     const outDegrees = adjacencyList.map(neighbors => neighbors.length);
+    //
+    //     // PageRank's computation using power iteration
+    //     const dampingFactor = 0.85;
+    //     const tolerance = 1.0e-6;
+    //     const maxIterations = 100;
+    //     let rank = new Array(N).fill(1 / N);
+    //
+    //     for (let iter = 0; iter < maxIterations; iter++) {
+    //         let newRank = new Array(N).fill((1 - dampingFactor) / N);
+    //
+    //         // Distribute rank from each node
+    //         for (let j = 0; j < N; j++) {
+    //             if (outDegrees[j] > 0) {
+    //                 const contribution = dampingFactor * rank[j] / outDegrees[j];
+    //                 // For each neighbor of node j, add the contribution
+    //                 adjacencyList[j].forEach(i => {
+    //                     newRank[i] += contribution;
+    //                 });
+    //             } else {
+    //                 // Dangling nodes: distribute uniformly to all nodes
+    //                 const contribution = dampingFactor * rank[j] / N;
+    //                 for (let i = 0; i < N; i++) {
+    //                     newRank[i] += contribution;
+    //                 }
+    //             }
+    //         }
+    //
+    //         // Check convergence (using L1 norm)
+    //         let diff = newRank.reduce((sum, r, i) => sum + Math.abs(r - rank[i]), 0);
+    //         rank = newRank;
+    //         if (diff < tolerance) break;
+    //     }
+    //     return rank;
+    // }
 
-        // Create a mapping from article title to index
-        const indexMap = {};
-        articlesData.forEach((title, idx) => { indexMap[title] = idx; });
-
-        // Build the graph: For each article, combine its outgoing links and backlinks
-        const N = articlesData.length;
-        // Using an array of sets for unique outgoing edges
-        const graph = Array.from({ length: N }, () => new Set());
-
-        // Helper: add edge if both nodes are in our dataset
-        function addEdge(from, to) {
-            if (indexMap.hasOwnProperty(from) && indexMap.hasOwnProperty(to)) {
-                graph[indexMap[from]].add(indexMap[to]);
-            }
-        }
-
-        // Process outgoing links (linksData)
-        for (let [article, outLinks] of Object.entries(linksData)) {
-            outLinks.forEach(target => addEdge(article, target));
-        }
-
-        // Process backlinks (backlinksData)
-        for (let [article, inLinks] of Object.entries(backlinksData)) {
-            // For each backlink, create an edge from the linking article to this article.
-            inLinks.forEach(source => addEdge(source, article));
-        }
-
-        // Convert graph sets to arrays for easier processing
-        const adjacencyList = graph.map(neighbors => Array.from(neighbors));
-
-        // Compute outdegree for each node
-        const outDegrees = adjacencyList.map(neighbors => neighbors.length);
-
-        // PageRank's computation using power iteration
-        const dampingFactor = 0.85;
-        const tolerance = 1.0e-6;
-        const maxIterations = 100;
-        let rank = new Array(N).fill(1 / N);
-
-        for (let iter = 0; iter < maxIterations; iter++) {
-            let newRank = new Array(N).fill((1 - dampingFactor) / N);
-
-            // Distribute rank from each node
-            for (let j = 0; j < N; j++) {
-                if (outDegrees[j] > 0) {
-                    const contribution = dampingFactor * rank[j] / outDegrees[j];
-                    // For each neighbor of node j, add the contribution
-                    adjacencyList[j].forEach(i => {
-                        newRank[i] += contribution;
-                    });
-                } else {
-                    // Dangling nodes: distribute uniformly to all nodes
-                    const contribution = dampingFactor * rank[j] / N;
-                    for (let i = 0; i < N; i++) {
-                        newRank[i] += contribution;
-                    }
-                }
-            }
-
-            // Check convergence (using L1 norm)
-            let diff = newRank.reduce((sum, r, i) => sum + Math.abs(r - rank[i]), 0);
-            rank = newRank;
-            if (diff < tolerance) break;
-        }
-        return rank;
-    }
 
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
         tableBody.innerHTML = "";
+        articles_msg.innerHTML = "";
 
         const edit_lang = document.getElementById("article-language-search").value.trim();
         const refer_lang = document.getElementById("article-refer-language-search").value.trim();
@@ -541,10 +515,11 @@ async function getArticleMetadata(title, lang) {
 
             // Check if each reference article exists in the edit language and rank them
             if (data.articles && data.articles.length > 0) {
-                articles_msg.innerHTML = "found articles, now fetching metadata...";
+                articles_msg.innerHTML = "found articles under category, now filtering missing articles and fetching metadata...";
 
                 const checkPromises = data.articles.map(async (article) => {
-                    const [exists, translatedTitle] = await checkPageInLanguage(article, referLanguageCode, languageCode);
+                    // const [exists, translatedTitle] = await checkPageInLanguage(article, referLanguageCode, languageCode);
+                    const exists = await checkPageInLanguage(article, referLanguageCode, languageCode);
 
                     if (exists === 1) {
                         // console.log(`Page exists in ${languageCode}:`, translatedTitle);
@@ -560,6 +535,9 @@ async function getArticleMetadata(title, lang) {
 
                 articles_msg.innerHTML = "Ranking...";
                 tableBody.innerHTML = "";
+                if(filteredMetadataList.length ===0){
+                    articles_msg.innerHTML = "Search completed, No missing article found under this category";
+                }
                 filteredMetadataList.forEach((meta,index) => {
                     const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(meta.title)}`;
 
@@ -594,9 +572,10 @@ async function getArticleMetadata(title, lang) {
                   editCount: Math.max(...filteredMetadataList.map(m => m.editCount)),
                   references: Math.max(...filteredMetadataList.map(m => m.references)),
                   editWars: Math.max(...filteredMetadataList.map(m => m.editWars)),
-                  // quality: Math.max(...filteredMetadataList.map(m => m.quality)),
                   templates: Math.max(...filteredMetadataList.map(m => m.templates)),
-                  backlinksCount: Math.max(...filteredMetadataList.map(m => m.backlinksCount))
+                  in_links_Count: Math.max(...filteredMetadataList.map(m => m.in_links_Count)),
+                  out_links_count: Math.max(...filteredMetadataList.map(m => m.out_links_count))
+                  // secs_since_last_edit: Math.max(...filteredMetadataList.map(m => m.in_links_Count))
                 };
 
                 // Normalize each metric for every article
@@ -618,7 +597,12 @@ async function getArticleMetadata(title, lang) {
                   // If higher template usage then should lower the score because it needs more editing
                   m.normTemplates = maxValues.templates ? 1- (m.templates / maxValues.templates) : 0;
 
-                  m.normBacklinksCount = maxValues.backlinksCount ? m.backlinksCount / maxValues.backlinksCount : 0;
+                  m.norm_in_links_Count = maxValues.in_links_Count ? m.in_links_Count / maxValues.in_links_Count : 0;
+
+                  m.norm_out_links_Count = maxValues.out_links_count ? m.out_links_count / maxValues.out_links_count : 0;
+
+                  // m.norm_in_links_Count = maxValues.in_links_Count ? m.in_links_Count / maxValues.in_links_Count : 0;
+                  // m.norm_in_links_Count = maxValues.in_links_Count ? m.in_links_Count / maxValues.in_links_Count : 0;
                 });
 
                 // Compute scores and sort
@@ -627,6 +611,7 @@ async function getArticleMetadata(title, lang) {
 
                 // Display sorted missing articles
                 tableBody.innerHTML = "";  // Clear previous rows
+                articles_msg.innerHTML = "";
 
                 filteredMetadataList.forEach((meta,index) => {
                     const encodedTitle = encodeURIComponent(meta.title);
@@ -653,22 +638,31 @@ async function getArticleMetadata(title, lang) {
                 articles_msg.innerHTML = "";
 
             } else {
-                tableBody.innerHTML = "<li>No missing articles found.</li>";
+                articles_msg.innerHTML = "Search completed, No articles found under this category";
             }
             ranked_res_spinner.style.display = "none";
 
         } catch (error) {
+            articles_msg.innerHTML ="";
             if (error.message === "noCatError"){
-                    tableBody.innerHTML = "<li>category not found in reference language.</li>";
-                    // all_res_spinner.style.display = "none";
+                    // tableBody.innerHTML = "<li>category not found in reference language.</li>";
+                    articles_msg.innerHTML = `<style="font-size: large">
+                                        category not found in reference language </style> `;
                     ranked_res_spinner.style.display = "none";
                     console.error("category not found in reference language.: ", error);
 
             }
 
             else if (error.message === "noQCode"){
-                    tableBody.innerHTML = "<li>there are no pages under this category,or this is a red link</li>";
+                    // tableBody.innerHTML = "<li>there are no pages under this category,or this is a red link</li>";
                     // all_res_spinner.style.display = "none";
+                    articles_msg.innerHTML =`This category is a <span style="color: red; font-weight: bold;">red link
+                                            </span> ,                                         
+                                            <a href="https://en.wikipedia.org/wiki/Wikipedia:Red_link" 
+                                                target="_blank" rel="noopener noreferrer">
+                                            click here for info about red links
+                                            </a>
+                    `;
                     ranked_res_spinner.style.display = "none";
                     console.error("this category is a redlink:", error);
 
