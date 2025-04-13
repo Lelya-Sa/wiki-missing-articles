@@ -5,7 +5,9 @@ import json
 from django.http import JsonResponse
 import requests
 from django.core.cache import cache  # Import Django's caching framework
-
+from django.conf import settings
+from django.utils import translation
+from django.shortcuts import redirect
 
 WIKI_API_URL = "https://{lang}.wikipedia.org/w/api.php"
 WIKIDATA_URL = "https://www.wikidata.org/wiki/Special:EntityData/{qcode}.json"
@@ -18,6 +20,7 @@ def dictfetchall(cursor):
     # Return all rows from a cursor as a dict
     columns = [col[0] for col in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
 # Create your views here.
 
 
@@ -25,6 +28,8 @@ def index(request):
     """
         the entrance page of the tool
     """
+    lang = request.COOKIES.get(settings.LANGUAGE_COOKIE_NAME, "en")
+    translation.activate(lang)
     return render(request, 'index.html')
 
 
@@ -57,9 +62,21 @@ def translated_page(request):  # TODO (not mandatory) currently redirects into l
     """
          translates the tool page into given language.
     """
-    lang = request.GET.get("lang", "en")  # Default to English if no language is selected
-    wikipedia_url = f"https://{lang}.wikipedia.org"  # Construct the Wikipedia URL for the selected language
-    return redirect(wikipedia_url)
+    lang = request.GET.get("lang", "en")
+
+    next_url = request.GET.get("next", "/")  # Default fallback to index
+    if lang not in dict(settings.LANGUAGES):
+        lang = "en"  # Fallback
+
+    translation.activate(lang)  # Set the active language
+    request.LANGUAGE_CODE = lang
+
+    # template_name = next_url + ".html"
+    response = redirect(next_url)
+    # response = render(request, template_name)
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
+    return response
+    # return redirect(next_url)  # <— this line skips rendering!
 
 
 def get_prefix(lang="en", type="category"):
@@ -98,11 +115,11 @@ def get_supported_languages(request):
     cached_languages = cache.get("supported_languages")
 
     if cached_languages:
+        # print(cached_languages)
         return JsonResponse({"languages": cached_languages})
 
     # If not cached, fetch from the Wikimedia API
     api_url = "https://www.mediawiki.org/w/api.php?action=sitematrix&format=json&origin=*"
-
     try:
         response = requests.get(api_url)
         response.raise_for_status()  # Raise an error for bad responses
@@ -123,7 +140,8 @@ def get_supported_languages(request):
         return JsonResponse({"languages": languages})
 
     except requests.RequestException as e:
-        result_message = f"An error occurred while searching for language: {e}"
+        error_message = f"An error occurred while searching for languages: {e}"
+        print(error_message)
         return JsonResponse({"error": "Failed to fetch data from Wikipedia. Please try again later."}, status=500)
 
 

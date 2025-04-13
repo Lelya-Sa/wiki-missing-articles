@@ -9,12 +9,16 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+
+import requests
+from django.core.cache import cache
+from django.core.exceptions import ImproperlyConfigured
+from django.conf.locale import LANG_INFO
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -50,6 +54,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -78,7 +83,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'finalproject.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -88,7 +92,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -108,10 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-
+# Set your default language (e.g., "en-us")
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -120,6 +122,429 @@ USE_I18N = True
 
 USE_TZ = True
 
+USE_L10N = True
+
+
+# Specify the list of languages you want to support
+def get_ui_languages_from_api():
+    try:
+        cached_languages = cache.get("supported_languages")
+
+        if cached_languages:
+            # print(cached_languages)
+            return cached_languages["languages"]
+
+        # If not cached, fetch from the Wikimedia API
+        api_url = "https://www.mediawiki.org/w/api.php?action=sitematrix&format=json&origin=*"
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise an error for bad responses
+        data = response.json()
+
+        # Extracting the languages from the API response
+        languages = []
+        for value in data['sitematrix'].values():
+            if isinstance(value, dict) and 'code' in value:
+                name = value.get('localname',
+                                 'Unknown Language')  # Default to 'Unknown Language' if 'localname' is missing
+                languages.append({"code": value['code'], "name": name})
+
+        # Cache the result for 24 hours (86400 seconds)
+        cache.set("supported_languages", languages, timeout=86400)
+
+        # Return the list of languages as a JSON response
+        return languages
+
+    except Exception as e:
+        raise ImproperlyConfigured(f"Failed to load languages: {e}")
+
+
+UI_LANGUAGES = get_ui_languages_from_api()
+
+LANGUAGES = []
+# for item in UI_LANGUAGES:
+#     language = item["name"]
+#     code = item["code"]
+#     try:
+#         if code not in LANG_INFO:
+#             print(f"Skipping unsupported language code: {code}")
+#             continue
+#         LANGUAGES.append((code, language))
+#     except Exception as e:
+#         print(f"Error processing ({language}, {code}): {e}")
+
+# add a page to translate when ready
+LANGUAGES = [
+    # ('aa', 'Afar'),
+    # ('ab', 'Abkhazian'),
+    # ('ace', 'Acehnese'),
+    # ('ady', 'Adyghe'),
+    # ('af', 'Afrikaans'),
+    # ('ak', 'Unknown Language'),
+    # ('als', 'Alemannic'),
+    # ('alt', 'Southern Altai'),
+    # ('am', 'Amharic'),
+    # ('ami', 'Amis'),
+    # ('an', 'Aragonese'),
+    # ('ang', 'Old English'),
+    # ('ann', 'Obolo'),
+    # ('anp', 'Angika'),
+    ('ar', 'Arabic'),
+    # ('arc', 'Aramaic'),
+    # ('ary', 'Moroccan Arabic'),
+    # ('arz', 'Egyptian Arabic'),
+    # ('as', 'Assamese'),
+    # ('ast', 'Asturian'),
+    # ('atj', 'Atikamekw'),
+    # ('av', 'Avaric'),
+    # ('avk', 'Kotava'),
+    # ('awa', 'Awadhi'),
+    # ('ay', 'Aymara'),
+    # ('az', 'Azerbaijani'),
+    # ('azb', 'South Azerbaijani'),
+    # ('ba', 'Bashkir'),
+    # ('ban', 'Balinese'),
+    # ('bar', 'Bavarian'),
+    # ('bat-smg', 'Samogitian'),
+    # ('bbc', 'Batak Toba'),
+    # ('bcl', 'Central Bikol'),
+    # ('bdr', 'West Coast Bajau'),
+    # ('be', 'Belarusian'),
+    # ('be-tarask', 'Belarusian (Taraškievica orthography)'),
+    # ('be-x-old', 'Belarusian (Taraškievica orthography)'),
+    # ('bew', 'Betawi'),
+    # ('bg', 'Bulgarian'),
+    # ('bh', 'Bhojpuri'),
+    # ('bi', 'Bislama'),
+    # ('bjn', 'Banjar'),
+    # ('blk', "Pa'O"),
+    # ('bm', 'Bambara'),
+    # ('bn', 'Bangla'),
+    # ('bo', 'Tibetan'),
+    # ('bpy', 'Bishnupriya'),
+    # ('br', 'Breton'),
+    # ('bs', 'Bosnian'),
+    # ('btm', 'Batak Mandailing'),
+    # ('bug', 'Buginese'),
+    # ('bxr', 'Russia Buriat'),
+    # ('ca', 'Catalan'),
+    # ('cbk-zam', 'Chavacano'),
+    # ('cdo', 'Mindong'),
+    # ('ce', 'Chechen'),
+    # ('ceb', 'Cebuano'),
+    # ('ch', 'Chamorro'),
+    # ('cho', 'Choctaw'),
+    # ('chr', 'Cherokee'),
+    # ('chy', 'Cheyenne'),
+    # ('ckb', 'Central Kurdish'),
+    # ('co', 'Corsican'),
+    # ('cr', 'Cree'),
+    # ('crh', 'Crimean Tatar'),
+    # ('cs', 'Czech'),
+    # ('csb', 'Kashubian'),
+    # ('cu', 'Church Slavic'),
+    # ('cv', 'Chuvash'),
+    # ('cy', 'Welsh'),
+    # ('da', 'Danish'),
+    # ('dag', 'Dagbani'),
+    # ('de', 'German'),
+    # ('dga', 'Southern Dagaare'),
+    # ('din', 'Dinka'),
+    # ('diq', 'Dimli'),
+    # ('dsb', 'Lower Sorbian'),
+    # ('dtp', 'Central Dusun'),
+    # ('dty', 'Doteli'),
+    # ('dv', 'Divehi'),
+    # ('dz', 'Dzongkha'),
+    # ('ee', 'Ewe'),
+    # ('el', 'Greek'),
+    # ('eml', 'Emiliano-Romagnolo'),
+    ('en', 'English'),
+    # ('eo', 'Esperanto'),
+    # ('es', 'Spanish'),
+    # ('et', 'Estonian'),
+    # ('eu', 'Basque'),
+    # ('ext', 'Extremaduran'),
+    # ('fa', 'Persian'),
+    # ('fat', 'Fanti'),
+    # ('ff', 'Fula'),
+    # ('fi', 'Finnish'),
+    # ('fiu-vro', 'Võro'),
+    # ('fj', 'Fijian'),
+    # ('fo', 'Faroese'),
+    # ('fon', 'Fon'),
+    ('fr', 'French'),
+    # ('frp', 'Arpitan'),
+    # ('frr', 'Northern Frisian'),
+    # ('fur', 'Friulian'),
+    # ('fy', 'Western Frisian'),
+    # ('ga', 'Irish'),
+    # ('gag', 'Gagauz'),
+    # ('gan', 'Gan'),
+    # ('gcr', 'Guianan Creole'),
+    # ('gd', 'Scottish Gaelic'),
+    # ('gl', 'Galician'),
+    # ('glk', 'Gilaki'),
+    # ('gn', 'Guarani'),
+    # ('gom', 'Goan Konkani'),
+    # ('gor', 'Gorontalo'),
+    # ('got', 'Gothic'),
+    # ('gpe', 'Ghanaian Pidgin'),
+    # ('gsw', 'Alemannic'),
+    # ('gu', 'Gujarati'),
+    # ('guc', 'Wayuu'),
+    # ('gur', 'Frafra'),
+    # ('guw', 'Gun'),
+    # ('gv', 'Manx'),
+    # ('ha', 'Hausa'),
+    # ('hak', 'Hakka Chinese'),
+    # ('haw', 'Hawaiian'),
+    ('he', 'Hebrew'),
+    # ('hi', 'Hindi'),
+    # ('hif', 'Fiji Hindi'),
+    # ('ho', 'Hiri Motu'),
+    # ('hr', 'Croatian'),
+    # ('hsb', 'Upper Sorbian'),
+    # ('ht', 'Haitian Creole'),
+    # ('hu', 'Hungarian'),
+    # ('hy', 'Armenian'),
+    # ('hyw', 'Western Armenian'),
+    # ('hz', 'Herero'),
+    # ('ia', 'Interlingua'),
+    # ('iba', 'Iban'),
+    # ('id', 'Indonesian'),
+    # ('ie', 'Interlingue'),
+    # ('ig', 'Igbo'),
+    # ('igl', 'Igala'),
+    # ('ii', 'Sichuan Yi'),
+    # ('ik', 'Inupiaq'),
+    # ('ilo', 'Iloko'),
+    # ('inh', 'Ingush'),
+    # ('io', 'Ido'),
+    # ('is', 'Icelandic'),
+    # ('it', 'Italian'),
+    # ('iu', 'Inuktitut'),
+    # ('ja', 'Japanese'),
+    # ('jam', 'Jamaican Creole English'),
+    # ('jbo', 'Lojban'),
+    # ('jv', 'Javanese'),
+    # ('ka', 'Georgian'),
+    # ('kaa', 'Kara-Kalpak'),
+    # ('kab', 'Kabyle'),
+    # ('kbd', 'Kabardian'),
+    # ('kbp', 'Kabiye'),
+    # ('kcg', 'Tyap'),
+    # ('kg', 'Kongo'),
+    # ('kge', 'Komering'),
+    # ('ki', 'Kikuyu'),
+    # ('kj', 'Kuanyama'),
+    # ('kk', 'Kazakh'),
+    # ('kl', 'Kalaallisut'),
+    # ('km', 'Khmer'),
+    # ('kn', 'Kannada'),
+    # ('knc', 'Central Kanuri'),
+    # ('ko', 'Korean'),
+    # ('koi', 'Komi-Permyak'),
+    # ('kr', 'Kanuri'),
+    # ('krc', 'Karachay-Balkar'),
+    # ('ks', 'Kashmiri'),
+    # ('ksh', 'Colognian'),
+    # ('ku', 'Kurdish'),
+    # ('kus', 'Kusaal'),
+    # ('kv', 'Komi'),
+    # ('kw', 'Cornish'),
+    # ('ky', 'Kyrgyz'),
+    # ('la', 'Latin'),
+    # ('lad', 'Ladino'),
+    # ('lb', 'Luxembourgish'),
+    # ('lbe', 'Lak'),
+    # ('lez', 'Lezghian'),
+    # ('lfn', 'Lingua Franca Nova'),
+    # ('lg', 'Ganda'),
+    # ('li', 'Limburgish'),
+    # ('lij', 'Ligurian'),
+    # ('lld', 'Ladin'),
+    # ('lmo', 'Lombard'),
+    # ('ln', 'Lingala'),
+    # ('lo', 'Lao'),
+    # ('lrc', 'Northern Luri'),
+    # ('lt', 'Lithuanian'),
+    # ('ltg', 'Latgalian'),
+    # ('lv', 'Latvian'),
+    # ('lzh', 'Literary Chinese'),
+    # ('mad', 'Madurese'),
+    # ('mai', 'Maithili'),
+    # ('map-bms', 'Banyumasan'),
+    # ('mdf', 'Moksha'),
+    # ('mg', 'Malagasy'),
+    # ('mh', 'Marshallese'),
+    # ('mhr', 'Eastern Mari'),
+    # ('mi', 'Māori'),
+    # ('min', 'Minangkabau'),
+    # ('mk', 'Macedonian'),
+    # ('ml', 'Malayalam'),
+    # ('mn', 'Mongolian'),
+    # ('mni', 'Manipuri'),
+    # ('mnw', 'Mon'),
+    # ('mo', 'Moldovan'),
+    # ('mos', 'Mossi'),
+    # ('mr', 'Marathi'),
+    # ('mrj', 'Western Mari'),
+    # ('ms', 'Malay'),
+    # ('mt', 'Maltese'),
+    # ('mus', 'Muscogee'),
+    # ('mwl', 'Mirandese'),
+    # ('my', 'Burmese'),
+    # ('myv', 'Erzya'),
+    # ('mzn', 'Mazanderani'),
+    # ('na', 'Nauru'),
+    # ('nah', 'Nahuatl'),
+    # ('nan', 'Minnan'),
+    # ('nap', 'Neapolitan'),
+    # ('nds', 'Low German'),
+    # ('nds-nl', 'Low Saxon'),
+    # ('ne', 'Nepali'),
+    # ('new', 'Newari'),
+    # ('ng', 'Ndonga'),
+    # ('nia', 'Nias'),
+    # ('nl', 'Dutch'),
+    # ('nn', 'Norwegian Nynorsk'),
+    # ('no', 'Norwegian'),
+    # ('nov', 'Novial'),
+    # ('nqo', 'N’Ko'),
+    # ('nr', 'South Ndebele'),
+    # ('nrm', 'Norman'),
+    # ('nso', 'Northern Sotho'),
+    # ('nv', 'Navajo'),
+    # ('ny', 'Nyanja'),
+    # ('oc', 'Occitan'),
+    # ('olo', 'Livvi-Karelian'),
+    # ('om', 'Oromo'),
+    # ('or', 'Odia'),
+    # ('os', 'Ossetic'),
+    # ('pa', 'Punjabi'),
+    # ('pag', 'Pangasinan'),
+    # ('pam', 'Pampanga'),
+    # ('pap', 'Papiamento'),
+    # ('pcd', 'Picard'),
+    # ('pcm', 'Nigerian Pidgin'),
+    # ('pdc', 'Pennsylvania German'),
+    # ('pfl', 'Palatine German'),
+    # ('pi', 'Pali'),
+    # ('pih', 'Pitcairn-Norfolk'),
+    # ('pl', 'Polish'),
+    # ('pms', 'Piedmontese'),
+    # ('pnb', 'Western Punjabi'),
+    # ('pnt', 'Pontic'),
+    # ('ps', 'Pashto'),
+    # ('pt', 'Portuguese'),
+    # ('pwn', 'Paiwan'),
+    # ('qu', 'Quechua'),
+    # ('rm', 'Romansh'),
+    # ('rmy', 'Vlax Romani'),
+    # ('rn', 'Rundi'),
+    # ('ro', 'Romanian'),
+    # ('roa-rup', 'Aromanian'),
+    # ('roa-tara', 'Tarantino'),
+    # ('rsk', 'Pannonian Rusyn'),
+    ('ru', 'Russian'),
+    # ('rue', 'Rusyn'),
+    # ('rup', 'Aromanian'),
+    # ('rw', 'Kinyarwanda'),
+    # ('sa', 'Sanskrit'),
+    # ('sah', 'Yakut'),
+    # ('sat', 'Santali'),
+    # ('sc', 'Sardinian'),
+    # ('scn', 'Sicilian'),
+    # ('sco', 'Scots'),
+    # ('sd', 'Sindhi'),
+    # ('se', 'Northern Sami'),
+    # ('sg', 'Sango'),
+    # ('sgs', 'Samogitian'),
+    # ('sh', 'Serbo-Croatian'),
+    # ('shi', 'Tachelhit'),
+    # ('shn', 'Shan'),
+    # ('shy', 'Shawiya'),
+    # ('si', 'Sinhala'),
+    # ('simple', 'Simple English'),
+    # ('sk', 'Slovak'),
+    # ('skr', 'Saraiki'),
+    # ('sl', 'Slovenian'),
+    # ('sm', 'Samoan'),
+    # ('smn', 'Inari Sami'),
+    # ('sn', 'Shona'),
+    # ('so', 'Somali'),
+    # ('sq', 'Albanian'),
+    # ('sr', 'Serbian'),
+    # ('srn', 'Sranan Tongo'),
+    # ('ss', 'Swati'),
+    # ('st', 'Southern Sotho'),
+    # ('stq', 'Saterland Frisian'),
+    # ('su', 'Sundanese'),
+    # ('sv', 'Swedish'),
+    # ('sw', 'Swahili'),
+    # ('syl', 'Sylheti'),
+    # ('szl', 'Silesian'),
+    # ('szy', 'Sakizaya'),
+    # ('ta', 'Tamil'),
+    # ('tay', 'Atayal'),
+    # ('tcy', 'Tulu'),
+    # ('tdd', 'Tai Nuea'),
+    # ('te', 'Telugu'),
+    # ('tet', 'Tetum'),
+    # ('tg', 'Tajik'),
+    # ('th', 'Thai'),
+    # ('ti', 'Tigrinya'),
+    # ('tig', 'Tigre'),
+    # ('tk', 'Turkmen'),
+    # ('tl', 'Tagalog'),
+    # ('tly', 'Talysh'),
+    # ('tn', 'Tswana'),
+    # ('to', 'Tongan'),
+    # ('tpi', 'Tok Pisin'),
+    # ('tr', 'Turkish'),
+    # ('trv', 'Taroko'),
+    # ('ts', 'Tsonga'),
+    # ('tt', 'Tatar'),
+    # ('tum', 'Tumbuka'),
+    # ('tw', 'Twi'),
+    # ('ty', 'Tahitian'),
+    # ('tyv', 'Tuvinian'),
+    # ('udm', 'Udmurt'),
+    # ('ug', 'Uyghur'),
+    # ('uk', 'Ukrainian'),
+    # ('ur', 'Urdu'),
+    # ('uz', 'Uzbek'),
+    # ('ve', 'Venda'),
+    # ('vec', 'Venetian'),
+    # ('vep', 'Veps'),
+    # ('vi', 'Vietnamese'),
+    # ('vls', 'West Flemish'),
+    # ('vo', 'Volapük'),
+    # ('vro', 'Võro'),
+    # ('wa', 'Walloon'),
+    # ('war', 'Waray'),
+    # ('wo', 'Wolof'),
+    # ('wuu', 'Wu'),
+    # ('xal', 'Kalmyk'),
+    # ('xh', 'Xhosa'),
+    # ('xmf', 'Mingrelian'),
+    # ('yi', 'Yiddish'),
+    # ('yo', 'Yoruba'),
+    # ('yue', 'Cantonese'),
+    # ('za', 'Zhuang'),
+    # ('zea', 'Zeelandic'),
+    # ('zgh', 'Standard Moroccan Tamazight'),
+    # ('zh', 'Chinese'),
+    # ('zh-classical', 'Literary Chinese'),
+    # ('zh-min-nan', 'Minnan'),
+    # ('zh-yue', 'Cantonese'),
+    # ('zu', 'Zulu')
+]
+
+# Indicate where Django should look for translation files:
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -133,3 +558,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-lang-id',  # A unique identifier for my cache instance
+    }
+}

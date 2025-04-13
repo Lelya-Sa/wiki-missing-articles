@@ -1,31 +1,28 @@
 <!DOCTYPE html>
-{% load static %}
-
-<html lang="en">
-
+{% load static i18n %}
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wikipedia Missing Articles</title>
+    <title>{% trans "Wikipedia Missing Articles" %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <div class="top-bar">
         <div class="top-left-container">
-            <a href="" title="Wikipedia Home">
-                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia_Home_" class="wikipedia_up_left_globe_logo">
-{#                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="Wikipedia_Home" class="wikipedia_up_left_text_logo">#}
+            <a href="{% url 'index' %}" title="{% trans 'Wikipedia Home' %}">
+                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia Home" class="wikipedia_up_left_globe_logo">
             </a>
-            <a href="" title="Wikipedia Home">
-{#                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia_Home_" class="wikipedia_up_left_globe_logo">#}
-                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="Wikipedia_Home" class="wikipedia_up_left_text_logo">
+            <a href="{% url 'index' %}" title="{% trans 'Wikipedia Home' %}">
+                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="{% trans 'Wikipedia Home' %}" class="wikipedia_up_left_text_logo">
             </a>
         </div>
         <!-- Top-right Language Button -->
-        <div class="top-right-container">  
+        <div class="top-right-container" style="">  
+            
             <button id="language-search-button" class="search-button">
-                <img src="{% static 'images/language_icon_gray.png' %}" alt="language icon" class="language_icon">
-                Page Language
+                <img src="{% static 'images/language_icon_gray.png' %}" alt="{% trans 'language icon' %}" class="language_icon">
+                {% trans "Page Language" %}
             </button>
             <!-- Language Search (Initially hidden) -->
             <div class="language-selector" id="language-selector">
@@ -33,57 +30,62 @@
                 <input 
                     type="text" 
                     id="language-search" 
-                    placeholder="Search for a language..." 
+                    placeholder="{% trans 'Search for a language...' %}" 
                     autocomplete="off"
                 >
                 <ul id="language-list" class="language-list">
                     <!-- Suggestions will be dynamically populated -->
                 </ul>
+{#                  <ul>#}
+{#                      {% get_current_language as LANGUAGE_CODE %}#}
+{#                      {% get_available_languages as LANGUAGES %}#}
+{#                      {% for code, name in LANGUAGES %}#}
+{#                          <li class="{% if LANGUAGE_CODE == code %}selected{% endif %}">#}
+{#                              <a href="{% url 'translated_page' %}?lang={{ code }}&next={{ request.path }}">#}
+{#                                  {{ name }}#}
+{#                              </a>#}
+{#                          </li>#}
+{#                      {% endfor %}#}
+{#                  </ul>#}
             </div>
+            
         </div>
     </div>
     
     <div class="central-container" style="text-align: center">
-        
-        <div style=" min-block-size: 100%; width: 100%"> 
+        <div style="min-block-size: 100%; width: 100%"> 
             <!-- Wikipedia Globe -->
-            <img src="{% static 'images/wikipedia-spins.gif' %}" alt="Wikipedia Globe" class="globe" loading="lazy">
+            <img src="{% static 'images/wikipedia-spins.gif' %}" alt="{% trans 'Wikipedia Globe' %}" class="globe" loading="lazy">
         </div>
-        
-        <div style=" min-block-size: 100%; width: 100%">
+        <div style="min-block-size: 100%; width: 100%">
             <br>
         </div>
-        
-        <div style=" min-block-size: 100%; width: 100%"> 
+        <div style="min-block-size: 100%; width: 100%"> 
             <!-- Heading -->
-            <h1 id="heading" align="center">Wikipedia Missing Articles</h1>
-            
+            <h1 id="heading" text-align="center">{% trans "Wikipedia Missing Articles" %}</h1>
             <p id="tagline" class="tagline">
-            Explore missing articles searching by category.
-        </p>
+                {% trans "Explore missing articles searching by category." %}
+            </p>
             <br>
-                    <!-- Search Options -->
+            <!-- Search Options -->
             <div class="search-options">
-    {#            <a href="{% url 'search_by_name' %}" class="search-button" id="search-by-name">Search by Name</a>#}
-{#                <a href="{% url 'missing_articles_by_portal' %}"#}
-{#                   class="category-button" id="search-by-Portal">Search by Portal</a>#}
                 <a href="{% url 'missing_articles_by_category' %}" 
-                   class="category-button" id="search-by-category">Search by Category</a>
+                   class="category-button" id="search-by-category">
+                   {% trans "Search by Category" %}
+                </a>
             </div>
-            
         </div>
-
     </div>
 
     <!-- Include JavaScript for the language search functionality -->
     <script src="{% static 'js/language-selector.js' %}" defer></script>
     <script>
         document.addEventListener("click", (e) => {
-    if (!languageSelector.contains(e.target) && e.target !== languageSearchButton) {
-        languageSelector.style.display = "none";
-    }
-});
-
+            if (!languageSelector.contains(e.target) && e.target !== languageSearchButton) {
+                languageSelector.style.display = "none";
+            }
+        });
     </script>
+
 </body>
 </html>

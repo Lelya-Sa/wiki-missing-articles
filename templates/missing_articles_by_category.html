@@ -1,59 +1,76 @@
 <!DOCTYPE html>
-{% load static %}
-<html>
+{% load static i18n %}
+
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Language & Category Selection</title>
+    <title>{% trans "Language & Category Selection"%}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
+    {# this bar have:  #}
+    {# 1. left top bar: ypu can click to return to the main tool page #}
+    {# 2. left right bar: choose page language, TODO: support all wikipedia languages #}
     <div class="top-bar">
         <div class="top-left-container">
-            <a href="/" title="Wikipedia Home">
-                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia_Home_" class="wikipedia_up_left_globe_logo">
+            <a href="{% url 'index' %}" title="{% trans 'Wikipedia Home' %}">
+                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia Home" class="wikipedia_up_left_globe_logo">
             </a>
-            <a href="/" title="Wikipedia Home">
-                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="Wikipedia_Home" class="wikipedia_up_left_text_logo">
+            <a href="{% url 'index' %}" title="{% trans 'Wikipedia Home' %}">
+                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="{% trans 'Wikipedia Home' %}" class="wikipedia_up_left_text_logo">
             </a>
         </div>
         <!-- Top-right Language Button -->
-        <div class="top-right-container">  
-            <div >
-                <button id="language-search-button" class="search-button">
-                <img src="{% static 'images/language_icon_gray.png' %}" alt="language icon" class="language_icon">
-                Page Language
-            </button>
-            </div>
+        <div class="top-right-container" style="">  
             
+            <button id="language-search-button" class="search-button">
+                <img src="{% static 'images/language_icon_gray.png' %}" alt="{% trans 'language icon' %}" class="language_icon">
+                {% trans "Page Language" %}
+            </button>
             <!-- Language Search (Initially hidden) -->
             <div class="language-selector" id="language-selector">
                 <label for="language-search"></label>
                 <input 
                     type="text" 
                     id="language-search" 
-                    placeholder="Search for a language..." 
+                    placeholder="{% trans 'Search for a language...' %}" 
                     autocomplete="off"
                 >
                 <ul id="language-list" class="language-list">
                     <!-- Suggestions will be dynamically populated -->
                 </ul>
+{#                  <ul>#}
+{#                      {% get_current_language as LANGUAGE_CODE %}#}
+{#                      {% get_available_languages as LANGUAGES %}#}
+{#                      {% for code, name in LANGUAGES %}#}
+{#                          <li class="{% if LANGUAGE_CODE == code %}selected{% endif %}">#}
+{#                              <a href="{% url 'translated_page' %}?lang={{ code }}&next={{ request.path }}">#}
+{#                                  {{ name }}#}
+{#                              </a>#}
+{#                          </li>#}
+{#                      {% endfor %}#}
+{#                  </ul>#}
             </div>
+            
         </div>
     </div>
     
+    {# contain the form and the results #}
     <div class="central-left-container">
-        <h2 style="text-align: center;">Search Missing Articles by Category</h2>
+        <h2 style="text-align: center;">{% trans "Search Missing Articles by Category" %}</h2>
         
         <p id="general-message" 
            class="info_msg" style="    width: 100%;
-    max-width: 960px;
-    margin-left: auto;
-    margin-right: auto;">
-            First enter the language you want to contribute to on the left, and the reference language on the right
+                                        max-width: 960px;
+                                        margin-left: auto;
+                                        margin-right: auto;">
+            {% blocktrans %}
+                First enter the language you want to contribute to on the left, and the reference language on the right
+            {% endblocktrans %}
         </p>
         
         <form id="missing-articles-form" style="display: flex; /* Enables flexbox */">
@@ -66,7 +83,9 @@
                 <!-- Language Search Bar -->
                 <div class="article-language-selector" id="article-language-selector" style="margin-left: 35px">
                     <label for="language" style="color: black;font-size: large">
-                         Select the language you want to <b>contribute</b> to:
+                        {% blocktrans %}
+                            Select the language you want to <b>contribute</b> to:
+                        {% endblocktrans %}
                     </label>
                     
                     <br>
@@ -90,7 +109,9 @@
                  <!-- reference Language Search Bar -->
                  <div class="article-language-selector" id="article-refer-language-selector" >
                      <label for="comparing-language" style="color: black;font-size: large">
+                         {% blocktrans %}
                          Select the language you want to <b>refer</b> from:
+                         {% endblocktrans %}
                      </label>
                      <br>
                      <label for="article-refer-language-search"></label>
@@ -114,7 +135,9 @@
             <div style="width: 100%">
                 <div id="article-refer-language-spinner" style="display: none;">
                     <img src="/static/images/spinner.gif" alt="language_spinner">
+                    {% blocktrans %}
                     Loading languages...
+                    {% endblocktrans %}
                 </div>
                 <p id="the_selected_refer_lang" style="color: #7c0808;"></p>
                 <br>
@@ -124,7 +147,9 @@
             <div style="width: 100%; margin-left: 0;margin-right:0; text-align: center" class="info_msg">
                 <!-- message -->
                 <p id="category-message">
+                    {% blocktrans %}
                     you can search from all categories in the selected contribution language
+                    {% endblocktrans %}
                 </p>
             </div>
             
@@ -132,7 +157,11 @@
             
             <div class="the-selector" id="all-category-selector-class" style="margin-left: 0">
                 <!-- all category Selector -->
-                <label for="all-category" style="color: black;font-size: large">Write a category name in contribute language:</label>
+                <label for="all-category" style="color: black;font-size: large">
+                    {% blocktrans %}
+                    Write a category name in contribute language:
+                    {% endblocktrans %}
+                </label>
                 <div id="all-category" class="the-selector" style="border: none; width: 80%;">
                     <input 
                         type="text" 
@@ -152,10 +181,15 @@
                 <br>
                 <p id="all-cat-response_data" style="color: #7c0808;"></p>
             </div>    
+        
             <div style="width: 100%"> <br><br> </div>
 
             <div style="width: 98%; text-align: center;" >
-                <button type="submit" style="font-size: large">Submit</button>
+                <button type="submit" style="font-size: x-large">
+                    {% blocktrans %}
+                    Submit
+                    {% endblocktrans %}
+                </button>
                 <p> <br> </p>
             </div>
         </form>
@@ -164,14 +198,18 @@
         <div style="width: 76%; margin-left: 150px;" class="info_msg">
                 <!-- message -->
             <p id="articles-message">
+                {% blocktrans %}
                 below are the missing articles in the language you want to contribute to
+                {% endblocktrans %}
             </p>
         </div>
         
         <div style="width: 98%" >
             
             <h2 style="margin-left: 150px; text-align: left;">
+                {% blocktrans %}
                 Articles Missing in Selected Contribute Language:
+                {% endblocktrans %}
             </h2>
             
             <div id="ranked_res_spinner" style="display: none;">
@@ -211,15 +249,20 @@
         </div>
         
     </div>
+    
+    <div id="welcome-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-welcome">&times;</span>
+            <h2>Welcome to the Missing Articles Tool!</h2>
+            <p>This tool helps you find Wikipedia articles missing in one language that exist in another.</p>
+            <p>Select the languages and a category to get started.</p>
+        </div>
+    </div>
 
     <script src="{% static 'js/category-search.js' %}" defer></script>
     <script src="{% static 'js/language-selector.js' %}" defer></script>
     <script src="{% static 'js/category-submission.js' %}" defer></script>
-
+    <script src="{% static 'js/welcome-popup.js' %}" defer></script>
 </body>
 </html>
-
-
-
-
 

@@ -1,0 +1,136 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-13 19:20+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Hebrew <LL@li.org>\n"
+"Language: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\templates\index.html:7 .\templates\index.html:65
+msgid "Wikipedia Missing Articles"
+msgstr "ערכים חסרים בוויקיפדיה"
+
+#: .\templates\index.html:13 .\templates\index.html:16
+#: .\templates\index.html:17 .\templates\missing_articles_by_category.html:14
+#: .\templates\missing_articles_by_category.html:17
+#: .\templates\missing_articles_by_category.html:18
+msgid "Wikipedia Home"
+msgstr "דף הבית של ויקיפדיה"
+
+#: .\templates\index.html:24 .\templates\missing_articles_by_category.html:25
+msgid "language icon"
+msgstr "סמל שפה"
+
+#: .\templates\index.html:25 .\templates\missing_articles_by_category.html:26
+msgid "Page Language"
+msgstr "שפת העמוד"
+
+#: .\templates\index.html:33 .\templates\missing_articles_by_category.html:34
+msgid "Search for a language..."
+msgstr "חפש שפה..."
+
+#: .\templates\index.html:58
+#, fuzzy
+#| msgid "Wikipedia Home"
+msgid "Wikipedia Globe"
+msgstr "דף הבית של ויקיפדיה"
+
+#: .\templates\index.html:67
+msgid "Explore missing articles searching by category."
+msgstr "חפש ערכים חסרים לפי קטגוריה"
+
+#: .\templates\index.html:74
+msgid "Search by Category"
+msgstr "חיפוש לפי קטגוריה"
+
+#: .\templates\missing_articles_by_category.html:7
+msgid "Language & Category Selection"
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:57
+msgid "Search Missing Articles by Category"
+msgstr "חפש ערכים חסרים לפי קטגוריה"
+
+#: .\templates\missing_articles_by_category.html:64
+#, fuzzy
+#| msgid ""
+#| "First enter the language you want to contribute to on the left, and the "
+#| "reference language on the right"
+msgid ""
+"\n"
+"                First enter the language you want to contribute to on the "
+"left, and the reference language on the right\n"
+"            "
+msgstr ""
+"הזן תחילה את השפה שברצונך לתרום לה בצד שמאל, ואת שפת ההתייחסות בצד ימין"
+
+#: .\templates\missing_articles_by_category.html:79
+msgid ""
+"\n"
+"                            Select the language you want to <b>contribute</"
+"b> to:\n"
+"                        "
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:105
+msgid ""
+"\n"
+"                         Select the language you want to <b>refer</b> from:\n"
+"                         "
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:131
+msgid ""
+"\n"
+"                    Loading languages...\n"
+"                    "
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:143
+msgid ""
+"\n"
+"                    you can search from all categories in the selected "
+"contribution language\n"
+"                    "
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:154
+msgid ""
+"\n"
+"                    Write a category name in contribute language:\n"
+"                    "
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:182
+msgid ""
+"\n"
+"                    Submit\n"
+"                    "
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:194
+msgid ""
+"\n"
+"                below are the missing articles in the language you want to "
+"contribute to\n"
+"                "
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:203
+msgid ""
+"\n"
+"                Articles Missing in Selected Contribute Language:\n"
+"                "
+msgstr ""

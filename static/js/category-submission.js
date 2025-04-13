@@ -477,8 +477,8 @@ document.addEventListener("DOMContentLoaded", function () {
         ranked_res_spinner.style.display = "inline-block";
 
         try {
-            // console.log("Submitting request: edit_lang:", edit_lang,
-            //             ", refer_lang", refer_lang, "category:", category);
+            console.log("Submitting request: edit_lang:", edit_lang,
+                        ", refer_lang", refer_lang, "category:", category);
 
             // Extract language code (inside parentheses)
             const languageCode = edit_lang.match(/\((.*?)\)/)?.[1];

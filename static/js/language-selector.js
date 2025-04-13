@@ -7,6 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let languages = [];
   let isLoading = true; // Track loading state
 
+  function changeLanguage(langCode) {
+    // Redirect to the translated view with ?lang=xx
+    const next = window.location.pathname;
+    window.location.href = `/translated_page/?lang=${langCode}&next=${next}`;
+}
+
   // Display "Loading..." feedback in the language list
   function showLoading() {
     languageList.innerHTML = ""; // Clear the list
@@ -35,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Populate the language list based on search query
   function populateLanguages(query = "") {
+    const currentLang = document.documentElement.lang; // <-- grabs current language from <html lang="...">
+
     const filteredLanguages = query
       ? languages.filter((lang) =>
           lang.name.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
@@ -52,13 +60,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     filteredLanguages.forEach((lang) => {
-      const listItem = document.createElement("li");
-      listItem.textContent = `${lang.name} (${lang.code})`;
-      listItem.dataset.langCode = lang.code;
-      listItem.addEventListener("click", () => {
-        window.location.href = `/translated_page/?lang=${lang.code}`;
-      });
-      languageList.appendChild(listItem);
+
+      const li = document.createElement("li");
+      li.textContent = `${lang.name} (${lang.code})`;
+      li.dataset.langCode = lang.code;
+      if (lang.code === currentLang) {
+        li.style.fontWeight = "bold";
+        li.style.color = "gray";
+        li.title = "Currently selected";
+      }
+      li.onclick = () => changeLanguage(lang.code);
+      languageList.appendChild(li);
     });
   }
 
