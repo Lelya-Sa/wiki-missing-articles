@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Missing_App/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Missing_App/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/category-search.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/category-submission.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-submission.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/portal-search.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/portal-submission.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_portal.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/finalproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/finalproject/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +52,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="MIXED" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -84,33 +78,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Django Server.FinalProject.executor&quot;: &quot;Run&quot;,
-    &quot;Django Server.fp.executor&quot;: &quot;Run&quot;,
-    &quot;Django Server.malak.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;lelya&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/lelya/Desktop/py/finalproject&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;ssh.settings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Django Server.FinalProject.executor": "Run",
+    "Django Server.fp.executor": "Run",
+    "Django Server.malak.executor": "Run",
+    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.pycharm.django.structure.promotion.once.per.project": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "django.template.preview.state": "SHOW_EDITOR",
+    "git-widget-placeholder": "malak",
+    "last_opened_file_path": "D:/Technion/FifthYear/semester9/malak",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "ssh.settings",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
+  "keyToStringList": {
+    "stardust.markdown.MarkdownSplitEditorSuppressor:keyList": []
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\lelya\Desktop\py\finalproject" />
@@ -172,7 +167,7 @@
         <env name="DJANGO_SETTINGS_MODULE" value="finalproject.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.10 (djangoProject)" />
+      <option name="SDK_NAME" value="Python 3.8 (base) (2)" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -212,8 +207,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.17011.127" />
-        <option value="bundled-python-sdk-48aec45f0201-7e9c3bbb6e34-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.17011.127" />
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220" />
+        <option value="bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220" />
       </set>
     </attachedChunks>
   </component>
@@ -265,6 +260,9 @@
       <workItem from="1743695329426" duration="9741000" />
       <workItem from="1743956972838" duration="38470000" />
       <workItem from="1744098628730" duration="10596000" />
+      <workItem from="1744369511319" duration="2339000" />
+      <workItem from="1744451604028" duration="74000" />
+      <workItem from="1744638960734" duration="1164000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -659,7 +657,6 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/static/js/category-submission.js</url>
           <line>152</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
