@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/finalproject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/finalproject.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/finalproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/finalproject/settings.py" afterDir="false" />
     </list>
@@ -84,6 +85,8 @@
     "Django Server.FinalProject.executor": "Run",
     "Django Server.fp.executor": "Run",
     "Django Server.malak.executor": "Run",
+    "Notification.DisplayName-DoNotAsk-Database detector": "Database detector",
+    "Notification.DoNotAsk-Database detector": "true",
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -262,7 +265,9 @@
       <workItem from="1744098628730" duration="10596000" />
       <workItem from="1744369511319" duration="2339000" />
       <workItem from="1744451604028" duration="74000" />
-      <workItem from="1744638960734" duration="1164000" />
+      <workItem from="1744638960734" duration="3197000" />
+      <workItem from="1744644295709" duration="31000" />
+      <workItem from="1744644447677" duration="2555000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -594,7 +599,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744068878769</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
+      <option name="closed" value="true" />
+      <created>1744640326234</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1744640326234</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
