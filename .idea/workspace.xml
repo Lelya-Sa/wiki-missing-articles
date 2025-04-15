@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="restyled right top container&#10;fixed translation&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TODO future development.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TODO future development.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_category.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles_by_category.html" afterDir="false" />
@@ -81,35 +80,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Django Server.FinalProject.executor": "Run",
-    "Django Server.fp.executor": "Run",
-    "Django Server.malak.executor": "Run",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.pycharm.django.structure.promotion.once.per.project": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "django.template.preview.state": "SHOW_EDITOR",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/lelya/Desktop/py/finalproject",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Django Server.FinalProject.executor&quot;: &quot;Run&quot;,
+    &quot;Django Server.fp.executor&quot;: &quot;Run&quot;,
+    &quot;Django Server.malak.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.pycharm.django.structure.promotion.once.per.project&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/lelya/Desktop/py/finalproject&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "stardust.markdown.MarkdownSplitEditorSuppressor:keyList": []
+  &quot;keyToStringList&quot;: {
+    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static\js" />
@@ -223,7 +222,8 @@
       <workItem from="1744477473115" duration="7299000" />
       <workItem from="1744505856739" duration="20019000" />
       <workItem from="1744633569341" duration="37228000" />
-      <workItem from="1744683210753" duration="1286000" />
+      <workItem from="1744683210753" duration="1498000" />
+      <workItem from="1744737177379" duration="8892000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -579,7 +579,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744682766503</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
+      <option name="closed" value="true" />
+      <created>1744684685755</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1744684685755</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -609,7 +617,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="restyled main page language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="language click bug fixed language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="fixed bugs in category page and redesigned&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
@@ -634,6 +641,7 @@
     <MESSAGE value="added a metric, removed portals&#10;TODO : &#10;- improve rating system.&#10;- optimize running time.&#10;- make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
     <MESSAGE value="added translation pages&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
     <MESSAGE value="restyled right top container&#10;fixed translation&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
-    <option name="LAST_COMMIT_MESSAGE" value="restyled right top container&#10;fixed translation&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
+    <MESSAGE value="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
   </component>
 </project>

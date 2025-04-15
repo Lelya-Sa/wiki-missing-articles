@@ -24,18 +24,22 @@
     <div class="top-bar">
         <div class="top-left-container" id="top-left-container">
             <a href="{% url 'index' %}" title="{% trans 'Wikipedia Home' %}">
-                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia Home" class="wikipedia_up_left_globe_logo">
+                <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}"
+                     alt="Wikipedia Home" class="wikipedia_up_left_globe_logo">
             </a>
             <a href="{% url 'index' %}" title="{% trans 'Wikipedia Home' %}">
-                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}" alt="{% trans 'Wikipedia Home' %}" class="wikipedia_up_left_text_logo">
+                <img src="{% static 'images/Wikipedia_Text_Logo.png' %}"
+                     alt="{% trans 'Wikipedia Home' %}" class="wikipedia_up_left_text_logo">
             </a>
         </div>
         <!-- Top-right Language Button -->
         <div class="top-right-container" id="top-right-container" >  
             
             <button id="language-search-button" class="search-button">
-                <img src="{% static 'images/language_icon_gray.png' %}" alt="{% trans 'language icon' %}" class="language_icon">
-                {% trans "Page Language" %}
+                <img src="{% static 'images/language_icon_gray.png' %}"
+                     alt="{% trans 'language icon' %}" class="language_icon">
+                    {% trans "Page Language"%}
+                
             </button>
             <!-- Language Search (Initially hidden) -->
             <div class="language-selector" id="language-selector">
@@ -54,7 +58,7 @@
         </div>
     </div>
     
-    <div style="text-align: left; font-size: xx-large;margin-left: 5%; width: 100%">
+    <div style="text-align: left; font-size: xx-large;margin-left: 5%; width: 90%">
         <br>
         <button id="start-tour" class="shepherd-button" >Start Tour</button>
     </div>
@@ -66,13 +70,20 @@
          <p>After the submit, below it will show the missing articles in the language you want to contribute to</p>
             {% endblocktrans %}"
 
-         data-language-selector="{% trans 'Click here to choose your preferred page language! Not all languages are supported.' %}"
-         data-return-to-main="{% trans 'Click here to return to main page' %}" 
-         data-edit-language-list="{% trans 'Search for the language you want to contribute to or scroll through the list.' %}" 
-         data-refer-language-list="{% trans 'Search for the language you want to refer from or scroll through the list.' %}" 
-         data-category="{% trans 'Write the category you are interested in' %}" 
-         data-submit="{% trans 'When you are done choosing languages and category, click on submit.' %}" 
-         data-articles="{% trans 'The missing articles will appear here' %}" 
+         data-language-selector=
+                 "{% trans 'Click here to choose your preferred page language! Not all languages are supported.' %}"
+         data-return-to-main=
+                 "{% trans 'Click here to return to main page' %}" 
+         data-edit-language-list=
+                 "{% trans 'Search for the language you want to contribute to or scroll through the list.' %}" 
+         data-refer-language-list=
+                 "{% trans 'Search for the language you want to refer from or scroll through the list.' %}" 
+         data-category=
+                 "{% trans 'Write the category you are interested in' %}" 
+         data-submit=
+                 "{% trans 'When you are done choosing languages and category, click on submit.' %}" 
+         data-articles=
+                 "{% trans 'The missing articles will appear here' %}" 
          data-next="{% trans 'Next' %}" 
          data-back="{% trans 'Back' %}" 
          data-done="{% trans 'Done' %}"
@@ -93,16 +104,14 @@
             {% endblocktrans %}
         </p>
         
-        <form id="missing-articles-form" method="POST" action="{% url 'missing_articles_by_category' %} style="display: flex; /* Enables flexbox */">
+        <form id="missing-articles-form" method="POST" action="{% url 'missing_articles_by_category' %}">
         {% csrf_token %}
-
             <div style="width: 100%;display: flex;border: 1px groove #94979e;/*border-radius: 1px;*/
                         box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-                         padding-bottom: 20px;
-                         padding-top: 20px;
+                         padding: 1%;
                         ">
                 <!-- Language Search Bar -->
-                <div class="article-language-selector" id="article-language-selector" style="margin-left: 35px">
+                <div class="article-language-selector" id="article-language-selector" >
                     <label for="language" style="color: black;font-size: large">
                         {% blocktrans %}
                             Select the language you want to <b>contribute</b> to:
@@ -194,7 +203,7 @@
                 </div>
                 
                 <div id="all-category-spinner" style="display: none;">Loading categories...</div>
-                <p id="all-cat-feedback-message" style="color: red; font-weight: bold; margin-top: 10px;"></p>
+                <p id="all-cat-feedback-message" style="color: red; font-weight: bold; margin-top: 0.05%;"></p>
                 
                 <br>
                 <p id="all-cat-response_data" style="color: #7c0808;"></p>
@@ -225,7 +234,7 @@
         
         <div id="the-results" style="width: 98%" >
             
-            <h2 style="margin-left: 150px; 
+            <h2 style="margin-left: 10%; 
                         text-align: left;
                         font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;">
                 {% blocktrans %}
@@ -245,17 +254,15 @@
             <br>
             
             <table id="articles-table" class="articles-table" style="
-                                            width: 78%;
+                                            width: 80%;
                                             text-align: center;
-                                            {#max-width: 1100px;#}
-                                            margin-left: 150px;
-                                            {#margin-right: 800px;#}
+                                            margin-left: 10%;
                                          border-collapse: collapse;">
                 <thead>
                 <tr>
-                    <th style="border: 1px solid #ccc; padding: 8px;"> </th>
-                    <th style="border: 1px solid #ccc; padding: 8px;">Title</th>
-                    <th style="border: 1px solid #ccc; padding: 8px;">Links</th>
+                    <th style="border: 1px solid #ccc; padding: 1%;"> </th>
+                    <th style="border: 1px solid #ccc; padding: 1%;">Title</th>
+                    <th style="border: 1px solid #ccc; padding: 1%;">Links</th>
                 </tr>
                 </thead>
                 <tbody id="articles-table-body">
