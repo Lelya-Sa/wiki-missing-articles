@@ -31,7 +31,7 @@
             </a>
         </div>
         <!-- Top-right Language Button -->
-        <div class="top-right-container" id="top-right-container" style="">  
+        <div class="top-right-container" id="top-right-container" >  
             
             <button id="language-search-button" class="search-button">
                 <img src="{% static 'images/language_icon_gray.png' %}" alt="{% trans 'language icon' %}" class="language_icon">
@@ -54,12 +54,18 @@
         </div>
     </div>
     
-    <div style="text-align: left; font-size: xx-large;margin-left: 50px; width: 100%">
+    <div style="text-align: left; font-size: xx-large;margin-left: 5%; width: 100%">
         <br>
         <button id="start-tour" class="shepherd-button" >Start Tour</button>
     </div>
     
     <div id="tour-translations" style="display: none;" 
+         data-main-msg="{% blocktrans %}<h2>Welcome to Search Missing Articles by Category!</h2>
+         <p>First enter the language you want to contribute to on the left, and the reference language on the right</p>
+         <p>Then, you can search from all categories in the selected contribution language</p>
+         <p>After the submit, below it will show the missing articles in the language you want to contribute to</p>
+            {% endblocktrans %}"
+
          data-language-selector="{% trans 'Click here to choose your preferred page language! Not all languages are supported.' %}"
          data-return-to-main="{% trans 'Click here to return to main page' %}" 
          data-edit-language-list="{% trans 'Search for the language you want to contribute to or scroll through the list.' %}" 
@@ -69,7 +75,8 @@
          data-articles="{% trans 'The missing articles will appear here' %}" 
          data-next="{% trans 'Next' %}" 
          data-back="{% trans 'Back' %}" 
-         data-done="{% trans 'Done' %}">
+         data-done="{% trans 'Done' %}"
+    >
         
     </div>
     
@@ -78,12 +85,9 @@
         <h2 style="text-align: center;font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;">
             {% trans "Search Missing Articles by Category" %}
         </h2>
-        
+    
         <p id="general-message" 
-           class="info_msg" style="    width: 100%;
-                                        max-width: 960px;
-                                        margin-left: auto;
-                                        margin-right: auto;">
+           class="info_msg">
             {% blocktrans %}
                 First enter the language you want to contribute to on the left, and the reference language on the right
             {% endblocktrans %}
@@ -157,7 +161,7 @@
                 <br>
             </div>
 
-            <div style="width: 100%; margin-left: 0;margin-right:0; text-align: center" class="info_msg">
+            <div class="info_msg" style="width: 100%;margin-left: 0;">
                 <!-- message -->
                 <p id="category-message">
                     {% blocktrans %}
@@ -209,7 +213,7 @@
         </form>
                 
         <br>
-        <div style="width: 76%; margin-left: 150px;" class="info_msg">
+        <div class="info_msg">
                 <!-- message -->
             <p id="articles-message">
                 {% blocktrans %}
@@ -265,18 +269,6 @@
         </div>
     </div>
     
-    <div id="missing-welcome-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="missing-close-welcome">&times;</span>
-            <h2>Welcome to Search Missing Articles by Category!</h2>
-            <p>First enter the language you want to contribute to on the left, and the reference language on the right </p>
-            <p>then, you can search from all categories in the selected contribution language</p>
-            <p>after the submit, below it will show the missing articles in the language you want to contribute to</p>
-        </div>
-    </div>
-    
-
-    <script src="{% static 'js/missing-welcome-popup.js' %}" defer></script>
     <script src="{% static 'js/category-search.js' %}" defer></script>
     <script src="{% static 'js/language-selector.js' %}" defer></script>
     <script src="{% static 'js/category-submission.js' %}" defer></script>

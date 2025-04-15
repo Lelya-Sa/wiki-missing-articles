@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wikipedia Missing Articles 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-15 03:06+0300\n"
+"POT-Creation-Date: 2025-04-15 05:02+0300\n"
 "PO-Revision-Date: 2025-04-15 10:00+0300\n"
 "Last-Translator: YOUR NAME <youremail@example.com>\n"
 "Language-Team: Hebrew <LL@li.org>\n"
@@ -57,50 +57,72 @@ msgid "Language & Category Selection"
 msgstr "בחירת שפה וקטגוריה"
 
 #: .\templates\missing_articles_by_category.html:63
-msgid "Click here to choose your preferred page language! Not all languages are supported."
+msgid ""
+"<h2>Welcome to Search Missing Articles by Category!</h2>\n"
+"         <p>First enter the language you want to contribute to on the left, "
+"and the reference language on the right</p>\n"
+"         <p>Then, you can search from all categories in the selected "
+"contribution language</p>\n"
+"         <p>After the submit, below it will show the missing articles in the "
+"language you want to contribute to</p>\n"
+"            "
+msgstr ""
+"<h2>ברוכים הבאים לחיפוש ערכים חסרים לפי קטגוריה!</h2>\n"
+"         <p>תחילה הזן את השפה שאליה ברצונך לתרום בצד שמאל, "
+"ואת שפת ההתייחסות בצד ימין</p>\n"
+"         <p>לאחר מכן תוכל לחפש בכל הקטגוריות בשפת התרומה שבחרת</p>\n"
+"         <p>לאחר הלחיצה על שליחה, יוצגו למטה הערכים החסרים בשפה שאליה ברצונך לתרום</p>\n"
+"            "
+
+#: .\templates\missing_articles_by_category.html:69
+msgid ""
+"Click here to choose your preferred page language! Not all languages are "
+"supported."
 msgstr "לחץ כאן כדי לבחור את שפת העמוד המועדפת עליך! לא כל השפות נתמכות."
 
-#: .\templates\missing_articles_by_category.html:64
+#: .\templates\missing_articles_by_category.html:70
 msgid "Click here to return to main page"
 msgstr "לחץ כאן כדי לחזור לעמוד הראשי"
 
-#: .\templates\missing_articles_by_category.html:65
-msgid "Search for the language you want to contribute to or scroll through the list."
+#: .\templates\missing_articles_by_category.html:71
+msgid ""
+"Search for the language you want to contribute to or scroll through the list."
 msgstr "חפש את השפה אליה ברצונך לתרום או גלול ברשימה."
 
-#: .\templates\missing_articles_by_category.html:66
-msgid "Search for the language you want to refer from or scroll through the list."
+#: .\templates\missing_articles_by_category.html:72
+msgid ""
+"Search for the language you want to refer from or scroll through the list."
 msgstr "חפש את שפת ההפניה שלך או גלול ברשימה."
 
-#: .\templates\missing_articles_by_category.html:67
+#: .\templates\missing_articles_by_category.html:73
 msgid "Write the category you are interested in"
 msgstr "כתוב את הקטגוריה שמעניינת אותך"
 
-#: .\templates\missing_articles_by_category.html:68
+#: .\templates\missing_articles_by_category.html:74
 msgid "When you are done choosing languages and category, click on submit."
 msgstr "לאחר שסיימת לבחור שפות וקטגוריה, לחץ על שלח."
 
-#: .\templates\missing_articles_by_category.html:69
+#: .\templates\missing_articles_by_category.html:75
 msgid "The missing articles will appear here"
 msgstr "הערכים החסרים יופיעו כאן"
 
-#: .\templates\missing_articles_by_category.html:70
+#: .\templates\missing_articles_by_category.html:76
 msgid "Next"
 msgstr "הבא"
 
-#: .\templates\missing_articles_by_category.html:71
+#: .\templates\missing_articles_by_category.html:77
 msgid "Back"
 msgstr "חזור"
 
-#: .\templates\missing_articles_by_category.html:72
+#: .\templates\missing_articles_by_category.html:78
 msgid "Done"
 msgstr "סיום"
 
-#: .\templates\missing_articles_by_category.html:79
+#: .\templates\missing_articles_by_category.html:86
 msgid "Search Missing Articles by Category"
 msgstr "חיפוש ערכים חסרים לפי קטגוריה"
 
-#: .\templates\missing_articles_by_category.html:87
+#: .\templates\missing_articles_by_category.html:91
 msgid ""
 "\n"
 "                First enter the language you want to contribute to on the "
@@ -108,10 +130,11 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"                קודם הזן את השפה אליה אתה רוצה לתרום בצד שמאל, ואת שפת ההפניה בצד ימין\n"
+"                קודם הזן את השפה אליה אתה רוצה לתרום בצד שמאל, ואת שפת "
+"ההפניה בצד ימין\n"
 "            "
 
-#: .\templates\missing_articles_by_category.html:102
+#: .\templates\missing_articles_by_category.html:106
 msgid ""
 "\n"
 "                            Select the language you want to <b>contribute</"
@@ -122,7 +145,7 @@ msgstr ""
 "                            בחר את השפה אליה ברצונך <b>לתרום</b>:\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:127
+#: .\templates\missing_articles_by_category.html:131
 msgid ""
 "\n"
 "                         Select the language you want to <b>refer</b> from:\n"
@@ -132,7 +155,7 @@ msgstr ""
 "                         בחר את השפה ממנה ברצונך <b>להפנות</b>:\n"
 "                         "
 
-#: .\templates\missing_articles_by_category.html:152
+#: .\templates\missing_articles_by_category.html:156
 msgid ""
 "\n"
 "                    Loading languages...\n"
@@ -142,7 +165,7 @@ msgstr ""
 "                    טוען שפות...\n"
 "                    "
 
-#: .\templates\missing_articles_by_category.html:163
+#: .\templates\missing_articles_by_category.html:167
 msgid ""
 "\n"
 "                    you can search from all categories in the selected "
@@ -153,7 +176,7 @@ msgstr ""
 "                    תוכל לחפש מכל הקטגוריות בשפת התרומה שנבחרה\n"
 "                    "
 
-#: .\templates\missing_articles_by_category.html:174
+#: .\templates\missing_articles_by_category.html:178
 msgid ""
 "\n"
 "                    Write a category name in contribute language:\n"
@@ -163,7 +186,7 @@ msgstr ""
 "                    כתוב את שם הקטגוריה בשפת התרומה:\n"
 "                    "
 
-#: .\templates\missing_articles_by_category.html:202
+#: .\templates\missing_articles_by_category.html:206
 msgid ""
 "\n"
 "                    Submit\n"
@@ -173,7 +196,7 @@ msgstr ""
 "                    שלח\n"
 "                    "
 
-#: .\templates\missing_articles_by_category.html:215
+#: .\templates\missing_articles_by_category.html:219
 msgid ""
 "\n"
 "                below are the missing articles in the language you want to "
@@ -184,7 +207,7 @@ msgstr ""
 "                להלן הערכים החסרים בשפה אליה ברצונך לתרום\n"
 "                "
 
-#: .\templates\missing_articles_by_category.html:226
+#: .\templates\missing_articles_by_category.html:230
 msgid ""
 "\n"
 "                Articles Missing in Selected Contribute Language:\n"

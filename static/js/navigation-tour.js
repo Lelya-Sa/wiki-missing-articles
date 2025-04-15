@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const TOUR_TRANSLATIONS = {
     steps: {
+      mainMsg: t.mainMsg,
       languageSelector: t.languageSelector,
       returnToMain: t.returnToMain,
       editLanguageList: t.editLanguageList,
@@ -37,8 +38,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // ESC key to close the tour
+    const handleEscKey = (e) => {
+    if (e.key === 'Escape') {
+      tour.cancel(); // Closes the tour
+    }
+    };
+
+
     const steps = [
         {
+          id: 'first-step',
+          text: TOUR_TRANSLATIONS.steps.mainMsg,
+          attachTo: { element: '#body', on: 'bottom' }
+        },
+      {
           id: 'language-selector-step',
           text: TOUR_TRANSLATIONS.steps.languageSelector,
           attachTo: { element: '#top-right-container', on: 'bottom' }
@@ -109,23 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const footer = stepEl.querySelector('.shepherd-footer');
       if (footer) footer.insertBefore(progressBar, footer.firstChild);
     }
-  }
-
-  function waitForElementVisible(selector, timeout = 3000) {
-    return new Promise((resolve, reject) => {
-      const start = Date.now();
-
-      function check() {
-        const el = document.querySelector(selector);
-        const visible = el && el.offsetParent !== null;
-        if (visible) return resolve();
-
-        if (Date.now() - start > timeout) return reject();
-        requestAnimationFrame(check);
-      }
-
-      check();
-    });
   }
 
   // Manual start button

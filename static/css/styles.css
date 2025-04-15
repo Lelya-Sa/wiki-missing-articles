@@ -29,7 +29,7 @@ body {
 .top-bar {
     width: 100%;
     display: flex; /* Enables flexbox */
-    align-items: center; /* Aligns items vertically (centered if needed) */
+    align-items: flex-start;
     top: 0; /* Aligns the container to the top */
     padding: 10px 10px 10px; /* Adds padding for spacing */
     background-color: rgb(225, 225, 229); /* Optional: Background color for the top bar */
@@ -43,21 +43,26 @@ body {
 
 /* Left container styles */
 .top-left-container  {
-    margin: 20px auto 10px 30px; /* top right bottom left*/
+    margin: 0 auto 10px 30px; /* top right bottom left*/
     display: flex; /* Align items in a row */
     flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     align-items: center; /* Vertically center the content */
 }
 
 .top-right-container {
-    text-align: right;
-    position: absolute;
-    top: -217px; /* Adjust as needed */
-    right: 5px; /* Adjust as needed */
-    display: flex; /* Align items in a row */
-    flex-wrap: wrap; /* Allows wrapping when space is insufficient */
+    text-align: center;
+    position: relative;
+    margin-top: 0; /* Ensures no extra margin above */
+    /*top: 0; !* Adjust as needed *!*/
+    right: 0; /* Adjust as needed */
+    /*left: auto;*/
+    /*display: flex; */
+    display: inline-block;
     z-index: var(--z-index-top-right-container);
     flex-direction: column; /* Stack items vertically */
+    justify-content: flex-start; /* Keep items pinned at the top */
+    align-items: flex-end; /* Align items to the right */
+    flex-wrap: nowrap; /* Prevent unwanted wrapping, if possible */
 }
 
 /* Central container styling */
@@ -154,9 +159,6 @@ h1 {
     color: #4d4f53;
     font-size: 16px;
     padding: 10px 10px;
-    margin-top: 225px;
-    margin-right: 80px;
-    /*margin: 225px 5px 5px 5px;*/
     text-decoration: none;
     border-radius: 5px;
     transition: background-color 0.3s ease;
@@ -225,7 +227,7 @@ h1 {
 /* Language Selector */
 .language-selector {
     position: relative; /* Ensure the dropdown appears on top */
-    top: 0; /* Adjust based on layout */
+    top: 100%; /* Adjust based on layout */
     display: none; /* Initially hidden */
     background-color: #f6f7f8;
     border-radius: 1px;
@@ -233,10 +235,11 @@ h1 {
     width: 200px; /* Adjust width as needed */
     z-index: 1000; /* Ensure it's above other elements */
     transition: opacity 0.2s ease, transform 0.2s ease;
-    transform: translateY(-10px); /* Start slightly above */
+    /*transform: translateY(-10px); !* Start slightly above *!*/
     opacity: 0;
     pointer-events: none; /* Prevent clicks when hidden */
     visibility: hidden; /* Ensures it's not interactable */
+    left: 0;
 }
 
 .the-selector, .article-language-selector {
@@ -259,10 +262,11 @@ h1 {
 
 /* Ensure proper positioning of dropdown */
 .language-list {
-    position: relative; /* Ensure the dropdown appears on top */
+    display: none;
+    position: absolute;
+    top: 36%;
+    left: 0;
     list-style: none;
-    margin: 0;
-    padding: 0;
     max-height: 200px; /* Limit height for scrolling */
     overflow-y: scroll; /* Enable scrolling */
     background-color: #fff;
@@ -271,7 +275,7 @@ h1 {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .language-list::-webkit-scrollbar {
-    width: 8px;
+    width: 5%;
 }
 .language-list::-webkit-scrollbar-thumb {
     background: #ccc;
@@ -328,11 +332,6 @@ h1 {
 /* Display list when search input is focused */
 .article-language-search:focus + .language-list {
     display: block; /* Show the dropdown when the input is focused */
-}
-
-/* Show dropdown when button is clicked */
-.language-list {
-    display: block; /* Ensure dropdown is visible when active */
 }
 
 /* Language Selector */
@@ -479,14 +478,15 @@ h1 {
 
 
 .info_msg{
+    width: 80%;
     font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
     color: #3366cb;
     font-weight: bold;
-    margin-left: 150px;
     text-align: center;
     border-radius: 5px;
     transition: background-color 0.3s ease;
     border: double #97b7e4;
+    margin-left: 10%;
 
 }
 .articles-table th {
@@ -577,6 +577,10 @@ h1 {
     .the-selector {
         width: 100%;
         padding: 0 10px;
+    }
+    .top-right-container {
+        flex-direction: column;
+        align-items: flex-end;
     }
 }
 
