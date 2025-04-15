@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Redirect to the translated view with ?lang=xx
     const next = window.location.pathname;
     window.location.href = `/translated_page/?lang=${langCode}&next=${next}`;
-}
+  }
 
   // Display "Loading..." feedback in the language list
   function showLoading() {
@@ -42,11 +42,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Populate the language list based on search query
   function populateLanguages(query = "") {
     const currentLang = document.documentElement.lang; // <-- grabs current language from <html lang="...">
+    const normalizedQuery = query.toLowerCase();
 
     const filteredLanguages = query
       ? languages.filter((lang) =>
-          lang.name.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
+          (lang.name && lang.name.toLowerCase().includes(normalizedQuery)) ||
+          (lang.native_name && lang.native_name.toLowerCase().includes(normalizedQuery)) ||
+          (lang.code && lang.code.toLowerCase().includes(normalizedQuery))
         )
+
       : languages; // If no query, show all languages
 
     languageList.innerHTML = ""; // Clear previous list
@@ -60,13 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     filteredLanguages.forEach((lang) => {
-
       const li = document.createElement("li");
-      li.textContent = `${lang.name} (${lang.code})`;
+      li.textContent = `${lang.name} - ${lang.native_name ? lang.native_name : ""} (${lang.code})`;
       li.dataset.langCode = lang.code;
       if (lang.code === currentLang) {
         li.style.fontWeight = "bold";
-        li.style.color = "gray";
+        li.style.color = "#3366cb";
         li.title = "Currently selected";
       }
       li.onclick = () => changeLanguage(lang.code);
@@ -105,7 +108,6 @@ languageSearchButton.addEventListener("click", (e) => {
   document.addEventListener("click", () => {
     languageSelector.classList.remove("active");
   });
-
 
   // Fetch languages on load
   fetchUpperLanguages();

@@ -9,6 +9,12 @@
     <title>{% trans "Language & Category Selection"%}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Shepherd CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js/dist/css/shepherd.css" />
+    
+    <!-- Include Shepherd JS -->
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js/dist/js/shepherd.min.js"></script>
+
 </head>
 
 <body>
@@ -16,7 +22,7 @@
     {# 1. left top bar: ypu can click to return to the main tool page #}
     {# 2. left right bar: choose page language, TODO: support all wikipedia languages #}
     <div class="top-bar">
-        <div class="top-left-container">
+        <div class="top-left-container" id="top-left-container">
             <a href="{% url 'index' %}" title="{% trans 'Wikipedia Home' %}">
                 <img src="{% static 'images/Wikipedia_Globe_Logo.png' %}" alt="Wikipedia Home" class="wikipedia_up_left_globe_logo">
             </a>
@@ -25,7 +31,7 @@
             </a>
         </div>
         <!-- Top-right Language Button -->
-        <div class="top-right-container" style="">  
+        <div class="top-right-container" id="top-right-container" style="">  
             
             <button id="language-search-button" class="search-button">
                 <img src="{% static 'images/language_icon_gray.png' %}" alt="{% trans 'language icon' %}" class="language_icon">
@@ -43,25 +49,35 @@
                 <ul id="language-list" class="language-list">
                     <!-- Suggestions will be dynamically populated -->
                 </ul>
-{#                  <ul>#}
-{#                      {% get_current_language as LANGUAGE_CODE %}#}
-{#                      {% get_available_languages as LANGUAGES %}#}
-{#                      {% for code, name in LANGUAGES %}#}
-{#                          <li class="{% if LANGUAGE_CODE == code %}selected{% endif %}">#}
-{#                              <a href="{% url 'translated_page' %}?lang={{ code }}&next={{ request.path }}">#}
-{#                                  {{ name }}#}
-{#                              </a>#}
-{#                          </li>#}
-{#                      {% endfor %}#}
-{#                  </ul>#}
             </div>
             
         </div>
     </div>
     
+    <div style="text-align: left; font-size: xx-large;margin-left: 50px; width: 100%">
+        <br>
+        <button id="start-tour" class="shepherd-button" >Start Tour</button>
+    </div>
+    
+    <div id="tour-translations" style="display: none;" 
+         data-language-selector="{% trans 'Click here to choose your preferred page language! Not all languages are supported.' %}"
+         data-return-to-main="{% trans 'Click here to return to main page' %}" 
+         data-edit-language-list="{% trans 'Search for the language you want to contribute to or scroll through the list.' %}" 
+         data-refer-language-list="{% trans 'Search for the language you want to refer from or scroll through the list.' %}" 
+         data-category="{% trans 'Write the category you are interested in' %}" 
+         data-submit="{% trans 'When you are done choosing languages and category, click on submit.' %}" 
+         data-articles="{% trans 'The missing articles will appear here' %}" 
+         data-next="{% trans 'Next' %}" 
+         data-back="{% trans 'Back' %}" 
+         data-done="{% trans 'Done' %}">
+        
+    </div>
+    
     {# contain the form and the results #}
     <div class="central-left-container">
-        <h2 style="text-align: center;">{% trans "Search Missing Articles by Category" %}</h2>
+        <h2 style="text-align: center;font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;">
+            {% trans "Search Missing Articles by Category" %}
+        </h2>
         
         <p id="general-message" 
            class="info_msg" style="    width: 100%;
@@ -96,10 +112,9 @@
                              id="article-language-search" 
                              placeholder="Search languages..." 
                              autocomplete="off"
-                             style="width: 80%"
+                             style="width: 80%; text-align: left;"
                     />
                     <ul id="article-language-list" class="article-language-list" role="listbox">
-    {#                <ul id="article-language-list" class="article-language-list" role="listitem">#}
                         <!-- Suggestions will be dynamically populated -->
                     </ul>
                 </div>
@@ -123,7 +138,6 @@
                             style="width: 80%"
                      />
                      <ul id="article-refer-language-list" class="article-language-list" role="listbox">
-        {#                <ul id="article-language-list" class="article-language-list" role="listitem">#}
                             <!-- Suggestions will be dynamically populated -->
                      </ul>
                      <br>
@@ -139,7 +153,6 @@
                     Loading languages...
                     {% endblocktrans %}
                 </div>
-                <p id="the_selected_refer_lang" style="color: #7c0808;"></p>
                 <br>
                 <br>
             </div>
@@ -155,7 +168,7 @@
             
             <div style="width: 100%"> <br> </div>
             
-            <div class="the-selector" id="all-category-selector-class" style="margin-left: 0">
+            <div class="the-selector" id="all-category-selector" style="margin-left: 0">
                 <!-- all category Selector -->
                 <label for="all-category" style="color: black;font-size: large">
                     {% blocktrans %}
@@ -185,12 +198,13 @@
             <div style="width: 100%"> <br><br> </div>
 
             <div style="width: 98%; text-align: center;" >
-                <button type="submit" style="font-size: x-large">
+                <button type="submit" id="submit" style="font-size: x-large">
                     {% blocktrans %}
                     Submit
                     {% endblocktrans %}
                 </button>
-                <p> <br> </p>
+                <p> <br>
+                </p>
             </div>
         </form>
                 
@@ -204,9 +218,11 @@
             </p>
         </div>
         
-        <div style="width: 98%" >
+        <div id="the-results" style="width: 98%" >
             
-            <h2 style="margin-left: 150px; text-align: left;">
+            <h2 style="margin-left: 150px; 
+                        text-align: left;
+                        font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;">
                 {% blocktrans %}
                 Articles Missing in Selected Contribute Language:
                 {% endblocktrans %}
@@ -247,22 +263,26 @@
             <br>
         
         </div>
-        
     </div>
     
-    <div id="welcome-modal" class="modal">
+    <div id="missing-welcome-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button" id="close-welcome">&times;</span>
-            <h2>Welcome to the Missing Articles Tool!</h2>
-            <p>This tool helps you find Wikipedia articles missing in one language that exist in another.</p>
-            <p>Select the languages and a category to get started.</p>
+            <span class="close-button" id="missing-close-welcome">&times;</span>
+            <h2>Welcome to Search Missing Articles by Category!</h2>
+            <p>First enter the language you want to contribute to on the left, and the reference language on the right </p>
+            <p>then, you can search from all categories in the selected contribution language</p>
+            <p>after the submit, below it will show the missing articles in the language you want to contribute to</p>
         </div>
     </div>
+    
 
+    <script src="{% static 'js/missing-welcome-popup.js' %}" defer></script>
     <script src="{% static 'js/category-search.js' %}" defer></script>
     <script src="{% static 'js/language-selector.js' %}" defer></script>
     <script src="{% static 'js/category-submission.js' %}" defer></script>
-    <script src="{% static 'js/welcome-popup.js' %}" defer></script>
+    <script src="{% static 'js/navigation-tour.js' %}" defer></script>
+
+
 </body>
 </html>
 

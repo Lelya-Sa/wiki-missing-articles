@@ -43,8 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedReferLanguageInput.addEventListener("input", checkInputs);
     selectedAllCategorySearchInput.addEventListener("input", checkInputs);
 
-
-    // categoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
     allCategoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
 
     // Fetch languages
@@ -80,9 +78,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Populate language dropdown
     function populateLanguageList(query = "") {
-        const filteredLanguages = languages.filter((lang) =>
-            lang.name.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
-        );
+        const normalizedQuery = query.toLowerCase();
+
+        const filteredLanguages =
+            query ?
+                languages.filter((lang) =>
+                        (lang.name && lang.name.toLowerCase().includes(normalizedQuery)) ||
+                        (lang.native_name && lang.native_name.toLowerCase().includes(normalizedQuery)) ||
+                    (lang.code && lang.code.toLowerCase().includes(normalizedQuery)))
+            : languages
+        ;
 
         articleLanguageList.innerHTML = ""; // Clear the list
 
@@ -93,14 +98,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         filteredLanguages.forEach((lang) => {
             const listItem = document.createElement("li");
-            listItem.textContent = `${lang.name} (${lang.code})`;
+            listItem.textContent = `${lang.name} - ${lang.native_name ? lang.native_name : ""} (${lang.code})`;
             listItem.dataset.langCode = lang.code;
             listItem.addEventListener("click", () => {
                 selectedLanguageInput.value = `${lang.name} (${lang.code})`;
 
                 articleLanguageList.innerHTML = ""; // Clear the dropdown
 
-                console.log("in populateLanguages: ", lang.code);
                 fetchAllCategories(lang.code); // Fetch all categories for selected language
             });
             articleLanguageList.appendChild(listItem);
@@ -108,9 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function populateReferLanguageList(query = "") {
-        const filteredLanguages = languages.filter((lang) =>
-            lang.name.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
-        );
+        const normalizedQuery = query.toLowerCase();
+
+        const filteredLanguages =
+            query ?
+                languages.filter((lang) =>
+                        (lang.name && lang.name.toLowerCase().includes(normalizedQuery)) ||
+                        (lang.native_name && lang.native_name.toLowerCase().includes(normalizedQuery)) ||
+                    (lang.code && lang.code.toLowerCase().includes(normalizedQuery)))
+            : languages
+        ;
 
         articleReferLanguageList.innerHTML = ""; // Clear the list
 
@@ -121,14 +132,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         filteredLanguages.forEach((lang) => {
             const listItem = document.createElement("li");
-            listItem.textContent = `${lang.name} (${lang.code})`;
+            listItem.textContent = `${lang.name} - ${lang.native_name ? lang.native_name : ""} (${lang.code})`;
             listItem.dataset.langCode = lang.code;
             listItem.addEventListener("click", () => {
                 selectedReferLanguageInput.value = `${lang.name} (${lang.code})`;
 
                 articleReferLanguageList.innerHTML = ""; // Clear the dropdown
-
-                console.log("in populateReferLanguages: ", lang.code);
 
             });
             articleReferLanguageList.appendChild(listItem);
@@ -158,10 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         if (isFetching) return;
-        console.log("in fetch all categories: the selectedinput:", selectedAllCategorySearchInput);
+
         // Default to empty string if query is not provided
         const searchQuery = document.getElementById("all-category-search").value;
-        console.log("in fetch all categories: searchQuery:", searchQuery);
 
         isFetching = true;
         allCategoryList.innerHTML = "<li><img src='/static/images/spinner.gif' alt='Loading...' /></li>";
@@ -171,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch(`/get_categories_with_query/${lang}/${searchQuery}/`);
             const data = await response.json();
-            console.log("allCat response:", data);
+
             if (data.categories) {
                 allCategories = data.categories;
             } else {
@@ -193,7 +201,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to filter and display categories
     async function displayFilteredAllCategories(query) {
-        console.log("All Cat Search query:", query);
 
         allCategoryList.innerHTML = ""; // Clear previous results
 
@@ -211,7 +218,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const filteredCategories = allCategories.filter(cat =>
             cat.toLowerCase().includes(query.toLowerCase())
         );
-        console.log("All Cat filteredCategories:", filteredCategories);
 
         if (filteredCategories.length === 0) {
             all_cat_feedbackMessage.textContent = "No matching categories found.";

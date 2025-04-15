@@ -36,17 +36,6 @@
                 <ul id="language-list" class="language-list">
                     <!-- Suggestions will be dynamically populated -->
                 </ul>
-{#                  <ul>#}
-{#                      {% get_current_language as LANGUAGE_CODE %}#}
-{#                      {% get_available_languages as LANGUAGES %}#}
-{#                      {% for code, name in LANGUAGES %}#}
-{#                          <li class="{% if LANGUAGE_CODE == code %}selected{% endif %}">#}
-{#                              <a href="{% url 'translated_page' %}?lang={{ code }}&next={{ request.path }}">#}
-{#                                  {{ name }}#}
-{#                              </a>#}
-{#                          </li>#}
-{#                      {% endfor %}#}
-{#                  </ul>#}
             </div>
             
         </div>
@@ -76,16 +65,21 @@
             </div>
         </div>
     </div>
-
-    <!-- Include JavaScript for the language search functionality -->
+    
+    <div id="welcome-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-welcome">&times;</span>
+            <h2>Welcome to the Missing Articles Tool!</h2>
+            <p>This tool helps you find Wikipedia articles missing in one language that exist in another,
+                and sort them by priority.
+            </p>
+            <p>You can choose your preferred language in upper right.</p>
+            <p>Currently, we developed search by category, click on the button to get started</p>
+        </div>
+    </div>
+    
+    <script src="{% static 'js/welcome-popup.js' %}" defer></script>
     <script src="{% static 'js/language-selector.js' %}" defer></script>
-    <script>
-        document.addEventListener("click", (e) => {
-            if (!languageSelector.contains(e.target) && e.target !== languageSearchButton) {
-                languageSelector.style.display = "none";
-            }
-        });
-    </script>
 
 </body>
 </html>

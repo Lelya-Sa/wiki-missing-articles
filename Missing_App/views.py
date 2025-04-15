@@ -7,7 +7,6 @@ import requests
 from django.core.cache import cache  # Import Django's caching framework
 from django.conf import settings
 from django.utils import translation
-from django.shortcuts import redirect
 
 WIKI_API_URL = "https://{lang}.wikipedia.org/w/api.php"
 WIKIDATA_URL = "https://www.wikidata.org/wiki/Special:EntityData/{qcode}.json"
@@ -20,8 +19,6 @@ def dictfetchall(cursor):
     # Return all rows from a cursor as a dict
     columns = [col[0] for col in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-# Create your views here.
 
 
 def index(request):
@@ -52,13 +49,12 @@ def missing_articles_by_category(request):
                 {"error": "Please select both a language and a category."},
             )
 
-        print("in missing_articles language: ", edit_lang, ", category:", category)
         get_articles_from_other_languages(edit_lang, category, refer_lang)
 
     return render(request, "missing_articles_by_category.html")
 
 
-def translated_page(request):  # TODO (not mandatory) currently redirects into language wikipedia
+def translated_page(request):  # TODO support translation to wikipedia languages
     """
          translates the tool page into given language.
     """
@@ -70,13 +66,9 @@ def translated_page(request):  # TODO (not mandatory) currently redirects into l
 
     translation.activate(lang)  # Set the active language
     request.LANGUAGE_CODE = lang
-
-    # template_name = next_url + ".html"
     response = redirect(next_url)
-    # response = render(request, template_name)
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
     return response
-    # return redirect(next_url)  # <— this line skips rendering!
 
 
 def get_prefix(lang="en", type="category"):
@@ -115,7 +107,6 @@ def get_supported_languages(request):
     cached_languages = cache.get("supported_languages")
 
     if cached_languages:
-        # print(cached_languages)
         return JsonResponse({"languages": cached_languages})
 
     # If not cached, fetch from the Wikimedia API
@@ -127,11 +118,18 @@ def get_supported_languages(request):
 
         # Extracting the languages from the API response
         languages = []
+
         for value in data['sitematrix'].values():
             if isinstance(value, dict) and 'code' in value:
+
                 name = value.get('localname',
                                  'Unknown Language')  # Default to 'Unknown Language' if 'localname' is missing
-                languages.append({"code": value['code'], "name": name})
+                native_name = value.get('name',
+                                 'Unknown Language')  # Default to 'Unknown Language' if 'localname' is missing
+                languages.append({"code": value['code'],
+                                  "name": name,
+                                  "native_name": native_name
+                                  })
 
         # Cache the result for 24 hours (86400 seconds)
         cache.set("supported_languages", languages, timeout=86400)
@@ -141,7 +139,6 @@ def get_supported_languages(request):
 
     except requests.RequestException as e:
         error_message = f"An error occurred while searching for languages: {e}"
-        print(error_message)
         return JsonResponse({"error": "Failed to fetch data from Wikipedia. Please try again later."}, status=500)
 
 
@@ -176,52 +173,6 @@ def get_categories_with_query(request, lang, query):
 
     except requests.RequestException as e:
         return JsonResponse({"error": f"Failed to fetch categories: {str(e)}"}, status=500)
-
-
-def get_main_categories(request, lang=None):
-    lang = lang or request.GET.get("lang")  # Fallback to query parameter if `lang` isn't in the path
-    if not lang:
-        return JsonResponse({"error": "Language not specified."}, status=400)
-
-    try:
-        # Fetch the Q-code for "Category:Contents"
-        contents_qcode = "Q4587687"  # Q-code for "Category:Contents" in English
-        response = requests.get(WIKIDATA_URL.format(qcode=contents_qcode))
-        response.raise_for_status()
-        wikidata = response.json()
-
-        # data = json.loads(wikidata)
-        # print(wikidata)  # Check if the "categories" key exists
-        # Get the name of "Category:Contents" in the selected language
-        category_title = wikidata['entities'][contents_qcode]['labels'].get(lang, {}).get('value', 'Category:Contents')
-        # print(category_title)
-        # Use the dynamically fetched category title for the selected language
-        params = {
-            "action": "query",
-            "list": "categorymembers",
-            "cmtitle": category_title,  # Now using the correct translated category title
-            "cmtype": "subcat",  # Get subcategories
-            "cmlimit": 50,  # Limit to top-level categories
-            "format": "json",
-        }
-        url = WIKI_API_URL.format(lang=lang)
-        category_response = requests.get(url, params=params)
-        category_response.raise_for_status()
-        category_data = category_response.json()
-
-        # Extract the top-level categories under 'Category:Contents'
-        # print(category_data)
-        categories = [
-            category for category in category_data['query']['categorymembers']
-        ]
-
-        if not categories:
-            return JsonResponse({"error": f"No categories found for {category_title} in this language."}, status=500)
-
-        return JsonResponse({"categories": categories})
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
 
 
 def get_qcode(page_name, lang, type="category"):
@@ -282,17 +233,14 @@ def get_qcode(page_name, lang, type="category"):
              'pageprops': {'expectunusedcategory': '', 'unexpectedUnconnectedPage': '-14'}}}}}
         """
 
-        print("in get_qcode ", data, end="" )
         if data['query']:
             # there is only one-pageID
             pid = next(iter(data['query']['pages']))
             res_qcode = data['query']['pages'][pid]['pageprops'].get('wikibase_item')
-            print("the res_qcode is", res_qcode)
             return res_qcode
         else:
             raise ValueError(f"query {page_name} not found on wikipedia.")
     except Exception as e:
-        print(f"Error fetching Q code for page_name {page_name}: {e}")
         return None
 
 
@@ -307,7 +255,6 @@ def get_page_name_in_refer_lang(qcode, refer_lang, edit_lang=None):
     """
     try:
         # Query Wikidata to get translations for the Q code
-        print("in get_page_name... qcode is ", qcode, " refer_lang", refer_lang)
         wikidata_url \
             = (f"https://www.wikidata.org/w/api.php?action=wbgetentities&ids={qcode}&props=labels&languages={refer_lang}&format=json")
         response = requests.get(wikidata_url)
@@ -334,32 +281,24 @@ def get_page_name_in_refer_lang(qcode, refer_lang, edit_lang=None):
         # Check if the Q-code exists in the response
         entity = data.get("entities", {}).get(qcode, {})
         labels = entity.get("labels", {})
-        print("in get_category_name_in_refer_lang: the data is: ", data)
         if refer_lang in labels:
             the_category_name = labels[refer_lang]["value"]
-            print("in get_category_name_in_refer_lang: the_category_name is... ",
-                  the_category_name.encode('utf-8', 'ignore').decode('utf-8'))
             return the_category_name
         else:
-            print(f"Error: Category name not found for language {refer_lang}")
             return None
 
     except UnicodeEncodeError as e:
-        print(f"Encoding error: {e}")
         return None
 
     except json.JSONDecodeError as e:
-        print(f"JSON parsing error: {e}")
         return None
 
     except Exception as e:
-        print(f"Unexpected error: {e}")
         return None
 
 
 def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
     articles = []
-    print("in get_articles_from_other_languages")
     try:
         # Get the Q code for the category from Wikidata
         qcode = get_qcode(category, edit_lang)
@@ -370,11 +309,6 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
         category_name_in_refer_lang = get_page_name_in_refer_lang(qcode, refer_lang, edit_lang)
         if not category_name_in_refer_lang:
             return JsonResponse({"noCatError": " category names not found"}, status=400)
-
-        print(
-            f"in get_articles_from_other_languages: "
-            f"Fetching articles from {refer_lang}.wikipedia.org in category: "
-            f"{category_name_in_refer_lang}")  # Debugging
 
         # Add the articles from the selected language (same process as before)
         params = {
@@ -455,14 +389,12 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
               }
             }            
         """
-        print("in get_articles_from_other_languages, data:", data)
 
         # Add the articles to the list
         articles.extend(article["title"] for article in data["query"]["categorymembers"])
 
         # Check if there's more data (pagination)
         while "continue" in data:
-            print("in get_articles_from_other_languages, continue?: ", data["continue"]["cmcontinue"])
             params["cmcontinue"] = data["continue"]["cmcontinue"]
             response = requests.get(url, params=params)
             response.raise_for_status()
@@ -474,23 +406,8 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
         return JsonResponse({"articles": articles})
 
     except Exception as e:
-        # logger.error(f"Error fetching articles from other languages: {str(e)}")
         return JsonResponse({"error": str(e)}, status=500)
 
-
-#
-#
-#
-#
-"""
-"
-"
-"
-the functions below are not in use right now but maybe will in the future!!!!! 
-"
-"
-"
-"""
 
 def custom_404(request, exception):
     # The requested resource could not be found.

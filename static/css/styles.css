@@ -1,4 +1,10 @@
 /* General body styling */
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 body {
     overflow: visible; /* Ensure body doesn't hide dropdowns */
     margin: 1px; /* Reset margins */
@@ -7,58 +13,51 @@ body {
     color: #202122;
     text-align: center;
     height: 100vh;
+    overflow-x: hidden; /* Hide horizontal overflow if acceptable */
+
+}
+
+:root {
+    --z-index-top-bar: 1000;
+    --z-index-top-right-container: 1;
+    --z-index-central-container: 1;
+    --z-index-modal: 10000 !important;
+    --z-shepherd: 9999 !important;
 }
 
 /* Flex container for top-left and top-right containers */
 .top-bar {
+    width: 100%;
     display: flex; /* Enables flexbox */
-    /*justify-content: space-between; !* Positions children at opposite ends *!*/
     align-items: center; /* Aligns items vertically (centered if needed) */
-    /*position: sticky; !* Keeps the containers fixed on the page The position:*/
-    /*             sticky ensures that the top bar stays at the top during scrolling*/
-    /*             but remains in its natural place within the layout.*!*/
     top: 0; /* Aligns the container to the top */
-    left: 0;
-    right: 0;
     padding: 10px 10px 10px; /* Adds padding for spacing */
     background-color: rgb(225, 225, 229); /* Optional: Background color for the top bar */
     height: 30px; /* Consistent height for layout spacing */
     position: relative;
-    z-index: 1000;
+    z-index: var(--z-index-top-bar);
     overflow: visible; /* Prevent clipping of dropdowns */
     border: 1px groove #94979e;
-    /*border-radius: 1px;*/
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adds a shadow */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a shadow */
 }
 
 /* Left container styles */
 .top-left-container  {
-    /* Ensures it's pushed to the left */
     margin: 20px auto 10px 30px; /* top right bottom left*/
     display: flex; /* Align items in a row */
     flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     align-items: center; /* Vertically center the content */
-    /*display: inline-block;*/
-    /*text-decoration: none;  !* Ensure there's no underline or unwanted content *!*/
-
 }
 
-/* Right container styles */
 .top-right-container {
+    text-align: right;
     position: absolute;
     top: -217px; /* Adjust as needed */
-    /*bottom: 20px;*/
     right: 5px; /* Adjust as needed */
-    /*left: 5px; !* Adjust as needed *!*/
-    /*margin: 0 5px 5px 1050px; !* top right bottom left*!*/
-    /*align-items: baseline;*/
     display: flex; /* Align items in a row */
     flex-wrap: wrap; /* Allows wrapping when space is insufficient */
-    z-index: 1;
-    /*padding: 10px 20px; !* Adds padding for spacing *!*/
-    /*margin-left: auto; !* Ensures it's pushed to the right *!*/
+    z-index: var(--z-index-top-right-container);
     flex-direction: column; /* Stack items vertically */
-
 }
 
 /* Central container styling */
@@ -68,21 +67,13 @@ body {
     flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     margin-top: 20px; /* Same as .top-bar height */
     padding-top: 10px; /* Adjust this based on the height of .top-bar */
-    /*text-align: center; !* Optional: Keep content centered *!*/
     overflow: visible;
     position: relative; /* Ensure container respects its children */
-    z-index: 1;
-    /*width: 100%;*/
-    /*max-width: 960px;*/
-    margin-left: 10px;
-    margin-right: 10px;
-    /*max-width: 200px;*/
-    margin-bottom: 20px;
+    z-index: var(--z-index-central-container);
 }
 
 .central-left-container #missing-articles-form {
     display: flex;
-    /*flex: 1; !* Makes both boxes take equal space *!*/
     flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     margin-top: 20px; /* Same as .top-bar height */
     padding-top: 10px; /* Adjust this based on the height of .top-bar */
@@ -90,8 +81,7 @@ body {
     overflow: visible;
     position: relative; /* Ensure container respects its children */
     z-index: 1;
-    width: 100%;
-    max-width: 960px;
+    width: 80%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -113,7 +103,7 @@ body {
 }
 .wikipedia_up_left_text_logo{
     max-width: 140px;
-    height: 120px;
+    height: 40px;
     margin: 0; /* Ensure no extra margins */
     padding: 0; /* Remove padding */
 }
@@ -153,29 +143,25 @@ h1 {
 
 /* Search options */
 .search-options {
-    /*flex: 1; !* Makes both boxes take equal space *!*/
     flex-wrap: wrap; /* Allows wrapping when space is insufficient */
     display: flex;
     justify-content: center;
-    /*gap: 15px;*/
-    /*margin-bottom: 30px;*/
 }
 
 .search-button {
-    /*z-index: 100; !* Ensure it's above other elements *!*/
     display: inline-block;
     background-color: #e2e2e6;
     color: #4d4f53;
     font-size: 16px;
-    /*padding: 20px 20px 0 5px;*/
     padding: 10px 10px;
-    margin: 225px 5px 5px 5px;
+    margin-top: 225px;
+    margin-right: 80px;
+    /*margin: 225px 5px 5px 5px;*/
     text-decoration: none;
     border-radius: 5px;
     transition: background-color 0.3s ease;
     cursor: pointer;
     border: none; /* Ensures no border is applied */
-
 }
 
 .search-button:hover {
@@ -199,9 +185,8 @@ h1 {
 
 .category-button:hover {
     background-color: #e9ebee;
-    color: #3366ca;
+    color: #3366cb;
 }
-
 
 /* Language links */
 .languages {
@@ -241,12 +226,8 @@ h1 {
 .language-selector {
     position: relative; /* Ensure the dropdown appears on top */
     top: 0; /* Adjust based on layout */
-    /*left: auto; !* Adjust based on your layout *!*/
-    /*right: 0; !* Align to the right edge of the button *!*/
     display: none; /* Initially hidden */
     background-color: #f6f7f8;
-    /*border: 1px solid #ccc;*/
-    /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
     border-radius: 1px;
     padding: 5px; /* Add some padding inside the dropdown */
     width: 200px; /* Adjust width as needed */
@@ -257,6 +238,17 @@ h1 {
     pointer-events: none; /* Prevent clicks when hidden */
     visibility: hidden; /* Ensures it's not interactable */
 }
+
+.the-selector, .article-language-selector {
+    position: relative;
+    background-color: #f6f7f8;
+    padding: 5px;
+    z-index: 1000;
+    display: block;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
 .language-selector.active {
     visibility: visible; /* Ensures it's not interactable */
     transform: translateY(0); /* Move to normal position */
@@ -276,7 +268,7 @@ h1 {
     background-color: #fff;
     border: 1px groove #ccc;
     border-radius: 4px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .language-list::-webkit-scrollbar {
     width: 8px;
@@ -298,7 +290,6 @@ h1 {
 
 .language-list li:hover {
     background-color: #f6f7f8;
-    /*color: #3366cb;*/
 }
 
 /* Search box input focus styling */
@@ -307,7 +298,6 @@ h1 {
     font-size: 16px;
     border: 1px solid #3161d6;
     border-radius: 4px;
-    /*outline: none;*/
     display: block;
     transition: box-shadow 0.2s;
 }
@@ -329,8 +319,6 @@ h1 {
     outline: none;
     display: block;
     transition: box-shadow 0.2s;
-    /*width: 80%;*/
-    /*max-width: 700px;*/
 }
 
 .article-language-search:focus {
@@ -349,8 +337,6 @@ h1 {
 
 /* Language Selector */
 .article-language-selector {
-    /*min-block-size: 35%;*/
-    /*flex: 1; !* Makes both boxes take equal space *!*/
     position: relative;
     background-color: rgba(170, 170, 174, 0.19);
     width: 40%; /* Adjust width as needed */
@@ -360,7 +346,6 @@ h1 {
     z-index: 1000; /* Ensure it's above other elements */
     transition: opacity 0.2s ease, transform 0.2s ease;
     border: 1px groove rgb(213, 213, 214);
-    /*border: groove #b8b3b3;*/
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 0;
 }
@@ -373,8 +358,7 @@ h1 {
     overflow-y: auto; /* Enable vertical scrolling */
     background-color: #fff;
     border: 1px groove #ccc;
-    /*border: 1px groove #94979e;*/
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 82%;
 }
 
@@ -389,13 +373,13 @@ h1 {
 .article-language-list li:hover {
     background-color: #f6f7f8;
 }
+
 /* Show dropdown when button is clicked */
 .article-language-selector.active .article-language-list {
     display: block; /* Ensure dropdown is visible when active */
 }
 
 .portal-search {
-    /*width: 100%;*/
     font-size: 16px;
     border: 1px solid #0a39aa;
     border-radius: 4px;
@@ -416,7 +400,7 @@ h1 {
     position: relative;
     background-color: #f6f7f8;
     border: 1px groove #94979e;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 5px;
     width: 40%; /* Adjust width as needed */
     z-index: 1000;
@@ -434,7 +418,7 @@ h1 {
     padding: 0;
     background-color: #fff;
     border-radius: 4px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
 .the-selector.active {
@@ -467,7 +451,7 @@ h1 {
         padding: 0;
         background-color: #fff;
         border-radius: 4px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
 .category-list li {
@@ -492,20 +476,12 @@ h1 {
     font-size: 16px;
 }
 
-.language-selector, .the-selector, .article-language-selector {
-    position: relative;
-    background-color: #f6f7f8;
-    padding: 5px;
-    z-index: 1000;
-    display: block;
-    transform: translateY(0);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
+
 
 .info_msg{
-    color: #367ee7;
+    font-family: 'Linux Libertine', 'Georgia', 'Times', 'Source Serif Pro', serif;
+    color: #3366cb;
     font-weight: bold;
-    /*margin-top: 10px;*/
     margin-left: 150px;
     text-align: center;
     border-radius: 5px;
@@ -526,15 +502,17 @@ h1 {
 }
 
 #articles_msg{
-    color: black;
+    font-size: x-large;
+    color: #2b2d30;
     font-weight: bold;
     text-align: center;
+    text-underline: #2b2d30;
 }
 
 .modal {
   display: none;
   position: fixed;
-  z-index: 999;
+  z-index: var(--z-index-modal);
   left: 0; top: 0;
   width: 100%; height: 100%;
   overflow: auto;
@@ -548,12 +526,13 @@ h1 {
   border: 1px solid #888;
   width: 60%;
   border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .close-button {
   color: #aaa;
   float: right;
+    top: 8px; right: 16px;
   font-size: 28px;
   font-weight: bold;
   cursor: pointer;
@@ -561,4 +540,68 @@ h1 {
 
 .close-button:hover {
   color: #000;
+}
+
+/* Right-to-left language support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Asian language input styling */
+[lang|="zh"], [lang|="ja"], [lang|="ko"] {
+  font-family: "Noto Sans CJK", sans-serif;
+}
+
+.shepherd-progress-bar {
+    height: 4px;
+    background-color: #4caf50;
+  transition: width 0.3s ease;
+  border-radius: 4px;
+  margin-top: 6px;
+  margin-bottom: 5px;
+}
+.shepherd-footer {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#welcome-modal,
+#missing-welcome-modal {
+  transition: opacity 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .top-left-container,
+    .central-container,
+    .article-language-selector,
+    .the-selector {
+        width: 100%;
+        padding: 0 10px;
+    }
+}
+
+.shepherd-step {
+  z-index: var(--z-shepherd) !important;
+}
+.shepherd-content,
+.shepherd-footer,
+.shepherd-arrow {
+  z-index: var(--z-shepherd) !important;
+}
+.shepherd-element,
+.shepherd-modal-overlay-container {
+  z-index: var(--z-shepherd) !important;
+}
+.shepherd-modal-overlay-container {
+  transition: opacity 0.3s ease;
+}
+.shepherd-element {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.shepherd-element.shepherd-enabled {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -1,17 +1,19 @@
 - implement PAGERANK algorithm.
-- the tool should be translated to Wikipedia's supported language ( multilingual tool)
+- the tool should be translated to more Wikipedia's supported language ( multilingual tool)
 - runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).
 - survey for Wikimedia editor on which metrics are more important !!!!. 
 - write requirements.txt file
-- for static file consider using Django’s collectstatic command during deployment and, if possible, configuring a CDN or another method for static content.
-- make sure the languages.json is updated once in a while.
-
+- write README
+- documentation
 
 
 should add in read me :
 - the api usage (names and ref).
 - the translation method.
-- python manage.py makemessages -l {lang_code}
+  python manage.py makemessages -l {lang_code}
+  django-admin compilemessages
+- shepherd.js usager
+
 
 
 Deployment Artifacts:

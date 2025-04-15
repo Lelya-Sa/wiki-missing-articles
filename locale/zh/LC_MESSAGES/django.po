@@ -1,7 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 一些描述性的标题。
+# 版权所有 (C) 年 包的版权所有者
+# 本文件按照与PACKAGE包相同的许可证分发。
+# 第一作者 <EMAIL@ADDRESS>, 年。
 #
 #, fuzzy
 msgid ""
@@ -11,8 +11,8 @@ msgstr ""
 "POT-Creation-Date: 2025-04-15 03:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Arabic <ar@li.org>\n"
-"Language: ar\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,90 +20,88 @@ msgstr ""
 
 #: .\templates\index.html:7 .\templates\index.html:54
 msgid "Wikipedia Missing Articles"
-msgstr "مقالات ويكيبيديا المفقودة"
+msgstr "维基百科缺失条目"
 
 #: .\templates\index.html:13 .\templates\index.html:16
 #: .\templates\index.html:17 .\templates\missing_articles_by_category.html:26
 #: .\templates\missing_articles_by_category.html:29
 #: .\templates\missing_articles_by_category.html:30
 msgid "Wikipedia Home"
-msgstr "الصفحة الرئيسية لويكيبيديا"
+msgstr "维基百科首页"
 
 #: .\templates\index.html:24 .\templates\missing_articles_by_category.html:37
 msgid "language icon"
-msgstr "أيقونة اللغة"
+msgstr "语言图标"
 
 #: .\templates\index.html:25 .\templates\missing_articles_by_category.html:38
 msgid "Page Language"
-msgstr "لغة الصفحة"
+msgstr "页面语言"
 
 #: .\templates\index.html:33 .\templates\missing_articles_by_category.html:46
 msgid "Search for a language..."
-msgstr "ابحث عن لغة..."
+msgstr "搜索语言..."
 
 #: .\templates\index.html:47
 msgid "Wikipedia Globe"
-msgstr "كرة ويكيبيديا"
+msgstr "维基百科地球"
 
 #: .\templates\index.html:56
 msgid "Explore missing articles searching by category."
-msgstr "استكشف المقالات المفقودة من خلال البحث حسب الفئة."
+msgstr "通过类别搜索探索缺失的条目。"
 
 #: .\templates\index.html:63
 msgid "Search by Category"
-msgstr "البحث حسب الفئة"
+msgstr "按类别搜索"
 
 #: .\templates\missing_articles_by_category.html:9
 msgid "Language & Category Selection"
-msgstr "اختيار اللغة والفئة"
+msgstr "语言与类别选择"
 
 #: .\templates\missing_articles_by_category.html:63
 msgid ""
 "Click here to choose your preferred page language! Not all languages are "
 "supported."
-msgstr "انقر هنا لاختيار لغة الصفحة المفضلة لديك! ليست كل اللغات مدعومة."
+msgstr "点击此处选择您偏好的页面语言！并非所有语言都受支持。"
 
 #: .\templates\missing_articles_by_category.html:64
 msgid "Click here to return to main page"
-msgstr "انقر هنا للعودة إلى الصفحة الرئيسية"
+msgstr "点击此处返回主页"
 
 #: .\templates\missing_articles_by_category.html:65
-msgid ""
-"Search for the language you want to contribute to or scroll through the list."
-msgstr "ابحث عن اللغة التي تريد المساهمة بها أو تصفح القائمة."
+msgid "Search for the language you want to contribute to or scroll through the list."
+msgstr "搜索您希望贡献的语言，或在列表中滚动查找。"
 
 #: .\templates\missing_articles_by_category.html:66
-msgid ""
-"Search for the language you want to refer from or scroll through the list."
-msgstr "ابحث عن اللغة التي تريد الرجوع منها أو تصفح القائمة."
+msgid "Search for the language you want to refer from or scroll through the list."
+msgstr "搜索您希望参考的语言，或在列表中滚动查找。"
 
 #: .\templates\missing_articles_by_category.html:67
 msgid "Write the category you are interested in"
-msgstr "اكتب الفئة التي تهمك"
+msgstr "填写您感兴趣的类别"
 
 #: .\templates\missing_articles_by_category.html:68
 msgid "When you are done choosing languages and category, click on submit."
-msgstr "عند الانتهاء من اختيار اللغات والفئة، انقر على الإرسال."
+msgstr "完成语言和类别选择后，点击提交。"
 
 #: .\templates\missing_articles_by_category.html:69
 msgid "The missing articles will appear here"
-msgstr "ستظهر المقالات المفقودة هنا"
+msgstr "缺失的条目将显示在此处"
 
 #: .\templates\missing_articles_by_category.html:70
 msgid "Next"
-msgstr "التالي"
+msgstr "下一步"
 
 #: .\templates\missing_articles_by_category.html:71
 msgid "Back"
-msgstr "السابق"
+msgstr "返回"
 
 #: .\templates\missing_articles_by_category.html:72
 msgid "Done"
-msgstr "تم"
+msgstr "完成"
 
 #: .\templates\missing_articles_by_category.html:79
 msgid "Search Missing Articles by Category"
-msgstr "البحث عن المقالات المفقودة حسب الفئة"
+msgstr "按类别搜索缺失条目"
 
 #: .\templates\missing_articles_by_category.html:87
 msgid ""
@@ -113,8 +111,7 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"                أدخل أولاً اللغة التي تريد المساهمة بها على الجانب الأيسر، "
-"واللغة المرجعية على الجانب الأيمن\n"
+"                首先在左侧输入您想要贡献的语言，在右侧输入参考语言\n"
 "            "
 
 #: .\templates\missing_articles_by_category.html:102
@@ -125,7 +122,7 @@ msgid ""
 "                        "
 msgstr ""
 "\n"
-"                            اختر اللغة التي تريد <b>المساهمة</b> بها:\n"
+"                            选择您想要<b>贡献</b>的语言：\n"
 "                        "
 
 #: .\templates\missing_articles_by_category.html:127
@@ -135,7 +132,7 @@ msgid ""
 "                         "
 msgstr ""
 "\n"
-"                         اختر اللغة التي تريد <b>الرجوع</b> منها:\n"
+"                         选择您想要<b>参考</b>的语言：\n"
 "                         "
 
 #: .\templates\missing_articles_by_category.html:152
@@ -145,7 +142,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    جارٍ تحميل اللغات...\n"
+"                    正在加载语言...\n"
 "                    "
 
 #: .\templates\missing_articles_by_category.html:163
@@ -156,7 +153,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    يمكنك البحث في جميع الفئات ضمن لغة المساهمة المختارة\n"
+"                    您可以在所选的贡献语言中搜索所有类别\n"
 "                    "
 
 #: .\templates\missing_articles_by_category.html:174
@@ -166,7 +163,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    اكتب اسم الفئة بلغة المساهمة:\n"
+"                    请用贡献语言填写一个类别名称：\n"
 "                    "
 
 #: .\templates\missing_articles_by_category.html:202
@@ -176,7 +173,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    إرسال\n"
+"                    提交\n"
 "                    "
 
 #: .\templates\missing_articles_by_category.html:215
@@ -187,7 +184,7 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"                أدناه المقالات المفقودة في اللغة التي تريد المساهمة بها\n"
+"                以下是您想要贡献语言中缺失的条目\n"
 "                "
 
 #: .\templates\missing_articles_by_category.html:226
@@ -197,5 +194,5 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"                المقالات المفقودة في لغة المساهمة المختارة:\n"
+"                所选贡献语言中缺失的条目：\n"
 "                "

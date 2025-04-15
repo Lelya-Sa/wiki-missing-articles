@@ -4,20 +4,45 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="added a metric, removed portals&#10;TODO : &#10;- improve rating system.&#10;- optimize running time.&#10;- make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TODO future development.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js/welcome-popup.js" afterDir="false" />
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="added translation pages&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
+      <change afterPath="$PROJECT_DIR$/static/js/missing-welcome-popup.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js/navigation-tour.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/finalproject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/finalproject.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Missing_App/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Missing_App/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TODO future development.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TODO future development.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Wikipedia-Namespace - Wikipedia.url" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/finalproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/finalproject/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finalproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/finalproject/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locale/ar/LC_MESSAGES/django.po" beforeDir="false" afterPath="$PROJECT_DIR$/locale/ar/LC_MESSAGES/django.po" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locale/ch/LC_MESSAGES/django.po" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/locale/en/LC_MESSAGES/django.po" beforeDir="false" afterPath="$PROJECT_DIR$/locale/en/LC_MESSAGES/django.po" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locale/es/LC_MESSAGES/django.po" beforeDir="false" afterPath="$PROJECT_DIR$/locale/es/LC_MESSAGES/django.po" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locale/fr/LC_MESSAGES/django.po" beforeDir="false" afterPath="$PROJECT_DIR$/locale/fr/LC_MESSAGES/django.po" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locale/he/LC_MESSAGES/django.mo" beforeDir="false" afterPath="$PROJECT_DIR$/locale/he/LC_MESSAGES/django.mo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locale/he/LC_MESSAGES/django.po" beforeDir="false" afterPath="$PROJECT_DIR$/locale/he/LC_MESSAGES/django.po" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locale/ru/LC_MESSAGES/django.po" beforeDir="false" afterPath="$PROJECT_DIR$/locale/ru/LC_MESSAGES/django.po" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/CSS-Padding.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/Homepage_of_Wikipedia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/Wikipedia_Text_Logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/static/images/Wikipedia_Text_Logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/Wikipedia_top_left_icon_full.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/full_template_Homepage_of_Wikipedia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/language_icon_black.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/language_icon_blue.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/spinner.gif" beforeDir="false" afterPath="$PROJECT_DIR$/static/images/spinner.gif" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/wikipedia_logo.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/wikipedia_up_left_logo.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/category-search.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-search.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/category-submission.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/category-submission.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/language-selector.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/language-selector.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/welcome-popup.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/welcome-popup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/not_for_use/en_main_categories_json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/not_for_use/search_by_name.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/not_for_use/search_by_q.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/not_for_use/wikipedia_up_left_logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/not_for_use/wikipedia_up_left_logo_.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_category.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles_by_category.html" afterDir="false" />
     </list>
@@ -106,7 +131,7 @@
     "WebServerToolWindowFactoryState": "false",
     "django.template.preview.state": "SHOW_EDITOR",
     "git-widget-placeholder": "lelya",
-    "last_opened_file_path": "C:/Users/lelya/Desktop/py/finalproject",
+    "last_opened_file_path": "C:/Users/lelya/Desktop/py/finalproject/static/js",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -122,11 +147,14 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\lelya\Desktop\py\finalproject\static\js" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\templates" />
       <recent name="D:\Technion\FifthYear\semester9\malak\templates" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\lelya\Desktop\py\finalproject\static\images" />
+      <recent name="C:\Users\lelya\Desktop\py\finalproject\static\not_for_use" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static\images\not used" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static\css" />
@@ -228,7 +256,8 @@
       <workItem from="1744098628730" duration="11217000" />
       <workItem from="1744464152350" duration="3759000" />
       <workItem from="1744477473115" duration="7299000" />
-      <workItem from="1744505856739" duration="15643000" />
+      <workItem from="1744505856739" duration="20019000" />
+      <workItem from="1744633569341" duration="37228000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -568,7 +597,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744111399429</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="added translation pages&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
+      <option name="closed" value="true" />
+      <created>1744563154411</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1744563154411</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -585,7 +622,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="lelya" />
+                        <option value="main" />
                       </list>
                     </value>
                   </entry>
@@ -598,7 +635,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added page language translation to main page&#10;restyled main page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="added page language translation to main page&#10;restyled main page, category page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="restyled main page language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="language click bug fixed language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
@@ -623,17 +659,7 @@
     <MESSAGE value="fixed edit to contribute, added a table&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)" />
     <MESSAGE value="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)" />
     <MESSAGE value="added a metric, removed portals&#10;TODO : &#10;- improve rating system.&#10;- optimize running time.&#10;- make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
-    <option name="LAST_COMMIT_MESSAGE" value="added a metric, removed portals&#10;TODO : &#10;- improve rating system.&#10;- optimize running time.&#10;- make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/static/js/category-submission.js</url>
-          <line>152</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="added translation pages&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="added translation pages&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
   </component>
 </project>

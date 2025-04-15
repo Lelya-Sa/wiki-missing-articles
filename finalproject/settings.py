@@ -131,7 +131,6 @@ def get_ui_languages_from_api():
         cached_languages = cache.get("supported_languages")
 
         if cached_languages:
-            # print(cached_languages)
             return cached_languages["languages"]
 
         # If not cached, fetch from the Wikimedia API
@@ -146,7 +145,11 @@ def get_ui_languages_from_api():
             if isinstance(value, dict) and 'code' in value:
                 name = value.get('localname',
                                  'Unknown Language')  # Default to 'Unknown Language' if 'localname' is missing
-                languages.append({"code": value['code'], "name": name})
+                native_name = value.get('name', 'Unknown Language')
+                languages.append({"code": value['code'],
+                                  "name": name,
+                                  "native_name": native_name
+                                  })
 
         # Cache the result for 24 hours (86400 seconds)
         cache.set("supported_languages", languages, timeout=86400)
@@ -159,18 +162,6 @@ def get_ui_languages_from_api():
 
 
 UI_LANGUAGES = get_ui_languages_from_api()
-
-LANGUAGES = []
-# for item in UI_LANGUAGES:
-#     language = item["name"]
-#     code = item["code"]
-#     try:
-#         if code not in LANG_INFO:
-#             print(f"Skipping unsupported language code: {code}")
-#             continue
-#         LANGUAGES.append((code, language))
-#     except Exception as e:
-#         print(f"Error processing ({language}, {code}): {e}")
 
 # add a page to translate when ready
 LANGUAGES = [
@@ -299,7 +290,7 @@ LANGUAGES = [
     # ('hak', 'Hakka Chinese'),
     # ('haw', 'Hawaiian'),
     ('he', 'Hebrew'),
-    # ('hi', 'Hindi'),
+    ('hi', 'Hindi'),
     # ('hif', 'Fiji Hindi'),
     # ('ho', 'Hiri Motu'),
     # ('hr', 'Croatian'),
@@ -534,7 +525,7 @@ LANGUAGES = [
     # ('za', 'Zhuang'),
     # ('zea', 'Zeelandic'),
     # ('zgh', 'Standard Moroccan Tamazight'),
-    # ('zh', 'Chinese'),
+    ('zh', 'Chinese'),
     # ('zh-classical', 'Literary Chinese'),
     # ('zh-min-nan', 'Minnan'),
     # ('zh-yue', 'Cantonese'),

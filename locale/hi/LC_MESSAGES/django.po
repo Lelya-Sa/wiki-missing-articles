@@ -11,8 +11,8 @@ msgstr ""
 "POT-Creation-Date: 2025-04-15 03:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Arabic <ar@li.org>\n"
-"Language: ar\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,90 +20,90 @@ msgstr ""
 
 #: .\templates\index.html:7 .\templates\index.html:54
 msgid "Wikipedia Missing Articles"
-msgstr "مقالات ويكيبيديا المفقودة"
+msgstr "विकिपीडिया लापता लेख"
 
 #: .\templates\index.html:13 .\templates\index.html:16
 #: .\templates\index.html:17 .\templates\missing_articles_by_category.html:26
 #: .\templates\missing_articles_by_category.html:29
 #: .\templates\missing_articles_by_category.html:30
 msgid "Wikipedia Home"
-msgstr "الصفحة الرئيسية لويكيبيديا"
+msgstr "विकिपीडिया गृहपृष्ठ"
 
 #: .\templates\index.html:24 .\templates\missing_articles_by_category.html:37
 msgid "language icon"
-msgstr "أيقونة اللغة"
+msgstr "भाषा आइकन"
 
 #: .\templates\index.html:25 .\templates\missing_articles_by_category.html:38
 msgid "Page Language"
-msgstr "لغة الصفحة"
+msgstr "पृष्ठ भाषा"
 
 #: .\templates\index.html:33 .\templates\missing_articles_by_category.html:46
 msgid "Search for a language..."
-msgstr "ابحث عن لغة..."
+msgstr "एक भाषा खोजें..."
 
 #: .\templates\index.html:47
 msgid "Wikipedia Globe"
-msgstr "كرة ويكيبيديا"
+msgstr "विकिपीडिया ग्लोब"
 
 #: .\templates\index.html:56
 msgid "Explore missing articles searching by category."
-msgstr "استكشف المقالات المفقودة من خلال البحث حسب الفئة."
+msgstr "वर्ग के अनुसार खोज करके लापता लेख खोजें।"
 
 #: .\templates\index.html:63
 msgid "Search by Category"
-msgstr "البحث حسب الفئة"
+msgstr "वर्ग द्वारा खोजें"
 
 #: .\templates\missing_articles_by_category.html:9
 msgid "Language & Category Selection"
-msgstr "اختيار اللغة والفئة"
+msgstr "भाषा एवं वर्ग चयन"
 
 #: .\templates\missing_articles_by_category.html:63
 msgid ""
 "Click here to choose your preferred page language! Not all languages are "
 "supported."
-msgstr "انقر هنا لاختيار لغة الصفحة المفضلة لديك! ليست كل اللغات مدعومة."
+msgstr "यहां क्लिक करें और अपनी पसंदीदा पृष्ठ भाषा चुनें! सभी भाषाएँ समर्थित नहीं हैं।"
 
 #: .\templates\missing_articles_by_category.html:64
 msgid "Click here to return to main page"
-msgstr "انقر هنا للعودة إلى الصفحة الرئيسية"
+msgstr "मुख्य पृष्ठ पर लौटने के लिए यहां क्लिक करें।"
 
 #: .\templates\missing_articles_by_category.html:65
 msgid ""
 "Search for the language you want to contribute to or scroll through the list."
-msgstr "ابحث عن اللغة التي تريد المساهمة بها أو تصفح القائمة."
+msgstr "उस भाषा के लिए खोजें जिसमें आप योगदान देना चाहते हैं या सूची में स्क्रॉल करें।"
 
 #: .\templates\missing_articles_by_category.html:66
 msgid ""
 "Search for the language you want to refer from or scroll through the list."
-msgstr "ابحث عن اللغة التي تريد الرجوع منها أو تصفح القائمة."
+msgstr "उस भाषा के लिए खोजें जिससे आप संदर्भ लेना चाहते हैं या सूची में स्क्रॉल करें।"
 
 #: .\templates\missing_articles_by_category.html:67
 msgid "Write the category you are interested in"
-msgstr "اكتب الفئة التي تهمك"
+msgstr "उस श्रेणी का नाम लिखें जिसमें आपकी रुचि है"
 
 #: .\templates\missing_articles_by_category.html:68
 msgid "When you are done choosing languages and category, click on submit."
-msgstr "عند الانتهاء من اختيار اللغات والفئة، انقر على الإرسال."
+msgstr "जब आप भाषाएँ और श्रेणी चुन लें, तो सबमिट पर क्लिक करें।"
 
 #: .\templates\missing_articles_by_category.html:69
 msgid "The missing articles will appear here"
-msgstr "ستظهر المقالات المفقودة هنا"
+msgstr "लापता लेख यहां दिखाई देंगे।"
 
 #: .\templates\missing_articles_by_category.html:70
 msgid "Next"
-msgstr "التالي"
+msgstr "अगला"
 
 #: .\templates\missing_articles_by_category.html:71
 msgid "Back"
-msgstr "السابق"
+msgstr "पीछे"
 
 #: .\templates\missing_articles_by_category.html:72
 msgid "Done"
-msgstr "تم"
+msgstr "समाप्त"
 
 #: .\templates\missing_articles_by_category.html:79
 msgid "Search Missing Articles by Category"
-msgstr "البحث عن المقالات المفقودة حسب الفئة"
+msgstr "वर्ग द्वारा लापता लेख खोजें"
 
 #: .\templates\missing_articles_by_category.html:87
 msgid ""
@@ -113,8 +113,7 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"                أدخل أولاً اللغة التي تريد المساهمة بها على الجانب الأيسر، "
-"واللغة المرجعية على الجانب الأيمن\n"
+"                सबसे पहले उस भाषा को दर्ज करें जिसमें आप योगदान देना चाहते हैं, बाईं ओर, और संदर्भ भाषा दाईं ओर\n"
 "            "
 
 #: .\templates\missing_articles_by_category.html:102
@@ -125,7 +124,7 @@ msgid ""
 "                        "
 msgstr ""
 "\n"
-"                            اختر اللغة التي تريد <b>المساهمة</b> بها:\n"
+"                            उस भाषा का चयन करें जिसमें आप <b>योगदान</b> देना चाहते हैं:\n"
 "                        "
 
 #: .\templates\missing_articles_by_category.html:127
@@ -135,7 +134,7 @@ msgid ""
 "                         "
 msgstr ""
 "\n"
-"                         اختر اللغة التي تريد <b>الرجوع</b> منها:\n"
+"                         उस भाषा का चयन करें जिससे आप <b>संदर्भ</b> लेना चाहते हैं:\n"
 "                         "
 
 #: .\templates\missing_articles_by_category.html:152
@@ -145,7 +144,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    جارٍ تحميل اللغات...\n"
+"                    भाषाएँ लोड हो रही हैं...\n"
 "                    "
 
 #: .\templates\missing_articles_by_category.html:163
@@ -156,7 +155,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    يمكنك البحث في جميع الفئات ضمن لغة المساهمة المختارة\n"
+"                    आप चयनित योगदान भाषा में सभी श्रेणियों से खोज सकते हैं\n"
 "                    "
 
 #: .\templates\missing_articles_by_category.html:174
@@ -166,7 +165,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    اكتب اسم الفئة بلغة المساهمة:\n"
+"                    योगदान भाषा में एक श्रेणी नाम लिखें:\n"
 "                    "
 
 #: .\templates\missing_articles_by_category.html:202
@@ -176,7 +175,7 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    إرسال\n"
+"                    सबमिट करें\n"
 "                    "
 
 #: .\templates\missing_articles_by_category.html:215
@@ -187,7 +186,7 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"                أدناه المقالات المفقودة في اللغة التي تريد المساهمة بها\n"
+"                नीचे उन लेखों को दर्शाया गया है जो उस भाषा में लापता हैं जिसमें आप योगदान देना चाहते हैं\n"
 "                "
 
 #: .\templates\missing_articles_by_category.html:226
@@ -197,5 +196,5 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"                المقالات المفقودة في لغة المساهمة المختارة:\n"
+"                चयनित योगदान भाषा में लापता लेख:\n"
 "                "

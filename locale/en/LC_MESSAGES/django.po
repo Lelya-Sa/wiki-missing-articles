@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-13 19:29+0300\n"
+"POT-Creation-Date: 2025-04-15 03:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,38 +18,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\templates\index.html:7 .\templates\index.html:65
+#: .\templates\index.html:7 .\templates\index.html:54
 msgid "Wikipedia Missing Articles"
 msgstr ""
 
 #: .\templates\index.html:13 .\templates\index.html:16
-#: .\templates\index.html:17 .\templates\missing_articles_by_category.html:20
-#: .\templates\missing_articles_by_category.html:23
-#: .\templates\missing_articles_by_category.html:24
+#: .\templates\index.html:17 .\templates\missing_articles_by_category.html:26
+#: .\templates\missing_articles_by_category.html:29
+#: .\templates\missing_articles_by_category.html:30
 msgid "Wikipedia Home"
 msgstr "Wikipedia Home"
 
-#: .\templates\index.html:24 .\templates\missing_articles_by_category.html:31
+#: .\templates\index.html:24 .\templates\missing_articles_by_category.html:37
 msgid "language icon"
 msgstr "language icon"
 
-#: .\templates\index.html:25 .\templates\missing_articles_by_category.html:32
+#: .\templates\index.html:25 .\templates\missing_articles_by_category.html:38
 msgid "Page Language"
 msgstr "Page Language"
 
-#: .\templates\index.html:33 .\templates\missing_articles_by_category.html:40
+#: .\templates\index.html:33 .\templates\missing_articles_by_category.html:46
 msgid "Search for a language..."
 msgstr "Search for a language..."
 
-#: .\templates\index.html:58
+#: .\templates\index.html:47
 msgid "Wikipedia Globe"
 msgstr "Wikipedia Globe"
 
-#: .\templates\index.html:67
+#: .\templates\index.html:56
 msgid "Explore missing articles searching by category."
 msgstr "Explore missing articles searching by category."
 
-#: .\templates\index.html:74
+#: .\templates\index.html:63
 msgid "Search by Category"
 msgstr "Search by Category"
 
@@ -57,11 +57,55 @@ msgstr "Search by Category"
 msgid "Language & Category Selection"
 msgstr "Language & Category Selection"
 
+#: .\templates\missing_articles_by_category.html:63
+msgid ""
+"Click here to choose your preferred page language! Not all languages are "
+"supported."
+msgstr ""
+
 #: .\templates\missing_articles_by_category.html:64
+msgid "Click here to return to main page"
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:65
+msgid ""
+"Search for the language you want to contribute to or scroll through the list."
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:66
+msgid ""
+"Search for the language you want to refer from or scroll through the list."
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:67
+msgid "Write the category you are interested in"
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:68
+msgid "When you are done choosing languages and category, click on submit."
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:69
+msgid "The missing articles will appear here"
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:70
+msgid "Next"
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:71
+msgid "Back"
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:72
+msgid "Done"
+msgstr ""
+
+#: .\templates\missing_articles_by_category.html:79
 msgid "Search Missing Articles by Category"
 msgstr "Search Missing Articles by Category"
 
-#: .\templates\missing_articles_by_category.html:71
+#: .\templates\missing_articles_by_category.html:87
 msgid ""
 "\n"
 "                First enter the language you want to contribute to on the "
@@ -73,7 +117,7 @@ msgstr ""
 "left, and the reference language on the right\n"
 "            "
 
-#: .\templates\missing_articles_by_category.html:86
+#: .\templates\missing_articles_by_category.html:102
 msgid ""
 "\n"
 "                            Select the language you want to <b>contribute</"
@@ -85,7 +129,7 @@ msgstr ""
 "b> to:\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:112
+#: .\templates\missing_articles_by_category.html:127
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -102,7 +146,7 @@ msgstr ""
 "b> to:\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:138
+#: .\templates\missing_articles_by_category.html:152
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -119,7 +163,7 @@ msgstr ""
 "b> to:\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:150
+#: .\templates\missing_articles_by_category.html:163
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -137,7 +181,7 @@ msgstr ""
 "b> to:\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:161
+#: .\templates\missing_articles_by_category.html:174
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -154,7 +198,7 @@ msgstr ""
 "b> to:\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:189
+#: .\templates\missing_articles_by_category.html:202
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -171,7 +215,7 @@ msgstr ""
 "b> to:\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:201
+#: .\templates\missing_articles_by_category.html:215
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -189,7 +233,7 @@ msgstr ""
 "b> to:\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:210
+#: .\templates\missing_articles_by_category.html:226
 msgid ""
 "\n"
 "                Articles Missing in Selected Contribute Language:\n"

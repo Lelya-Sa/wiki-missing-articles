@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("welcome-modal");
-    const closeBtn = document.getElementById("close-welcome");
+    const modal = document.getElementById("missing-welcome-modal");
+    const closeBtn = document.getElementById("missing-close-welcome");
 
     // Show only once per session
-    if (!sessionStorage.getItem("welcomeModalShown")) {
+    if (!sessionStorage.getItem("missingWelcomeModalShown")) {
         modal.style.display = "block";
-        sessionStorage.setItem("welcomeModalShown", "true");
+        sessionStorage.setItem("missingWelcomeModalShown", "true");
     }
 
     // Close when clicking the × button
