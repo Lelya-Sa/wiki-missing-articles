@@ -389,7 +389,7 @@ h1 {
     transform: translateY(0); /* Remove hidden transform */
 }
 
-.portal-list {
+.category-list {
     max-height: 200px; /* Limit the height for scrolling */
     overflow-y: auto; /* Enable vertical scrolling */
     border: 1px solid #ccc;
@@ -406,7 +406,7 @@ h1 {
     opacity: 1;
     display: block;
 }
-.portal-list li {
+.category-list li {
     padding: 10px;
     font-size: 14px;
     transition: background-color 0.2s ease;
@@ -414,11 +414,11 @@ h1 {
     cursor: pointer;
 }
 
-.portal-list li:hover {
+.category-list li:hover {
     background-color: #f6f7f8;
 }
 /* Show dropdown when button is clicked */
-.the-selector.active .portal-list {
+.the-selector.active .category-list {
     display: block; /* Ensure dropdown is visible when active */
 }
 
