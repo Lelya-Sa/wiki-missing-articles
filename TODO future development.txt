@@ -13,7 +13,7 @@ should add in read me :
   python manage.py makemessages -l {lang_code}
   django-admin compilemessages
 - shepherd.js usager
-
+- current tool languages:  en, ar, es, fr, he, hi, ru, zh
 
 
 Deployment Artifacts:

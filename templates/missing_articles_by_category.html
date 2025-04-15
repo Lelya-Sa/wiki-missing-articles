@@ -93,8 +93,9 @@
             {% endblocktrans %}
         </p>
         
-        <form id="missing-articles-form" style="display: flex; /* Enables flexbox */">
-            
+        <form id="missing-articles-form" method="POST" action="{% url 'missing_articles_by_category' %} style="display: flex; /* Enables flexbox */">
+        {% csrf_token %}
+
             <div style="width: 100%;display: flex;border: 1px groove #94979e;/*border-radius: 1px;*/
                         box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
                          padding-bottom: 20px;
