@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/missing_articles_by_category.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/missing_articles_by_category.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/finalproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/finalproject/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +22,6 @@
       <list>
         <option value="HTML File" />
         <option value="CSS File" />
-        <option value="package.json" />
         <option value="Python Script" />
         <option value="JavaScript File" />
       </list>
@@ -54,7 +52,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="MIXED" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -86,23 +84,24 @@
     &quot;Django Server.FinalProject.executor&quot;: &quot;Run&quot;,
     &quot;Django Server.fp.executor&quot;: &quot;Run&quot;,
     &quot;Django Server.malak.executor&quot;: &quot;Run&quot;,
+    &quot;Notification.DisplayName-DoNotAsk-Database detector&quot;: &quot;Database detector&quot;,
+    &quot;Notification.DoNotAsk-Database detector&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.pycharm.django.structure.promotion.once.per.project&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/lelya/Desktop/py/finalproject&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;malak&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Technion/FifthYear/semester9/malak&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ssh.settings&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -111,20 +110,55 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\lelya\Desktop\py\finalproject\static\js" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\templates" />
       <recent name="D:\Technion\FifthYear\semester9\malak\templates" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\lelya\Desktop\py\finalproject\static\images" />
-      <recent name="C:\Users\lelya\Desktop\py\finalproject\static\not_for_use" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static\images\not used" />
       <recent name="C:\Users\lelya\Desktop\py\finalproject\static\css" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Django Server.fp">
+    <configuration name="search_by_q.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/malak/templates/search_by_q.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="FinalProject" type="Python.DjangoServer" factoryName="Django server">
+      <module name="finalproject" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="finalproject.settings" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="localhost" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="fp" type="Python.DjangoServer" factoryName="Django server">
       <module name="finalproject" />
       <option name="ENV_FILES" value="" />
@@ -135,7 +169,7 @@
         <env name="DJANGO_SETTINGS_MODULE" value="finalproject.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.10 (finalproject)" />
+      <option name="SDK_NAME" value="Python 3.8 (base) (2)" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -161,12 +195,22 @@
       <option name="customRunCommand" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Django Server.FinalProject" />
+      <item itemvalue="Django Server.fp" />
+      <item itemvalue="JavaScript Debug.search_by_q.html" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.search_by_q.html" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.17011.127" />
-        <option value="bundled-python-sdk-48aec45f0201-7e9c3bbb6e34-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.17011.127" />
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220" />
+        <option value="bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220" />
       </set>
     </attachedChunks>
   </component>
@@ -217,13 +261,12 @@
       <workItem from="1742827322948" duration="68021000" />
       <workItem from="1743695329426" duration="9741000" />
       <workItem from="1743956972838" duration="38470000" />
-      <workItem from="1744098628730" duration="11217000" />
-      <workItem from="1744464152350" duration="3759000" />
-      <workItem from="1744477473115" duration="7299000" />
-      <workItem from="1744505856739" duration="20019000" />
-      <workItem from="1744633569341" duration="37228000" />
-      <workItem from="1744683210753" duration="1498000" />
-      <workItem from="1744737177379" duration="8892000" />
+      <workItem from="1744098628730" duration="10596000" />
+      <workItem from="1744369511319" duration="2339000" />
+      <workItem from="1744451604028" duration="74000" />
+      <workItem from="1744638960734" duration="3197000" />
+      <workItem from="1744644295709" duration="31000" />
+      <workItem from="1744644447677" duration="2638000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -555,39 +598,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744068878769</updated>
     </task>
-    <task id="LOCAL-00043" summary="added a metric, removed portals&#10;TODO : &#10;- improve rating system.&#10;- optimize running time.&#10;- make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)">
+    <task id="LOCAL-00043" summary="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
       <option name="closed" value="true" />
-      <created>1744111399429</created>
+      <created>1744640326234</created>
       <option name="number" value="00043" />
       <option name="presentableId" value="LOCAL-00043" />
       <option name="project" value="LOCAL" />
-      <updated>1744111399429</updated>
+      <updated>1744640326234</updated>
     </task>
-    <task id="LOCAL-00044" summary="added translation pages&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
+    <task id="LOCAL-00044" summary="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
       <option name="closed" value="true" />
-      <created>1744563154411</created>
+      <created>1744647854737</created>
       <option name="number" value="00044" />
       <option name="presentableId" value="LOCAL-00044" />
       <option name="project" value="LOCAL" />
-      <updated>1744563154411</updated>
+      <updated>1744647854737</updated>
     </task>
-    <task id="LOCAL-00045" summary="restyled right top container&#10;fixed translation&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
-      <option name="closed" value="true" />
-      <created>1744682766503</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1744682766503</updated>
-    </task>
-    <task id="LOCAL-00046" summary="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation">
-      <option name="closed" value="true" />
-      <created>1744684685755</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1744684685755</updated>
-    </task>
-    <option name="localTasksCounter" value="47" />
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -604,7 +631,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="main" />
+                        <option value="lelya" />
                       </list>
                     </value>
                   </entry>
@@ -617,6 +644,10 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <MESSAGE value="added navigation to main page&#10;restyled main page&#10;TODO : search by subcategories&#10;exclude articles in selected language" />
+    <MESSAGE value="added page language translation to main page&#10;restyled main page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
+    <MESSAGE value="added page language translation to main page&#10;restyled main page, category page&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
+    <MESSAGE value="restyled main page language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="language click bug fixed language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="fixed bugs in category page and redesigned&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
@@ -638,10 +669,17 @@
     <MESSAGE value="fixed error handling issue&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)" />
     <MESSAGE value="fixed edit to contribute, added a table&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)" />
     <MESSAGE value="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)" />
-    <MESSAGE value="added a metric, removed portals&#10;TODO : &#10;- improve rating system.&#10;- optimize running time.&#10;- make a better design of the page.&#10;making the page redirected to the translated selected language page ( not mandatory)" />
-    <MESSAGE value="added translation pages&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
-    <MESSAGE value="restyled right top container&#10;fixed translation&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
-    <MESSAGE value="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
-    <option name="LAST_COMMIT_MESSAGE" value="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/static/js/category-submission.js</url>
+          <line>135</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
