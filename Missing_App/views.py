@@ -297,6 +297,55 @@ def get_page_name_in_refer_lang(qcode, refer_lang, edit_lang=None):
         return None
 
 
+def get_all_subcategories(lang, category, visited=None, current_depth=0, max_depth=1):
+    """
+    Récupère récursivement toutes les sous-catégories d'une catégorie jusqu'à une profondeur maximale
+    :param lang: La langue Wikipedia
+    :param category: Le nom de la catégorie
+    :param visited: Set pour éviter les cycles
+    :param current_depth: Profondeur actuelle de la récursion
+    :param max_depth: Profondeur maximale autorisée (par défaut 3)
+    :return: Liste de toutes les sous-catégories
+    """
+    if visited is None:
+        visited = set()
+    
+    # Vérifier si on a atteint la profondeur maximale
+    if current_depth >= max_depth:
+        return []
+    
+    if category in visited:
+        return []
+    
+    visited.add(category)
+    subcategories = []
+    
+    # Récupérer les sous-catégories directes
+    params = {
+        "action": "query",
+        "list": "categorymembers",
+        "cmtitle": category,
+        "cmtype": "subcat",  # On ne cherche que les sous-catégories
+        "cmlimit": 500,
+        "format": "json"
+    }
+    
+    url = WIKI_API_URL.format(lang=lang)
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    data = response.json()
+    
+    # Ajouter les sous-catégories directes
+    for member in data.get("query", {}).get("categorymembers", []):
+        subcat = member["title"]
+        subcategories.append(subcat)
+        # Récursion pour les sous-catégories de cette sous-catégorie
+        # Incrémenter la profondeur actuelle
+        subcategories.extend(get_all_subcategories(lang, subcat, visited, current_depth + 1, max_depth))
+    
+    return subcategories
+
+
 def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
     articles = []
     try:
@@ -310,98 +359,33 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
         if not category_name_in_refer_lang:
             return JsonResponse({"noCatError": " category names not found"}, status=400)
 
-        # Add the articles from the selected language (same process as before)
-        params = {
-            "action": "query",
-            "list": "categorymembers",
-            "cmtitle": f"{category_name_in_refer_lang}",
-            "cmtype": "page",
-            "cmlimit": 50,
-            "format": "json",
-        }
-        url = WIKI_API_URL.format(lang=refer_lang)
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
+        # Récupérer toutes les sous-catégories
+        all_categories = [category_name_in_refer_lang]  # La catégorie principale
+        all_categories.extend(get_all_subcategories(refer_lang, category_name_in_refer_lang))
 
-        """ 
-            example of a response for تصنيف:صحة for arabic (ar) language: 
-            {
-              "batchcomplete": "",
-              "continue": {
-                "cmcontinue": 
-                "page|d8a7d984d8a5d8afd8a7d8b1d8a920d8a7d984d8b9d8a7d985d8a920d984d984d8b5d8add8a920d8a7d984d8b9d8b3d983d8b1d98ad8a9|3368070",
-                "continue": "-||"
-              },
-              "query": {
-                "categorymembers": [
-                  {
-                    "pageid": 1846,
-                    "ns": 0,
-                    "title": "صحة"
-                  },
-                  {
-                    "pageid": 8687431,
-                    "ns": 2,
-                    "title": "مستخدم:2marwa musa/ملعب"
-                  },
-                  {
-                    "pageid": 9424998,
-                    "ns": 2,
-                    "title": "مستخدم:Haton123th/4ملعب"
-                  },
-                  {
-                    "pageid": 8970486,
-                    "ns": 2,
-                    "title": "مستخدم:RAHMA MOHAMMED SALAHUDDIN/ملعب"
-                  },
-                  {
-                    "pageid": 5725344,
-                    "ns": 0,
-                    "title": "إصحاح بيئي"
-                  },
-                  {
-                    "pageid": 6493745,
-                    "ns": 0,
-                    "title": "اختلال الميكروبيوم"
-                  },
-                  {
-                    "pageid": 6560302,
-                    "ns": 0,
-                    "title": "استرات ايثيل حمض أوميجا 3"
-                  },
-                  {
-                    "pageid": 9254410,
-                    "ns": 0,
-                    "title": "الأثر النفسي للتمييز على الصحة"
-                  },
-                  {
-                    "pageid": 9371273,
-                    "ns": 0,
-                    "title": "الأخبار الطبية اليوم (موقع)"
-                  },
-                  {
-                    "pageid": 9365188,
-                    "ns": 0,
-                    "title": "الأسبوع الوطني لعدم التدخين"
-                  }
-                ]
-              }
-            }            
-        """
-
-        # Add the articles to the list
-        articles.extend(article["title"] for article in data["query"]["categorymembers"])
-
-        # Check if there's more data (pagination)
-        while "continue" in data:
-            params["cmcontinue"] = data["continue"]["cmcontinue"]
+        # Pour chaque catégorie (principale et sous-catégories)
+        for current_category in all_categories:
+            # Récupérer les articles de cette catégorie
+            params = {
+                "action": "query",
+                "list": "categorymembers",
+                "cmtitle": current_category,
+                "cmtype": "page",  # On ne cherche que les articles
+                "cmlimit": 20,  # Limite à 20 articles par catégorie
+                "format": "json",
+            }
+            url = WIKI_API_URL.format(lang=refer_lang)
             response = requests.get(url, params=params)
             response.raise_for_status()
             data = response.json()
 
-            # Add more articles to the list
+            # Ajouter les articles à la liste
             articles.extend(article["title"] for article in data["query"]["categorymembers"])
+
+            # On ne gère plus la pagination car on limite à 20 articles
+
+        # Supprimer les doublons
+        articles = list(set(articles))
 
         return JsonResponse({"articles": articles})
 

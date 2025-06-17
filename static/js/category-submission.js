@@ -87,8 +87,15 @@ document.addEventListener("DOMContentLoaded", function () {
     async function checkPageInLanguage(title, sourceLang, targetLang) {
         const apiUrl =
                     `https://${sourceLang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=langlinks&lllang=${targetLang}&format=json&origin=*`;
+        const timeout = 10000; // 10 secondes
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+
         try {
-            const response = await fetch(apiUrl);
+            const response = await fetch(apiUrl, {
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
             const data = await response.json();
 
             const pageId = Object.keys(data.query.pages)[0];  // Get the page ID
@@ -100,6 +107,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 return 0; // page does not exist
             }
         } catch (error) {
+            if (error.name === 'AbortError') {
+                console.error('Request timed out');
+            }
             console.error("Error checking Wikipedia page:", error);
             return -1; // Error occurred
         }
@@ -135,109 +145,72 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function getArticleMetadata(title, lang) {
         const baseUrl = `https://${lang}.wikipedia.org/w/api.php`;
-        const wiki = `${lang}.wikipedia.org`; // language + project
+        const wiki = `${lang}.wikipedia.org`;
 
         // "Basic information about the page."
         const xToolInfoUrl = `https://xtools.wmcloud.org/api/page/pageinfo/${wiki}/${encodeURIComponent(title)}`;
-
-        // "Get statistics about the prose (characters, word count, etc.) and referencing of a page."
-        // (more info in xToolPage wikimedia cloud).
         const xToolProseStatisticsUrl = `https://xtools.wmcloud.org/api/page/prose/${wiki}/${encodeURIComponent(title)}`;
-
-        // Counts of in and outgoing links, external links, and redirects.
         const xToolLinksUrl = `https://xtools.wmcloud.org/api/page/links/${wiki}/${encodeURIComponent(title)}`;
+
+        const timeout = 10000; // 10 secondes
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
 
         try {
             // Step 1: Basic info
-            const infoResponse = await fetch(xToolInfoUrl);
-            if (!infoResponse.ok) throw new Error("infoResponse API request failed");
+            console.log(`\n=== Fetching metadata for article: ${title} ===`);
+            const infoResponse = await fetch(xToolInfoUrl, {
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            if (!infoResponse.ok) {
+                console.error(`Info API failed for ${title}:`, infoResponse.status);
+                throw new Error("infoResponse API request failed");
+            }
             const infoData = await infoResponse.json();
-            /**
-             * https://xtools.wmcloud.org/api/page/articleinfo/ar.wikipedia.org/%D8%A8%D9%88%D8%A7%D8%A8%D8%A9%3A%D8%B5%D8%AD%D8%A9
-             * {
-             *   "warning": [
-             *     "In XTools 3.21, the last_edit_id property will be removed. Use the modified_rev_id property instead.",
-             *     "In XTools 3.21, the author and author_editcount properties will be removed. Instead, use creator and creator_editcount, respectively.",
-             *     "In XTools 3.21, the ip_edits property will be removed. Use the anon_edits property instead."
-             *   ],
-             *   "project": "ar.wikipedia.org",
-             *   "page": "بوابة:صحة",
-             *   "watchers": null,
-             *   "pageviews": 64,
-             *   "pageviews_offset": 30,
-             *   "revisions": 11,
-             *   "editors": 8,
-             *   "anon_edits": 0,
-             *   "minor_edits": 6,
-             *   "creator": "محمد القنة",
-             *   "creator_editcount": 16354,
-             *   "created_at": "2017-08-05T07:28:48Z",
-             *   "created_rev_id": 24054701,
-             *   "modified_at": "2024-09-20T16:18:01Z",
-             *   "secs_since_last_edit": 17133578,
-             *   "modified_rev_id": 67905581,
-             *   "assessment": {
-             *     "badge": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Symbol_question.svg",
-             *     "color": "",
-             *     "category": "تصنيف:مقالات غير مقيمة",
-             *     "value": "???"
-             *   },
-             *   "last_edit_id": 67905581,
-             *   "author": "محمد القنة",
-             *   "author_editcount": 16354,
-             *   "ip_edits": 0,
-             *   "elapsed_time": 0.152
-             *
-             * **/
-            const pageviews =  infoData.pageviews? infoData.pageviews : 0;
+            console.log(`Raw info data for ${title}:`, infoData);
 
-            // Step 2: Fetch revisions
-            const revisions = infoData.revisions? infoData.revisions : 0;
-
+            const pageviews = infoData.pageviews ? infoData.pageviews : 0;
+            const revisions = infoData.revisions ? infoData.revisions : 0;
             const editors = infoData.editors ? infoData.editors : 0;
-
             const created_at = infoData.created_at ? infoData.created_at : 0;
-
             const secs_since_last_edit = infoData.secs_since_last_edit ? infoData.secs_since_last_edit : 0;
 
-            const proseResponse = await fetch(xToolProseStatisticsUrl);
-            if (!proseResponse.ok) throw new Error("proseResponse API request failed");
+            // Step 2: Prose statistics
+            const proseResponse = await fetch(xToolProseStatisticsUrl, {
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            if (!proseResponse.ok) {
+                console.error(`Prose API failed for ${title}:`, proseResponse.status);
+                throw new Error("proseResponse API request failed");
+            }
             const proseData = await proseResponse.json();
+            console.log(`Raw prose data for ${title}:`, proseData);
 
             const references = proseData.references ? proseData.references : 0;
-
             const words = proseData.words ? proseData.words : 0;
-
             const bytesSize = proseData.bytes ? proseData.bytes : 0;
 
-            let words_bytes_ratio;
-            if(bytesSize!==0){
-                words_bytes_ratio = words / bytesSize;
-            }
-            else{
-                words_bytes_ratio = 0;
-            }
+            let words_bytes_ratio = bytesSize !== 0 ? words / bytesSize : 0;
 
-            // Step 3: Basic info
-            const infoParams = new URLSearchParams({
-                action: "query",
-                prop: "info|pageviews",
-                titles: title,
-                format: "json",
-                origin: "*"
+            // Step 3: Links
+            const linkResponse = await fetch(xToolLinksUrl, {
+                signal: controller.signal
             });
-
-            const baseInfoResponse = await fetch(`${baseUrl}?${infoParams}`);
-            const baseInfoData = await baseInfoResponse.json();
-            const pageId = Object.keys(baseInfoData.query.pages)[0];
-            /**
-            * https://ar.wikipedia.org/w/api.php?action=query&titles=%D8%A7%D9%84%D9%84%D9%88%D8%B2+%D8%A7%D9%84%D9%85%D8%B1&prop=info
-             * */
-
-            if (pageId === "-1") {
-                return null;
+            clearTimeout(timeoutId);
+            if (!linkResponse.ok) {
+                console.error(`Links API failed for ${title}:`, linkResponse.status);
+                throw new Error("linkResponse API request failed");
             }
-            // Step 4: Fetch langlinks
+            const linkData = await linkResponse.json();
+            console.log(`Raw links data for ${title}:`, linkData);
+
+            const links_in = linkData.links_in ? linkData.links_in : 0;
+            const links_ext_count = linkData.links_ext_count ? linkData.links_ext_count : 0;
+            const out_links_count = linkData.links_out ? linkData.links_out : 0;
+
+            // Step 4: Langlinks
             const langlinks = await fetchAllFromApi(baseUrl, {
                 action: "query",
                 prop: "langlinks",
@@ -246,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 format: "json"
             }, "langlinks");
 
-            // Step 5: Fetch templates
+            // Step 5: Templates
             const templates = await fetchAllFromApi(baseUrl, {
                 action: "query",
                 prop: "templates",
@@ -255,56 +228,62 @@ document.addEventListener("DOMContentLoaded", function () {
                 format: "json"
             }, "templates");
 
-            // Step 5: Fetch in links and out links
-            const linkResponse = await fetch(xToolLinksUrl);
-            if (!linkResponse.ok) throw new Error(" linkResponse API request failed");
-            const linkData = await linkResponse.json();
-
-            const links_in = linkData.links_in ? linkData.links_in : 0;
-
-            const links_ext_count = linkData.links_ext_count ? linkData.links_ext_count : 0;
-
-            const out_links_count = linkData.links_out ? linkData.links_out : 0;
-
-            return {
+            const metadata = {
                 title: title,
                 views: pageviews,
                 langlinks: langlinks.length,
                 editCount: revisions,
                 firstEdit: created_at,
                 references: references,
-                editWars: revisions / editors,
+                editWars: editors !== 0 ? revisions / editors : 0,
                 words_bytes_ratio: words_bytes_ratio,
                 templates: templates.length,
                 in_links_Count: links_in + links_ext_count,
                 out_links_count: out_links_count,
                 secs_since_last_edit: secs_since_last_edit,
-                pageRank: 0, // TODO still placeholder
+                pageRank: 0,
             };
+            
+
+            console.log(`\nFinal metadata for ${title}:`, metadata);
+            return metadata;
 
         } catch (error) {
-            console.error("Error fetching article metadata:", error);
-            return {
+            if (error.name === 'AbortError') {
+                console.error('Request timed out');
             }
-            ;
+            console.error(`Error fetching metadata for ${title}:`, error);
+            return {};
         }
     }
 
     // Function to compute ranking score
     function computeRankingScore(metadata, weights) {
-        return (
-            metadata.normViews * weights.views +
-            metadata.normLanglinks * weights.langlinks +
-            metadata.normEditCount * weights.editCount +
-            metadata.normReferences * weights.references +
-            metadata.normEditWars * weights.editWars +
-            metadata.normTemplates * weights.templates +
-            metadata.norm_in_links_Count * weights.in_links_Count +
-            metadata.norm_out_links_Count * weights.out_Links_count +
-            metadata.norm_words_bytes_ratio * weights.words_bytes_ratio +
-            metadata.norm_secs_since_last_edit * weights.secs_since_last_edit +
-            metadata.pageRank * weights.pageRank
-        );
+        const scoreComponents = {
+            views: metadata.normViews * weights.views,
+            langlinks: metadata.normLanglinks * weights.langlinks,
+            editCount: metadata.normEditCount * weights.editCount,
+            references: metadata.normReferences * weights.references,
+            editWars: metadata.normEditWars * weights.editWars,
+            templates: metadata.normTemplates * weights.templates,
+            in_links: metadata.norm_in_links_Count * weights.in_links_Count,
+            out_links: metadata.norm_out_links_Count * weights.out_Links_count,
+            words_bytes: metadata.norm_words_bytes_ratio * weights.words_bytes_ratio,
+            last_edit: metadata.norm_secs_since_last_edit * weights.secs_since_last_edit,
+            pageRank: metadata.pageRank * weights.pageRank
+        };
+
+        const totalScore = Object.values(scoreComponents).reduce((a, b) => a + b, 0);
+
+        console.log(`\n=== Score calculation for ${metadata.title} ===`);
+        console.log('Score components:', scoreComponents);
+        console.log('Total score:', totalScore);
+
+        return totalScore;
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     form.addEventListener("submit", async function (event) {
@@ -356,18 +335,17 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.articles && data.articles.length > 0) {
                 articles_msg.innerHTML = "found articles under category, now filtering missing articles and fetching metadata...";
 
-                const checkPromises = data.articles.map(async (article) => {
+                const filteredMetadataList = [];
+                for (const article of data.articles) {
                     const exists = await checkPageInLanguage(article, referLanguageCode, languageCode);
-
-                    if (exists === 1) {
+                    if (exists !== 1) {
+                        const metadata = await getArticleMetadata(article, referLanguageCode);
+                        if (metadata) {
+                            filteredMetadataList.push(metadata);
+                        }
+                        await sleep(250); // 250 ms de pause entre chaque requête
                     }
-                    else {
-                        return getArticleMetadata(article, referLanguageCode);
-                    }
-                });
-
-                // Filter out nulls (existing pages)
-                const filteredMetadataList = (await Promise.all(checkPromises)).filter(Boolean);
+                }
 
                 articles_msg.innerHTML = "Ranking...";
                 tableBody.innerHTML = "";
@@ -377,32 +355,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     return
                 }
 
-                filteredMetadataList.forEach((meta,index) => {
-                    const wikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(meta.title)}`;
-
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                                    <td style="border: 1px solid #ccc; padding: 8px;">${index + 1}</td>
-                                    <td style="border: 1px solid #ccc; padding: 8px;">${meta.title}</td>
-                                    <td style="border: 1px solid #ccc; padding: 8px;">
-                                        <a href="${wikiUrl}" target="_blank">View Article</a>
-                                    </td>
-                    `;
-                    tableBody.appendChild(row);
+                // Avant la normalisation
+                console.log("Max values:", {
+                    views: Math.max(...filteredMetadataList.map(m => Number(m.views)).filter(v => !isNaN(v))),
+                    langlinks: Math.max(...filteredMetadataList.map(m => Number(m.langlinks)).filter(v => !isNaN(v))),
+                    editCount: Math.max(...filteredMetadataList.map(m => Number(m.editCount)).filter(v => !isNaN(v))),
+                    references: Math.max(...filteredMetadataList.map(m => Number(m.references)).filter(v => !isNaN(v))),
+                    editWars: Math.max(...filteredMetadataList.map(m => Number(m.editWars)).filter(v => !isNaN(v))),
+                    templates: Math.max(...filteredMetadataList.map(m => Number(m.templates)).filter(v => !isNaN(v))),
+                    in_links_Count: Math.max(...filteredMetadataList.map(m => Number(m.in_links_Count)).filter(v => !isNaN(v))),
+                    out_links_count: Math.max(...filteredMetadataList.map(m => Number(m.out_links_count)).filter(v => !isNaN(v))),
+                    words_bytes_ratio: Math.max(...filteredMetadataList.map(m => Number(m.words_bytes_ratio)).filter(v => !isNaN(v))),
+                    secs_since_last_edit: Math.max(...filteredMetadataList.map(m => Number(m.secs_since_last_edit)).filter(v => !isNaN(v)))
                 });
+                console.log("Raw metadata before normalization:", filteredMetadataList);
 
                 // Compute maximum values for each metric across all articles
                 const maxValues = {
-                  views: Math.max(...filteredMetadataList.map(m => m.views)),
-                  langlinks: Math.max(...filteredMetadataList.map(m => m.langlinks)),
-                  editCount: Math.max(...filteredMetadataList.map(m => m.editCount)),
-                  references: Math.max(...filteredMetadataList.map(m => m.references)),
-                  editWars: Math.max(...filteredMetadataList.map(m => m.editWars)),
-                  templates: Math.max(...filteredMetadataList.map(m => m.templates)),
-                  in_links_Count: Math.max(...filteredMetadataList.map(m => m.in_links_Count)),
-                  out_links_count: Math.max(...filteredMetadataList.map(m => m.out_links_count)),
-                  words_bytes_ratio: Math.max(...filteredMetadataList.map(m => m.words_bytes_ratio)),
-                  secs_since_last_edit: Math.max(...filteredMetadataList.map(m => m.secs_since_last_edit))
+                  views: Math.max(...filteredMetadataList.map(m => Number(m.views)).filter(v => !isNaN(v))),
+                  langlinks: Math.max(...filteredMetadataList.map(m => Number(m.langlinks)).filter(v => !isNaN(v))),
+                  editCount: Math.max(...filteredMetadataList.map(m => Number(m.editCount)).filter(v => !isNaN(v))),
+                  references: Math.max(...filteredMetadataList.map(m => Number(m.references)).filter(v => !isNaN(v))),
+                  editWars: Math.max(...filteredMetadataList.map(m => Number(m.editWars)).filter(v => !isNaN(v))),
+                  templates: Math.max(...filteredMetadataList.map(m => Number(m.templates)).filter(v => !isNaN(v))),
+                  in_links_Count: Math.max(...filteredMetadataList.map(m => Number(m.in_links_Count)).filter(v => !isNaN(v))),
+                  out_links_count: Math.max(...filteredMetadataList.map(m => Number(m.out_links_count)).filter(v => !isNaN(v))),
+                  words_bytes_ratio: Math.max(...filteredMetadataList.map(m => Number(m.words_bytes_ratio)).filter(v => !isNaN(v))),
+                  secs_since_last_edit: Math.max(...filteredMetadataList.map(m => Number(m.secs_since_last_edit)).filter(v => !isNaN(v)))
                 };
 
                 function safe_division(numerator, denominators){
@@ -416,37 +395,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Normalize each metric for every article
                 filteredMetadataList.forEach(m => {
+                    console.log(`\n=== Normalizing metrics for ${m.title} ===`);
+                    console.log('Raw values:', {
+                        views: m.views,
+                        langlinks: m.langlinks,
+                        editCount: m.editCount,
+                        references: m.references,
+                        editWars: m.editWars,
+                        templates: m.templates,
+                        in_links_Count: m.in_links_Count,
+                        out_links_count: m.out_links_count,
+                        words_bytes_ratio: m.words_bytes_ratio,
+                        secs_since_last_edit: m.secs_since_last_edit
+                    });
 
-                  m.normViews = maxValues.views ? safe_division( m.views , maxValues.views) : 0;
+                    m.normViews = maxValues.views ? safe_division(m.views, maxValues.views) : 0;
+                    m.normLanglinks = maxValues.langlinks ? safe_division(m.langlinks, maxValues.langlinks) : 0;
+                    m.normEditCount = maxValues.editCount ? 1 - safe_division(m.editCount, maxValues.editCount) : 0;
+                    m.normReferences = maxValues.references ? 1 - safe_division(m.references, maxValues.references) : 0;
+                    m.normEditWars = maxValues.editWars ? safe_division(m.editWars, maxValues.editWars) : 0;
+                    m.normTemplates = maxValues.templates ? 1 - safe_division(m.templates, maxValues.templates) : 0;
+                    m.norm_in_links_Count = maxValues.in_links_Count ? safe_division(m.in_links_Count, maxValues.in_links_Count) : 0;
+                    m.norm_out_links_Count = maxValues.out_links_count ? safe_division(m.out_links_count, maxValues.out_links_count) : 0;
+                    m.norm_words_bytes_ratio = maxValues.words_bytes_ratio ? 1 - safe_division(m.words_bytes_ratio, maxValues.words_bytes_ratio) : 0;
+                    m.norm_secs_since_last_edit = maxValues.secs_since_last_edit ? safe_division(m.secs_since_last_edit, maxValues.secs_since_last_edit) : 0;
 
-                  m.normLanglinks = maxValues.langlinks ? safe_division( m.langlinks , maxValues.langlinks) : 0;
-
-                  m.normEditCount = maxValues.editCount ? 1- safe_division( m.editCount , maxValues.editCount) : 0;
-
-                  // If higher references should lower the score because it needs more editing
-                  m.normReferences = maxValues.references ?
-                                                        1- safe_division(m.references , maxValues.references) : 0;
-
-                  m.normEditWars = maxValues.editWars ?
-                                                        safe_division(m.editWars , maxValues.editWars) : 0;
-
-                  // If higher template usage then should lower the score because it needs more editing
-                  m.normTemplates = maxValues.templates ? 1 -
-                                                        safe_division(m.templates , maxValues.templates) : 0;
-
-                  m.norm_in_links_Count = maxValues.in_links_Count ?
-                                                safe_division(m.in_links_Count , maxValues.in_links_Count) : 0;
-
-                  m.norm_out_links_Count = maxValues.out_links_count ?
-                                        safe_division(m.out_links_count, maxValues.out_links_count) : 0;
-
-                  m.norm_words_bytes_ratio = maxValues.words_bytes_ratio ?
-                      1 - safe_division(m.words_bytes_ratio,maxValues.words_bytes_ratio) : 0;
-
-                  m.norm_secs_since_last_edit = maxValues.secs_since_last_edit ?
-                    safe_division(m.secs_since_last_edit,maxValues.secs_since_last_edit) : 0;
-
-                    // m.page_rank = maxValues.page_rank ? m.page_rank / maxValues.page_rank : 0;
+                    console.log('Normalized values:', {
+                        normViews: m.normViews,
+                        normLanglinks: m.normLanglinks,
+                        normEditCount: m.normEditCount,
+                        normReferences: m.normReferences,
+                        normEditWars: m.normEditWars,
+                        normTemplates: m.normTemplates,
+                        norm_in_links_Count: m.norm_in_links_Count,
+                        norm_out_links_Count: m.norm_out_links_Count,
+                        norm_words_bytes_ratio: m.norm_words_bytes_ratio,
+                        norm_secs_since_last_edit: m.norm_secs_since_last_edit
+                    });
                 });
 
                 // Compute scores and sort
