@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Check if each reference article exists in the edit language and rank them
             if (data.articles && data.articles.length > 0) {
-                articles_msg.innerHTML = "found articles under category, now filtering missing articles and fetching metadata...";
+                articles_msg.innerHTML = "fetching metadata and compute relevance score of missing articles found....";
 
                 const filteredMetadataList = [];
                 for (const article of data.articles) {
@@ -343,7 +343,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (metadata) {
                             filteredMetadataList.push(metadata);
                         }
-                        await sleep(250); // 250 ms de pause entre chaque requête
+                        await sleep(100);
                     }
                 }
 

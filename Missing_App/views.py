@@ -326,7 +326,7 @@ def get_all_subcategories(lang, category, visited=None, current_depth=0, max_dep
         "list": "categorymembers",
         "cmtitle": category,
         "cmtype": "subcat",  # On ne cherche que les sous-catégories
-        "cmlimit": 500,
+        "cmlimit": 10,
         "format": "json"
     }
     
@@ -381,8 +381,6 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
 
             # Ajouter les articles à la liste
             articles.extend(article["title"] for article in data["query"]["categorymembers"])
-
-            # On ne gère plus la pagination car on limite à 20 articles
 
         # Supprimer les doublons
         articles = list(set(articles))
