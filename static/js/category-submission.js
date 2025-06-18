@@ -295,25 +295,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const refer_lang = document.getElementById("article-refer-language-search").value.trim();
         const category = document.getElementById("all-category-search").value.trim();
 
-        if (!edit_lang || !category || !refer_lang ) {
+        if (!edit_lang || !category || !refer_lang) {
             alert("Please select both a language and a category.");
             return;
         }
 
-        articles_msg.innerHTML = "Loading missing articles...";  // Clear previous rows
-
+        articles_msg.innerHTML = "Loading missing articles...";
         ranked_res_spinner.style.display = "inline-block";
 
         try {
-            // Extract language code (inside parentheses)
             const languageCode = edit_lang.match(/\((.*?)\)/)?.[1];
-            if (!languageCode) {
-                alert("Invalid language selection. Please select a valid language.");
-                return;
-            }
-            // Extract language code (inside parentheses)
             const referLanguageCode = refer_lang.match(/\((.*?)\)/)?.[1];
-            if (!referLanguageCode) {
+            if (!languageCode || !referLanguageCode) {
                 alert("Invalid language selection. Please select a valid language.");
                 return;
             }
@@ -323,189 +316,196 @@ document.addEventListener("DOMContentLoaded", function () {
                 `/get_articles_from_other_languages/${languageCode}/${category}/${referLanguageCode}/`);
             const data = await response.json();
 
-            if(data.noCatError){
+            if (data.noCatError) {
                 throw new Error("noCatError");
-            }
-
-            else if(data.noQCode){
+            } else if (data.noQCode) {
                 throw new Error("noQCode");
             }
 
-            // Check if each reference article exists in the edit language and rank them
             if (data.articles && data.articles.length > 0) {
-                articles_msg.innerHTML = "fetching metadata and compute relevance score of missing articles found....";
+                // ÉTAPE 1: Afficher les articles sans score
+                displayArticlesWithoutScores(data.articles, referLanguageCode, languageCode);
+                
+                articles_msg.innerHTML = "fetching metadata and compute relevance score of missing articles found";
 
-                const filteredMetadataList = [];
-                for (const article of data.articles) {
-                    const exists = await checkPageInLanguage(article, referLanguageCode, languageCode);
-                    if (exists !== 1) {
-                        const metadata = await getArticleMetadata(article, referLanguageCode);
-                        if (metadata) {
-                            filteredMetadataList.push(metadata);
-                        }
-                        await sleep(100);
-                    }
-                }
-
-                articles_msg.innerHTML = "Ranking...";
-                tableBody.innerHTML = "";
-                if(filteredMetadataList.length === 0){
-                    articles_msg.innerHTML = "Search completed, No missing article found under this category";
-                    ranked_res_spinner.style.display = "none";
-                    return
-                }
-
-                // Avant la normalisation
-                console.log("Max values:", {
-                    views: Math.max(...filteredMetadataList.map(m => Number(m.views)).filter(v => !isNaN(v))),
-                    langlinks: Math.max(...filteredMetadataList.map(m => Number(m.langlinks)).filter(v => !isNaN(v))),
-                    editCount: Math.max(...filteredMetadataList.map(m => Number(m.editCount)).filter(v => !isNaN(v))),
-                    references: Math.max(...filteredMetadataList.map(m => Number(m.references)).filter(v => !isNaN(v))),
-                    editWars: Math.max(...filteredMetadataList.map(m => Number(m.editWars)).filter(v => !isNaN(v))),
-                    templates: Math.max(...filteredMetadataList.map(m => Number(m.templates)).filter(v => !isNaN(v))),
-                    in_links_Count: Math.max(...filteredMetadataList.map(m => Number(m.in_links_Count)).filter(v => !isNaN(v))),
-                    out_links_count: Math.max(...filteredMetadataList.map(m => Number(m.out_links_count)).filter(v => !isNaN(v))),
-                    words_bytes_ratio: Math.max(...filteredMetadataList.map(m => Number(m.words_bytes_ratio)).filter(v => !isNaN(v))),
-                    secs_since_last_edit: Math.max(...filteredMetadataList.map(m => Number(m.secs_since_last_edit)).filter(v => !isNaN(v)))
-                });
-                console.log("Raw metadata before normalization:", filteredMetadataList);
-
-                // Compute maximum values for each metric across all articles
-                const maxValues = {
-                  views: Math.max(...filteredMetadataList.map(m => Number(m.views)).filter(v => !isNaN(v))),
-                  langlinks: Math.max(...filteredMetadataList.map(m => Number(m.langlinks)).filter(v => !isNaN(v))),
-                  editCount: Math.max(...filteredMetadataList.map(m => Number(m.editCount)).filter(v => !isNaN(v))),
-                  references: Math.max(...filteredMetadataList.map(m => Number(m.references)).filter(v => !isNaN(v))),
-                  editWars: Math.max(...filteredMetadataList.map(m => Number(m.editWars)).filter(v => !isNaN(v))),
-                  templates: Math.max(...filteredMetadataList.map(m => Number(m.templates)).filter(v => !isNaN(v))),
-                  in_links_Count: Math.max(...filteredMetadataList.map(m => Number(m.in_links_Count)).filter(v => !isNaN(v))),
-                  out_links_count: Math.max(...filteredMetadataList.map(m => Number(m.out_links_count)).filter(v => !isNaN(v))),
-                  words_bytes_ratio: Math.max(...filteredMetadataList.map(m => Number(m.words_bytes_ratio)).filter(v => !isNaN(v))),
-                  secs_since_last_edit: Math.max(...filteredMetadataList.map(m => Number(m.secs_since_last_edit)).filter(v => !isNaN(v)))
-                };
-
-                function safe_division(numerator, denominators){
-                    if(denominators===0){
-                        return 0;
-                    }
-                    else {
-                        return numerator/denominators;
-                    }
-                }
-
-                // Normalize each metric for every article
-                filteredMetadataList.forEach(m => {
-                    console.log(`\n=== Normalizing metrics for ${m.title} ===`);
-                    console.log('Raw values:', {
-                        views: m.views,
-                        langlinks: m.langlinks,
-                        editCount: m.editCount,
-                        references: m.references,
-                        editWars: m.editWars,
-                        templates: m.templates,
-                        in_links_Count: m.in_links_Count,
-                        out_links_count: m.out_links_count,
-                        words_bytes_ratio: m.words_bytes_ratio,
-                        secs_since_last_edit: m.secs_since_last_edit
-                    });
-
-                    m.normViews = maxValues.views ? safe_division(m.views, maxValues.views) : 0;
-                    m.normLanglinks = maxValues.langlinks ? safe_division(m.langlinks, maxValues.langlinks) : 0;
-                    m.normEditCount = maxValues.editCount ? 1 - safe_division(m.editCount, maxValues.editCount) : 0;
-                    m.normReferences = maxValues.references ? 1 - safe_division(m.references, maxValues.references) : 0;
-                    m.normEditWars = maxValues.editWars ? safe_division(m.editWars, maxValues.editWars) : 0;
-                    m.normTemplates = maxValues.templates ? 1 - safe_division(m.templates, maxValues.templates) : 0;
-                    m.norm_in_links_Count = maxValues.in_links_Count ? safe_division(m.in_links_Count, maxValues.in_links_Count) : 0;
-                    m.norm_out_links_Count = maxValues.out_links_count ? safe_division(m.out_links_count, maxValues.out_links_count) : 0;
-                    m.norm_words_bytes_ratio = maxValues.words_bytes_ratio ? 1 - safe_division(m.words_bytes_ratio, maxValues.words_bytes_ratio) : 0;
-                    m.norm_secs_since_last_edit = maxValues.secs_since_last_edit ? safe_division(m.secs_since_last_edit, maxValues.secs_since_last_edit) : 0;
-
-                    console.log('Normalized values:', {
-                        normViews: m.normViews,
-                        normLanglinks: m.normLanglinks,
-                        normEditCount: m.normEditCount,
-                        normReferences: m.normReferences,
-                        normEditWars: m.normEditWars,
-                        normTemplates: m.normTemplates,
-                        norm_in_links_Count: m.norm_in_links_Count,
-                        norm_out_links_Count: m.norm_out_links_Count,
-                        norm_words_bytes_ratio: m.norm_words_bytes_ratio,
-                        norm_secs_since_last_edit: m.norm_secs_since_last_edit
-                    });
-                });
-
-                // Compute scores and sort
-                filteredMetadataList.forEach(meta => meta.score = computeRankingScore(meta, weights));
-                filteredMetadataList.sort((a, b) => b.score - a.score);
-
-                // Display sorted missing articles
-                tableBody.innerHTML = "";  // Clear previous rows
+                // ÉTAPE 2: Traitement hybride avec affichage progressif
+                await processArticlesHybrid(data.articles, referLanguageCode, languageCode);
+                
                 articles_msg.innerHTML = "";
-
-                filteredMetadataList.forEach((meta,index) => {
-                    const encodedTitle = encodeURIComponent(meta.title);
-
-                    const referenceWikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodeURIComponent(meta.title)}`;
-                    const wikiUrl =
-                        `https://${languageCode}.wikipedia.org/w/index.php?title=${encodedTitle}&action=edit`;
-
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                                    <td style="border: 1px solid #ccc; padding: 8px;">
-                                        ${index + 1}
-                                    </td>
-                                    <td style="border: 1px solid #ccc; padding: 8px;">
-                                        ${meta.title} 
-                                        - Score: ${meta.score.toFixed(2)} 
-                                    </td>
-                                    <td style="border: 1px solid #ccc; padding: 8px;">
-                                        <a href="${referenceWikiUrl}" target="_blank">View Article</a> 
-                                        - 
-                                        <a href="${wikiUrl}" target="_blank">Edit Article</a>
-                                    </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-                articles_msg.innerHTML = "";
-
+                ranked_res_spinner.style.display = "none";
             } else {
                 articles_msg.innerHTML = "Search completed, No missing articles found under this category";
+                ranked_res_spinner.style.display = "none";
             }
-            ranked_res_spinner.style.display = "none";
 
         } catch (error) {
-            articles_msg.innerHTML ="";
-            if (error.message === "noCatError"){
-                    articles_msg.innerHTML = `<span style="color: red; font-weight: bold;">
-                                        category not found
-                                        </span>
-                                         in reference language`;
-                    ranked_res_spinner.style.display = "none";
-                    console.error("category not found in reference language.: ", error);
+            handleError(error);
+        }
+    });
 
+    // Fonction pour afficher les articles sans score
+    function displayArticlesWithoutScores(articles, referLanguageCode, languageCode) {
+        tableBody.innerHTML = "";
+        articles.forEach((title, index) => {
+            const encodedTitle = encodeURIComponent(title);
+            const referenceWikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodedTitle}`;
+            const wikiUrl = `https://${languageCode}.wikipedia.org/w/index.php?title=${encodedTitle}&action=edit`;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td style="border: 1px solid #ccc; padding: 8px;">
+                    ${index + 1}
+                </td>
+                <td style="border: 1px solid #ccc; padding: 8px;">
+                    ${title}
+                    <span class="score-placeholder">Score: calculating...</span>
+                </td>
+                <td style="border: 1px solid #ccc; padding: 8px;">
+                    <a href="${referenceWikiUrl}" target="_blank">View Article</a>
+                    -
+                    <a href="${wikiUrl}" target="_blank">Edit Article</a>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Fonction principale pour le traitement hybride
+    async function processArticlesHybrid(articles, referLanguageCode, languageCode) {
+        const BATCH_SIZE = 10; // Nombre d'articles pour commencer le calcul des scores
+        const filteredMetadataList = [];
+        const processedArticles = new Set();
+        
+        // Traiter les articles par batch
+        for (let i = 0; i < articles.length; i += BATCH_SIZE) {
+            const batch = articles.slice(i, i + BATCH_SIZE);
+            
+            // Traiter le batch actuel
+            for (const article of batch) {
+                if (processedArticles.has(article)) continue;
+                
+                const exists = await checkPageInLanguage(article, referLanguageCode, languageCode);
+                if (exists !== 1) {
+                    const metadata = await getArticleMetadata(article, referLanguageCode);
+                    if (metadata) {
+                        filteredMetadataList.push(metadata);
+                        processedArticles.add(article);
+                    }
+                    await sleep(100);
+                }
             }
-
-            else if (error.message === "noQCode"){
-                    articles_msg.innerHTML =`This category 
-                                            <span style="color: red; font-weight: bold;">
-                                                does not exist OR is a red link
-                                            </span> ,                                         
-                                            <a href="https://en.wikipedia.org/wiki/Wikipedia:Red_link" 
-                                                target="_blank" rel="noopener noreferrer">
-                                            click here for info about red links
-                                            </a>
-                    `;
-                    ranked_res_spinner.style.display = "none";
-            }
-
-            else{
-                articles_msg.innerHTML = `<span style="color: red; font-weight: bold;">
-                                                Error loading missing articles. Please try again later.
-                                        </span>`;
-                ranked_res_spinner.style.display = "none";
-                console.error("Error fetching articles:", error);
+            
+            // Si on a assez d'articles, calculer et afficher les scores
+            if (filteredMetadataList.length >= BATCH_SIZE || i + BATCH_SIZE >= articles.length) {
+                await calculateAndDisplayScores(filteredMetadataList, referLanguageCode, languageCode, false);
             }
         }
+        
+        // ÉTAPE 3: Calcul final avec tous les articles
+        articles_msg.innerHTML = "Ranking...";
+        await calculateAndDisplayScores(filteredMetadataList, referLanguageCode, languageCode, true);
     }
-    );
+
+    // Fonction pour calculer et afficher les scores
+    async function calculateAndDisplayScores(metadataList, referLanguageCode, languageCode, isFinal = false) {
+        if (metadataList.length === 0) {
+            articles_msg.innerHTML = "Search completed, No missing article found under this category";
+            return;
+        }
+
+        // Calculer les max_values
+        const maxValues = {
+            views: Math.max(...metadataList.map(m => Number(m.views)).filter(v => !isNaN(v))),
+            langlinks: Math.max(...metadataList.map(m => Number(m.langlinks)).filter(v => !isNaN(v))),
+            editCount: Math.max(...metadataList.map(m => Number(m.editCount)).filter(v => !isNaN(v))),
+            references: Math.max(...metadataList.map(m => Number(m.references)).filter(v => !isNaN(v))),
+            editWars: Math.max(...metadataList.map(m => Number(m.editWars)).filter(v => !isNaN(v))),
+            templates: Math.max(...metadataList.map(m => Number(m.templates)).filter(v => !isNaN(v))),
+            in_links_Count: Math.max(...metadataList.map(m => Number(m.in_links_Count)).filter(v => !isNaN(v))),
+            out_links_count: Math.max(...metadataList.map(m => Number(m.out_links_count)).filter(v => !isNaN(v))),
+            words_bytes_ratio: Math.max(...metadataList.map(m => Number(m.words_bytes_ratio)).filter(v => !isNaN(v))),
+            secs_since_last_edit: Math.max(...metadataList.map(m => Number(m.secs_since_last_edit)).filter(v => !isNaN(v)))
+        };
+
+        // Normaliser et calculer les scores
+        metadataList.forEach(m => {
+            m.normViews = maxValues.views ? safe_division(m.views, maxValues.views) : 0;
+            m.normLanglinks = maxValues.langlinks ? safe_division(m.langlinks, maxValues.langlinks) : 0;
+            m.normEditCount = maxValues.editCount ? 1 - safe_division(m.editCount, maxValues.editCount) : 0;
+            m.normReferences = maxValues.references ? 1 - safe_division(m.references, maxValues.references) : 0;
+            m.normEditWars = maxValues.editWars ? safe_division(m.editWars, maxValues.editWars) : 0;
+            m.normTemplates = maxValues.templates ? 1 - safe_division(m.templates, maxValues.templates) : 0;
+            m.norm_in_links_Count = maxValues.in_links_Count ? safe_division(m.in_links_Count, maxValues.in_links_Count) : 0;
+            m.norm_out_links_Count = maxValues.out_links_count ? safe_division(m.out_links_count, maxValues.out_links_count) : 0;
+            m.norm_words_bytes_ratio = maxValues.words_bytes_ratio ? 1 - safe_division(m.words_bytes_ratio, maxValues.words_bytes_ratio) : 0;
+            m.norm_secs_since_last_edit = maxValues.secs_since_last_edit ? safe_division(m.secs_since_last_edit, maxValues.secs_since_last_edit) : 0;
+            
+            m.score = computeRankingScore(m, weights);
+        });
+
+        // Trier par score décroissant
+        metadataList.sort((a, b) => b.score - a.score);
+
+        // Afficher les résultats
+        displayArticlesWithScores(metadataList, referLanguageCode, languageCode, isFinal);
+    }
+
+    // Fonction pour afficher les articles avec scores
+    function displayArticlesWithScores(sortedMetadataList, referLanguageCode, languageCode, isFinal = false) {
+        tableBody.innerHTML = "";
+        sortedMetadataList.forEach((meta, index) => {
+            const encodedTitle = encodeURIComponent(meta.title);
+            const referenceWikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodedTitle}`;
+            const wikiUrl = `https://${languageCode}.wikipedia.org/w/index.php?title=${encodedTitle}&action=edit`;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td style="border: 1px solid #ccc; padding: 8px;">
+                    ${index + 1}
+                </td>
+                <td style="border: 1px solid #ccc; padding: 8px;">
+                    ${meta.title}
+                    - Score: ${meta.score.toFixed(2)}
+                    ${!isFinal ? ' <span style="color: orange;">(provisional)</span>' : ''}
+                </td>
+                <td style="border: 1px solid #ccc; padding: 8px;">
+                    <a href="${referenceWikiUrl}" target="_blank">View Article</a>
+                    -
+                    <a href="${wikiUrl}" target="_blank">Edit Article</a>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Fonction helper pour la division sécurisée
+    function safe_division(numerator, denominator) {
+        return denominator === 0 ? 0 : numerator / denominator;
+    }
+
+    // Fonction pour gérer les erreurs
+    function handleError(error) {
+        articles_msg.innerHTML = "";
+        if (error.message === "noCatError") {
+            articles_msg.innerHTML = `<span style="color: red; font-weight: bold;">
+                category not found
+                </span>
+                in reference language`;
+        } else if (error.message === "noQCode") {
+            articles_msg.innerHTML = `This category 
+                <span style="color: red; font-weight: bold;">
+                    does not exist OR is a red link
+                </span>,                                         
+                <a href="https://en.wikipedia.org/wiki/Wikipedia:Red_link" 
+                    target="_blank" rel="noopener noreferrer">
+                click here for info about red links
+                </a>`;
+        } else {
+            articles_msg.innerHTML = `<span style="color: red; font-weight: bold;">
+                Error loading missing articles. Please try again later.
+                </span>`;
+            console.error("Error fetching articles:", error);
+        }
+        ranked_res_spinner.style.display = "none";
+    }
 });
