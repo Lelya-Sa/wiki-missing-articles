@@ -255,20 +255,17 @@
             
             <button id="save-csv-btn" style="display:none; margin-bottom: 10px;">Save result to CSV</button>
             
-            <table id="articles-table" class="articles-table" style="
-                                            width: 80%;
-                                            text-align: center;
-                                            margin-left: 10%;
-                                         border-collapse: collapse;">
+            <table id="articles-table" class="articles-table" style="width: 100%; border-collapse: collapse;">
                 <thead>
-                <tr>
-                    <th style="border: 1px solid #ccc; padding: 1%;"> </th>
-                    <th style="border: 1px solid #ccc; padding: 1%;">Title</th>
-                    <th style="border: 1px solid #ccc; padding: 1%;">Links</th>
-                </tr>
+                    <tr>
+                        <th style="border: 1px solid #ccc; padding: 8px;">#</th>
+                        <th style="border: 1px solid #ccc; padding: 8px;">Title</th>
+                        <th style="border: 1px solid #ccc; padding: 8px;">Found in</th>
+                        <th style="border: 1px solid #ccc; padding: 8px;">Links</th>
+                    </tr>
                 </thead>
                 <tbody id="articles-table-body">
-                <!-- Rows will be inserted here dynamically -->
+                    <!-- Les résultats JS s'affichent ici -->
                 </tbody>
             </table>
             

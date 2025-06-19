@@ -379,13 +379,21 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
             response.raise_for_status()
             data = response.json()
 
-            # Ajouter les articles à la liste
-            articles.extend(article["title"] for article in data["query"]["categorymembers"])
+            # Ajouter les articles à la liste avec la source
+            articles.extend({
+                "title": article["title"],
+                "source": current_category
+            } for article in data["query"]["categorymembers"])
 
-        # Supprimer les doublons
-        articles = list(set(articles))
+        # Supprimer les doublons par titre (en gardant la première source trouvée)
+        seen_titles = set()
+        unique_articles = []
+        for art in articles:
+            if art["title"] not in seen_titles:
+                unique_articles.append(art)
+                seen_titles.add(art["title"])
 
-        return JsonResponse({"articles": articles})
+        return JsonResponse({"articles": unique_articles})
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)

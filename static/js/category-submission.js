@@ -292,6 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         tableBody.innerHTML = "";
         articles_msg.innerHTML = "";
+        document.getElementById("save-csv-btn").style.display = "none";
 
         const edit_lang = document.getElementById("article-language-search").value.trim();
         const refer_lang = document.getElementById("article-refer-language-search").value.trim();
@@ -348,7 +349,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Fonction pour afficher les articles sans score
     function displayArticlesWithoutScores(articles, referLanguageCode, languageCode) {
         tableBody.innerHTML = "";
-        articles.forEach((title, index) => {
+        articles.forEach((article, index) => {
+            const title = typeof article === 'string' ? article : article.title;
+            const source = article.source || '';
             const encodedTitle = encodeURIComponent(title);
             const referenceWikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodedTitle}`;
             const wikiUrl = `https://${languageCode}.wikipedia.org/w/index.php?title=${encodedTitle}&action=edit`;
@@ -361,6 +364,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td style="border: 1px solid #ccc; padding: 8px;">
                     ${title}
                     <span class="score-placeholder">Score: calculating...</span>
+                </td>
+                <td style="border: 1px solid #ccc; padding: 8px;">
+                    ${source}
                 </td>
                 <td style="border: 1px solid #ccc; padding: 8px;">
                     <a href="${referenceWikiUrl}" target="_blank">View Article</a>
@@ -383,15 +389,18 @@ document.addEventListener("DOMContentLoaded", function () {
             const batch = articles.slice(i, i + BATCH_SIZE);
             
             // Traiter le batch actuel
-            for (const article of batch) {
-                if (processedArticles.has(article)) continue;
+            for (const articleObj of batch) {
+                const title = typeof articleObj === 'string' ? articleObj : articleObj.title;
+                const source = articleObj.source || '';
+                if (processedArticles.has(title)) continue;
                 
-                const exists = await checkPageInLanguage(article, referLanguageCode, languageCode);
+                const exists = await checkPageInLanguage(title, referLanguageCode, languageCode);
                 if (exists !== 1) {
-                    const metadata = await getArticleMetadata(article, referLanguageCode);
+                    const metadata = await getArticleMetadata(title, referLanguageCode);
                     if (metadata) {
+                        metadata.source = source;
                         filteredMetadataList.push(metadata);
-                        processedArticles.add(article);
+                        processedArticles.add(title);
                     }
                     await sleep(100);
                 }
@@ -459,7 +468,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const encodedTitle = encodeURIComponent(meta.title);
             const referenceWikiUrl = `https://${referLanguageCode}.wikipedia.org/wiki/${encodedTitle}`;
             const wikiUrl = `https://${languageCode}.wikipedia.org/w/index.php?title=${encodedTitle}&action=edit`;
-
+            const source = meta.source || '';
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td style="border: 1px solid #ccc; padding: 8px;">
@@ -469,6 +478,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     ${meta.title}
                     - Score: ${meta.score.toFixed(2)}
                     ${!isFinal ? ' <span style="color: orange;">(provisional)</span>' : ''}
+                </td>
+                <td style="border: 1px solid #ccc; padding: 8px;">
+                    ${source}
                 </td>
                 <td style="border: 1px solid #ccc; padding: 8px;">
                     <a href="${referenceWikiUrl}" target="_blank">View Article</a>
@@ -484,7 +496,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 title: meta.title,
                 score: meta.score,
                 referLanguageCode,
-                languageCode
+                languageCode,
+                source: meta.source || ''
             }));
             document.getElementById("save-csv-btn").style.display = "inline-block";
         } else {
@@ -532,13 +545,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const ref_code = refer_lang.match(/\((.*?)\)/)?.[1] || "ref";
         const safeCat = category.replace(/[^a-zA-Z0-9-_]/g, "_");
         const filename = `Ed_${edit_code}_ref_${ref_code}_cat_${safeCat}.csv`;
-        let csv = "Name of the article,Relevance score,View Link,Edit Link\n";
+        let csv = "Name of the article,Relevance score,Source,View Link,Edit Link\n";
         finalSortedResults.forEach(meta => {
             const encodedTitle = encodeURIComponent(meta.title);
             const viewLink = `https://${meta.referLanguageCode}.wikipedia.org/wiki/${encodedTitle}`;
             const editLink = `https://${meta.languageCode}.wikipedia.org/w/index.php?title=${encodedTitle}&action=edit`;
             const safeTitle = '"' + meta.title.replace(/"/g, '""') + '"';
-            csv += `${safeTitle},${meta.score.toFixed(2)},${viewLink},${editLink}\n`;
+            csv += `${safeTitle},${meta.score.toFixed(2)},${meta.source || ''},${viewLink},${editLink}\n`;
         });
         const blob = new Blob([csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
