@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pageRank: 0, //TODO simple pageRank algorithm
     };
 
+    let finalSortedResults = [];
+
     /** check if each page exists in edit-lage by using the MediaWiki API with the action=query
      and prop=langlinks parameters.
      for example if we asked this : https://ar.wikipedia.org/w/api.php?action=query&titles=%D8%B5%D8%AD%D8%A9&prop=langlinks&format=json&origin=*
@@ -476,6 +478,18 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
             tableBody.appendChild(row);
         });
+        // Si c'est le résultat final, on stocke et affiche le bouton
+        if (isFinal) {
+            finalSortedResults = sortedMetadataList.map(meta => ({
+                title: meta.title,
+                score: meta.score,
+                referLanguageCode,
+                languageCode
+            }));
+            document.getElementById("save-csv-btn").style.display = "inline-block";
+        } else {
+            document.getElementById("save-csv-btn").style.display = "none";
+        }
     }
 
     // Fonction helper pour la division sécurisée
@@ -508,4 +522,32 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         ranked_res_spinner.style.display = "none";
     }
+
+    document.getElementById("save-csv-btn").addEventListener("click", function() {
+        if (!finalSortedResults.length) return;
+        const edit_lang = document.getElementById("article-language-search").value.trim();
+        const refer_lang = document.getElementById("article-refer-language-search").value.trim();
+        const category = document.getElementById("all-category-search").value.trim();
+        const edit_code = edit_lang.match(/\((.*?)\)/)?.[1] || "edit";
+        const ref_code = refer_lang.match(/\((.*?)\)/)?.[1] || "ref";
+        const safeCat = category.replace(/[^a-zA-Z0-9-_]/g, "_");
+        const filename = `Ed_${edit_code}_ref_${ref_code}_cat_${safeCat}.csv`;
+        let csv = "Name of the article,Relevance score,View Link,Edit Link\n";
+        finalSortedResults.forEach(meta => {
+            const encodedTitle = encodeURIComponent(meta.title);
+            const viewLink = `https://${meta.referLanguageCode}.wikipedia.org/wiki/${encodedTitle}`;
+            const editLink = `https://${meta.languageCode}.wikipedia.org/w/index.php?title=${encodedTitle}&action=edit`;
+            const safeTitle = '"' + meta.title.replace(/"/g, '""') + '"';
+            csv += `${safeTitle},${meta.score.toFixed(2)},${viewLink},${editLink}\n`;
+        });
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
 });
