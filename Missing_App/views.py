@@ -1,3 +1,31 @@
+"""
+Django Views for Wikipedia Missing Articles Tool
+
+This module implements the main backend logic for the Wikipedia Missing Articles tool. It provides endpoints and helper functions to:
+- Render the main and category search pages
+- Dynamically fetch supported Wikipedia languages and categories
+- Retrieve missing articles in a target language by comparing categories across languages
+- Handle translation and language switching for the tool interface
+- Interact with the Wikipedia and Wikidata APIs to fetch category, article, and language data
+- Use caching to optimize repeated queries for supported languages
+
+Key Endpoints:
+- index: Renders the main landing page of the tool
+- missing_articles_by_category: Renders the category search page and handles POST form submissions (not used in AJAX flow)
+- get_supported_languages: Returns a JSON list of supported Wikipedia languages (with caching)
+- get_categories_with_query: Returns a filtered list of categories for a given language and query string
+- get_articles_from_other_languages: Main AJAX endpoint to fetch missing articles in a target language, given a category and reference language. Handles subcategory recursion and deduplication.
+- translated_page: Handles switching the UI language of the tool
+- custom_404: Custom 404 error page
+
+Implementation Notes:
+- Uses requests to interact with Wikipedia and Wikidata APIs for live data
+- Uses Django's cache framework to store supported languages for 24 hours
+- Handles Unicode and encoding issues for multilingual support
+- Recursively fetches subcategories up to a user-specified depth
+- Deduplicates articles by title, keeping the first found source
+
+"""
 import sys
 sys.stdout.reconfigure(encoding='utf-8')  # Ensures proper encoding for print output
 
@@ -16,14 +44,22 @@ from django.shortcuts import render
 
 
 def dictfetchall(cursor):
-    # Return all rows from a cursor as a dict
+    """
+    Return all rows from a cursor as a list of dictionaries.
+
+    :param cursor: Database cursor
+    :return: List of dictionaries, one per row
+    """
     columns = [col[0] for col in cursor.description]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
 
 def index(request):
     """
-        the entrance page of the tool
+    Render the main entrance page of the tool.
+
+    :param request: Django HTTP request
+    :return: Rendered index.html page
     """
     lang = request.COOKIES.get(settings.LANGUAGE_COOKIE_NAME, "en")
     translation.activate(lang)
@@ -32,10 +68,10 @@ def index(request):
 
 def missing_articles_by_category(request):
     """
-        page used for: searching for missing articles by entering category and language.
-        uses get_articles_from_other_languages function
-    :param request:
-    :return:
+    Render the category search page and handle POST form submissions for missing articles by category.
+
+    :param request: Django HTTP request
+    :return: Rendered missing_articles_by_category.html page
     """
     if request.method == "POST":
         edit_lang = request.POST.get("article-language-search")  # Get the selected language
@@ -56,7 +92,10 @@ def missing_articles_by_category(request):
 
 def translated_page(request):  # TODO support translation to wikipedia languages
     """
-         translates the tool page into given language.
+    Translate the tool page into the given language and redirect to the next URL.
+
+    :param request: Django HTTP request
+    :return: Redirect response with language cookie set
     """
     lang = request.GET.get("lang", "en")
 
@@ -73,11 +112,11 @@ def translated_page(request):  # TODO support translation to wikipedia languages
 
 def get_prefix(lang="en", type="category"):
     """
-    Get the correct category namespace prefix for a given Wikipedia language.
-    example : https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=namespaces&format=json
+    Get the correct category or portal namespace prefix for a given Wikipedia language.
 
-    :param lang: Wikipedia's language code (default: 'en' for English)
-    :return: Category namespace prefix (e.g., 'Category:', 'تصنيف:', 'Kategorie:')
+    :param lang: Wikipedia language code (default: 'en')
+    :param type: Namespace type ('category' or 'portal')
+    :return: Namespace prefix string (e.g., 'Category:', 'تصنيف:')
     """
     base_url = f"https://{lang}.wikipedia.org/w/api.php"
 
@@ -103,6 +142,12 @@ def get_prefix(lang="en", type="category"):
 
 # Fetch supported languages (with caching)
 def get_supported_languages(request):
+    """
+    Return a JSON list of supported Wikipedia languages, using cache if available.
+
+    :param request: Django HTTP request
+    :return: JsonResponse with list of supported languages
+    """
     # Try to get languages from cache first
     cached_languages = cache.get("supported_languages")
 
@@ -144,7 +189,12 @@ def get_supported_languages(request):
 
 def get_categories_with_query(request, lang, query):
     """
-    Fetch categories dynamically based on query, filtering directly in the API request.
+    Fetch categories dynamically based on a query string, filtering directly in the API request.
+
+    :param request: Django HTTP request
+    :param lang: Wikipedia language code
+    :param query: Query string for category prefix
+    :return: JsonResponse with list of categories or error
     """
 
     if not query:
@@ -176,11 +226,13 @@ def get_categories_with_query(request, lang, query):
 
 
 def get_qcode(page_name, lang, type="category"):
-    """ retrieves the universal qcode of the page from wikidata api
+    """
+    Retrieve the universal Wikidata Q-code for a Wikipedia page (category or portal).
 
-    :param page_name: the page you want its qcode
-    :param lang: the language of this page
-    :return: the universal qcode of the page
+    :param page_name: Name of the page
+    :param lang: Wikipedia language code
+    :param type: Type of page ('category' or 'portal')
+    :return: Q-code string or None if not found
     """
     try:
         if type == "category":
@@ -229,7 +281,7 @@ def get_qcode(page_name, lang, type="category"):
           {'1056957':
            {'pageid':1056957,
             'ns': 14,
-             'title': 'ØªØµÙ†ÙŠÙ�:Ø§Ù„ØµØ­Ø©',
+             'title': 'ØªØµÙ†ÙŠÙ:Ø§Ù„ØµØ­Ø©',
              'pageprops': {'expectunusedcategory': '', 'unexpectedUnconnectedPage': '-14'}}}}}
         """
 
@@ -246,12 +298,12 @@ def get_qcode(page_name, lang, type="category"):
 
 def get_page_name_in_refer_lang(qcode, refer_lang, edit_lang=None):
     """
-     uses a universal qcode of storing data in wikidata, and retrieve the name of the page if existed
-      in refer_lang - reference language.
-    :param qcode: the universal qcode of the page name
-    :param refer_lang:  the page language that you want to know its title
-    :param edit_lang:  the page language that you already know its title
-    :return:
+    Retrieve the localized page name in the reference language using the Wikidata Q-code.
+
+    :param qcode: Wikidata Q-code
+    :param refer_lang: Reference Wikipedia language code
+    :param edit_lang: (Optional) Contribution language code
+    :return: Page name in reference language or None
     """
     try:
         # Query Wikidata to get translations for the Q code
@@ -299,18 +351,18 @@ def get_page_name_in_refer_lang(qcode, refer_lang, edit_lang=None):
 
 def get_all_subcategories(lang, category, visited=None, current_depth=0, max_depth=1):
     """
-    Récupère récursivement toutes les sous-catégories d'une catégorie jusqu'à une profondeur maximale
-    :param lang: La langue Wikipedia
-    :param category: Le nom de la catégorie
-    :param visited: Set pour éviter les cycles
-    :param current_depth: Profondeur actuelle de la récursion
-    :param max_depth: Profondeur maximale autorisée (par défaut 3)
-    :return: Liste de toutes les sous-catégories
+    Recursively retrieve all subcategories of a category up to a maximum depth.
+
+    :param lang: Wikipedia language code
+    :param category: Name of the category
+    :param visited: Set to avoid cycles
+    :param current_depth: Current recursion depth
+    :param max_depth: Maximum allowed depth (default 1)
+    :return: List of all subcategory names
     """
     if visited is None:
         visited = set()
     
-    # Vérifier si on a atteint la profondeur maximale
     if current_depth >= max_depth:
         return []
     
@@ -320,12 +372,11 @@ def get_all_subcategories(lang, category, visited=None, current_depth=0, max_dep
     visited.add(category)
     subcategories = []
     
-    # Récupérer les sous-catégories directes
     params = {
         "action": "query",
         "list": "categorymembers",
         "cmtitle": category,
-        "cmtype": "subcat",  # On ne cherche que les sous-catégories
+        "cmtype": "subcat",  
         "cmlimit": 10,
         "format": "json"
     }
@@ -339,14 +390,21 @@ def get_all_subcategories(lang, category, visited=None, current_depth=0, max_dep
     for member in data.get("query", {}).get("categorymembers", []):
         subcat = member["title"]
         subcategories.append(subcat)
-        # Récursion pour les sous-catégories de cette sous-catégorie
-        # Incrémenter la profondeur actuelle
         subcategories.extend(get_all_subcategories(lang, subcat, visited, current_depth + 1, max_depth))
     
     return subcategories
 
 
 def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
+    """
+    Retrieve missing articles in the target language by comparing categories and subcategories with the reference language.
+
+    :param request: Django HTTP request
+    :param edit_lang: Contribution language code
+    :param category: Category name in contribution language
+    :param refer_lang: Reference language code
+    :return: JsonResponse with list of missing articles (title, source)
+    """
     articles = []
     try:
         # Get the Q code for the category from Wikidata
@@ -359,21 +417,18 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
         if not category_name_in_refer_lang:
             return JsonResponse({"noCatError": " category names not found"}, status=400)
 
-        # Récupérer toutes les sous-catégories
         max_depth = int(request.GET.get('max_depth',1))
         print("max_depth reçu :", max_depth)
         all_categories = [category_name_in_refer_lang]  # La catégorie principale
         all_categories.extend(get_all_subcategories(refer_lang, category_name_in_refer_lang, max_depth=max_depth))
 
-        # Pour chaque catégorie (principale et sous-catégories)
         for current_category in all_categories:
-            # Récupérer les articles de cette catégorie
             params = {
                 "action": "query",
                 "list": "categorymembers",
                 "cmtitle": current_category,
-                "cmtype": "page",  # On ne cherche que les articles
-                "cmlimit": 20,  # Limite à 20 articles par catégorie
+                "cmtype": "page", 
+                "cmlimit": 20,  
                 "format": "json",
             }
             url = WIKI_API_URL.format(lang=refer_lang)
@@ -381,7 +436,7 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
             response.raise_for_status()
             data = response.json()
 
-            # Ajouter les articles à la liste avec la source
+
             articles.extend({
                 "title": article["title"],
                 "source": current_category
@@ -402,6 +457,13 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
 
 
 def custom_404(request, exception):
+    """
+    Render a custom 404 error page.
+
+    :param request: Django HTTP request
+    :param exception: Exception object
+    :return: Rendered 404.html page with status 404
+    """
     # The requested resource could not be found.
     return render(request, '404.html', status=404)
 

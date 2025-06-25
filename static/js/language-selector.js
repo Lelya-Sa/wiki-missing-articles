@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const languageList = document.getElementById("language-list");
 
   let languages = [];
-  let isLoading = true; // Track loading state
+  let isLoading = true; 
 
   function changeLanguage(langCode) {
     // Redirect to the translated view with ?lang=xx
@@ -13,18 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = `/translated_page/?lang=${langCode}&next=${next}`;
   }
 
-  // Display "Loading..." feedback in the language list
   function showLoading() {
-    languageList.innerHTML = ""; // Clear the list
+    languageList.innerHTML = ""; 
     const loadingItem = document.createElement("li");
     loadingItem.textContent = "Loading languages...";
     loadingItem.style.color = "#555";
     languageList.appendChild(loadingItem);
   }
 
-  // Hide "Loading..." and populate the language list
   async function fetchUpperLanguages() {
-    showLoading(); // Show loading message
+    showLoading(); 
     try {
       const response = await fetch("/api/supported_languages/");
       if (!response.ok) throw new Error("Failed to fetch languages");
@@ -35,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       languageList.innerHTML = "<li style='color: red;'>Failed to load languages.</li>";
     } finally {
       isLoading = false;
-      populateLanguages(); // Populate with all languages once fetched
+      populateLanguages(); 
     }
   }
 

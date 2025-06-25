@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
     async function checkPageInLanguage(title, sourceLang, targetLang) {
         const apiUrl =
                     `https://${sourceLang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=langlinks&lllang=${targetLang}&format=json&origin=*`;
-        const timeout = 10000; // 10 secondes
+        const timeout = 10000; 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const xToolProseStatisticsUrl = `https://xtools.wmcloud.org/api/page/prose/${wiki}/${encodeURIComponent(title)}`;
         const xToolLinksUrl = `https://xtools.wmcloud.org/api/page/links/${wiki}/${encodeURIComponent(title)}`;
 
-        const timeout = 10000; // 10 secondes
+        const timeout = 10000; 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -315,7 +315,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Correction : encodage de la catégorie et ajout du paramètre max_depth
             const url = `/get_articles_from_other_languages/${languageCode}/${encodeURIComponent(category)}/${referLanguageCode}/?max_depth=${maxDepth}`;
             console.log("URL fetchée :", url);
 
@@ -330,12 +329,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (data.articles && data.articles.length > 0) {
-                // ÉTAPE 1: Afficher les articles sans score
+                // Step 1: Display articles without scores
                 displayArticlesWithoutScores(data.articles, referLanguageCode, languageCode);
                 
                 articles_msg.innerHTML = "fetching metadata and compute relevance score of missing articles found";
 
-                // ÉTAPE 2: Traitement hybride avec affichage progressif
+                // Step 2: Process articles hybrid
                 await processArticlesHybrid(data.articles, referLanguageCode, languageCode);
                 
                 articles_msg.innerHTML = "";
@@ -350,7 +349,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Fonction pour afficher les articles sans score
+    // function to display articles without scores
     function displayArticlesWithoutScores(articles, referLanguageCode, languageCode) {
         tableBody.innerHTML = "";
         articles.forEach((article, index) => {
@@ -382,17 +381,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Fonction principale pour le traitement hybride
+    // main function for hybrid processing
     async function processArticlesHybrid(articles, referLanguageCode, languageCode) {
-        const BATCH_SIZE = 10; // Nombre d'articles pour commencer le calcul des scores
+        const BATCH_SIZE = 10; 
         const filteredMetadataList = [];
         const processedArticles = new Set();
         
-        // Traiter les articles par batch
+        // process articles by batch
         for (let i = 0; i < articles.length; i += BATCH_SIZE) {
             const batch = articles.slice(i, i + BATCH_SIZE);
             
-            // Traiter le batch actuel
+            // process current batch
             for (const articleObj of batch) {
                 const title = typeof articleObj === 'string' ? articleObj : articleObj.title;
                 const source = articleObj.source || '';
@@ -410,25 +409,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
             
-            // Si on a assez d'articles, calculer et afficher les scores
+            // if we have enough articles, calculate and display scores
             if (filteredMetadataList.length >= BATCH_SIZE || i + BATCH_SIZE >= articles.length) {
                 await calculateAndDisplayScores(filteredMetadataList, referLanguageCode, languageCode, false);
             }
         }
         
-        // ÉTAPE 3: Calcul final avec tous les articles
+        // Step 3: Calculate final scores with all articles
         articles_msg.innerHTML = "Ranking...";
         await calculateAndDisplayScores(filteredMetadataList, referLanguageCode, languageCode, true);
     }
 
-    // Fonction pour calculer et afficher les scores
+    // function to calculate and display scores
     async function calculateAndDisplayScores(metadataList, referLanguageCode, languageCode, isFinal = false) {
         if (metadataList.length === 0) {
             articles_msg.innerHTML = "Search completed, No missing article found under this category";
             return;
         }
 
-        // Calculer les max_values
+        // calculate max_values
         const maxValues = {
             views: Math.max(...metadataList.map(m => Number(m.views)).filter(v => !isNaN(v))),
             langlinks: Math.max(...metadataList.map(m => Number(m.langlinks)).filter(v => !isNaN(v))),
@@ -442,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
             secs_since_last_edit: Math.max(...metadataList.map(m => Number(m.secs_since_last_edit)).filter(v => !isNaN(v)))
         };
 
-        // Normaliser et calculer les scores
+        // normalize and calculate scores
         metadataList.forEach(m => {
             m.normViews = maxValues.views ? safe_division(m.views, maxValues.views) : 0;
             m.normLanglinks = maxValues.langlinks ? safe_division(m.langlinks, maxValues.langlinks) : 0;
@@ -458,14 +457,14 @@ document.addEventListener("DOMContentLoaded", function () {
             m.score = computeRankingScore(m, weights);
         });
 
-        // Trier par score décroissant
+        // sort by descending score
         metadataList.sort((a, b) => b.score - a.score);
 
-        // Afficher les résultats
+        // display results
         displayArticlesWithScores(metadataList, referLanguageCode, languageCode, isFinal);
     }
 
-    // Fonction pour afficher les articles avec scores
+    // function to display articles with scores
     function displayArticlesWithScores(sortedMetadataList, referLanguageCode, languageCode, isFinal = false) {
         tableBody.innerHTML = "";
         sortedMetadataList.forEach((meta, index) => {
@@ -494,7 +493,7 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
             tableBody.appendChild(row);
         });
-        // Si c'est le résultat final, on stocke et affiche le bouton
+        // if it's the final result, store and display the button
         if (isFinal) {
             finalSortedResults = sortedMetadataList.map(meta => ({
                 title: meta.title,
@@ -509,12 +508,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Fonction helper pour la division sécurisée
+    // Helper function for safe division
+    /**
+     * Safely divide two numbers, returning 0 if denominator is 0.
+     *
+     * @param numerator {number} Numerator
+     * @param denominator {number} Denominator
+     * @return {number} Result of division or 0
+     */
     function safe_division(numerator, denominator) {
         return denominator === 0 ? 0 : numerator / denominator;
     }
 
-    // Fonction pour gérer les erreurs
+    // Error handling for article fetching
+    /**
+     * Handle errors during article fetching and display appropriate messages.
+     *
+     * @param error {Error} Error object
+     */
     function handleError(error) {
         articles_msg.innerHTML = "";
         if (error.message === "noCatError") {
