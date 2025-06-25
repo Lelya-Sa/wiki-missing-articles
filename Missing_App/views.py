@@ -360,8 +360,10 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
             return JsonResponse({"noCatError": " category names not found"}, status=400)
 
         # Récupérer toutes les sous-catégories
+        max_depth = int(request.GET.get('max_depth',1))
+        print("max_depth reçu :", max_depth)
         all_categories = [category_name_in_refer_lang]  # La catégorie principale
-        all_categories.extend(get_all_subcategories(refer_lang, category_name_in_refer_lang))
+        all_categories.extend(get_all_subcategories(refer_lang, category_name_in_refer_lang, max_depth=max_depth))
 
         # Pour chaque catégorie (principale et sous-catégories)
         for current_category in all_categories:

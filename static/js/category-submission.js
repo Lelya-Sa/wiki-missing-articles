@@ -294,6 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
         articles_msg.innerHTML = "";
         document.getElementById("save-csv-btn").style.display = "none";
 
+        const maxDepth = document.getElementById("max-depth-select").value;
         const edit_lang = document.getElementById("article-language-search").value.trim();
         const refer_lang = document.getElementById("article-refer-language-search").value.trim();
         const category = document.getElementById("all-category-search").value.trim();
@@ -314,9 +315,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            // Correction : encodage de la catégorie et ajout du paramètre max_depth
+            const url = `/get_articles_from_other_languages/${languageCode}/${encodeURIComponent(category)}/${referLanguageCode}/?max_depth=${maxDepth}`;
+            console.log("URL fetchée :", url);
+
             // Fetch missing articles
-            const response = await fetch(
-                `/get_articles_from_other_languages/${languageCode}/${category}/${referLanguageCode}/`);
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.noCatError) {
@@ -541,10 +545,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const edit_lang = document.getElementById("article-language-search").value.trim();
         const refer_lang = document.getElementById("article-refer-language-search").value.trim();
         const category = document.getElementById("all-category-search").value.trim();
+        const maxDepth = document.getElementById("max-depth-select").value.trim();
         const edit_code = edit_lang.match(/\((.*?)\)/)?.[1] || "edit";
         const ref_code = refer_lang.match(/\((.*?)\)/)?.[1] || "ref";
         const safeCat = category.replace(/[^a-zA-Z0-9-_]/g, "_");
-        const filename = `Ed_${edit_code}_ref_${ref_code}_cat_${safeCat}.csv`;
+        const filename = `Ed_${edit_code}_ref_${ref_code}_cat_${safeCat}_depth_${maxDepth}.csv`;
         let csv = "Name of the article,Relevance score,Source,View Link,Edit Link\n";
         finalSortedResults.forEach(meta => {
             const encodedTitle = encodeURIComponent(meta.title);
