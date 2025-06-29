@@ -4,7 +4,6 @@
 - survey for Wikimedia editor on which metrics are more important !!!!. 
 - write requirements.txt file
 - write README
-- documentation
 
 
 should add in read me :

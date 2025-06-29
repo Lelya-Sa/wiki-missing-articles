@@ -162,10 +162,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to fetch all categories
     async function fetchAllCategories(lang, query = "") {
+
         if (!lang) {
             all_cat_feedbackMessage.textContent = "Please select a language first.";
             return;
         }
+
         if (isFetching) return;
 
         // Default to empty string if query is not provided
@@ -243,11 +245,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const selectedLanguage = document.getElementById("article-language-search").value;
         const languageCode = selectedLanguage.match(/\((.*)\)/)?.[1]; // Extract language code
 
+        const selectedReferLanguage = document.getElementById("article-refer-language-search").value;
+        const referLanguageCode = selectedReferLanguage.match(/\((.*)\)/)?.[1]; // Extract language code
+
         if (!languageCode) {
             all_cat_feedbackMessage.textContent = "Please select a language first.";
             allCategoryList.innerHTML = "<li style='color: red;'>Please select a language first.</li>";
             return;
         }
+        if (languageCode === referLanguageCode) {
+            all_cat_feedbackMessage.textContent = "The selected languages are the same!";
+            allCategoryList.innerHTML = "<li style='color: red;'> </li>";
+            return;
+        }
+
         fetchAllCategories(languageCode, query).then(() => {displayFilteredAllCategories(query);    });
     }, 300)); // Debounce delay of 500ms
 
