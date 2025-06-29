@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="fixed articles urls&#10;TODO : - improve rating system.&#10;- list result data in table.&#10;- optimize running time.&#10;- make a better design of the page.&#10;-fix portal search ( not mandatory)&#10;making the page redirected to the translated selected language page ( not mandatory)">
-      <change beforePath="$PROJECT_DIR$/.idea/finalproject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/finalproject.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="STATIC_ROOT">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/finalproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/finalproject/settings.py" afterDir="false" />
     </list>
@@ -632,7 +630,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744684685755</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="STATIC_ROOT">
+      <option name="closed" value="true" />
+      <created>1751220163201</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1751220163201</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -662,7 +668,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="language click bug fixed language-selector.js&#10;TODO : search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="fixed bugs in category page and redesigned&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="deleted search by naem&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
@@ -687,6 +692,7 @@
     <MESSAGE value="added translation pages&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
     <MESSAGE value="restyled right top container&#10;fixed translation&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
     <MESSAGE value="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
-    <option name="LAST_COMMIT_MESSAGE" value="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
+    <MESSAGE value="STATIC_ROOT" />
+    <option name="LAST_COMMIT_MESSAGE" value="STATIC_ROOT" />
   </component>
 </project>
