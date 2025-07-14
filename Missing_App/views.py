@@ -386,7 +386,7 @@ def get_all_subcategories(lang, category, visited=None, current_depth=0, max_dep
     response.raise_for_status()
     data = response.json()
     
-    # Ajouter les sous-catégories directes
+    # Add the direct subcategories
     for member in data.get("query", {}).get("categorymembers", []):
         subcat = member["title"]
         subcategories.append(subcat)
@@ -442,7 +442,7 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
                 "source": current_category
             } for article in data["query"]["categorymembers"])
 
-        # Supprimer les doublons par titre (en gardant la première source trouvée)
+        # Remove duplicates by title (keeping the first source found)
         seen_titles = set()
         unique_articles = []
         for art in articles:
