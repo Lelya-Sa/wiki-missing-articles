@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="">
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="Final Updates">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Missing_App/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Missing_App/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TODO future development.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -268,7 +268,8 @@
       <workItem from="1744633569341" duration="37228000" />
       <workItem from="1744683210753" duration="1498000" />
       <workItem from="1744737177379" duration="8892000" />
-      <workItem from="1752500326074" duration="1089000" />
+      <workItem from="1752500326074" duration="1882000" />
+      <workItem from="1752644944174" duration="161000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -648,7 +649,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751221207611</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Final Updates">
+      <option name="closed" value="true" />
+      <created>1752501545425</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1752501545425</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -678,7 +687,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added top-bar to category page&#10;fixed bugs in category page&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="fixed bugs in category page and redesigned&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="deleted search by naem&#10;TODO : &#10;list articles&#10;search by subcategories&#10;making the page redirected to the selected language page&#10;exclude articles in selected language" />
     <MESSAGE value="added search by portal or by category &#10;and listed articles with a url&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
@@ -703,6 +711,7 @@
     <MESSAGE value="restyled right top container&#10;fixed translation&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
     <MESSAGE value="restyled right top container&#10;TODO : &#10;- implement PAGERANK algorithm.&#10;- the tool should be translated to more Wikipedia's supported language ( multilingual tool)&#10;- runtime optimization (ex. make use of available cache storage in the Media Wiki cloud).&#10;- survey for Wikimedia editor on which metrics are more important !!!!. &#10;- write requirements.txt file&#10;- write README&#10;- documentation" />
     <MESSAGE value="STATIC_ROOT" />
-    <option name="LAST_COMMIT_MESSAGE" value="STATIC_ROOT" />
+    <MESSAGE value="Final Updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="Final Updates" />
   </component>
 </project>

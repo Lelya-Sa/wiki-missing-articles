@@ -15,6 +15,10 @@ The tool supports multilingual content enrichment and encourages cross-language 
 - Simple and intuitive user interface
 - Responsive design (works on multiple screen sizes)
 
+## Supported Languages
+The current tool interface is available in the following languages:  
+**en, ar, es, fr, he, hi, ru, zh**
+
 ## Technologies Used
 - **Python** - backend logic
 - **Django** - web framework
