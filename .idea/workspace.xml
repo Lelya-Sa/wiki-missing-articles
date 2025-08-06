@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="requirements.txt">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="48255a17-33b2-4fb2-b55f-8499fc96bdeb" name="Changes" comment="Update README.md">
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -271,7 +270,7 @@
       <workItem from="1752644944174" duration="417000" />
       <workItem from="1753381512926" duration="1617000" />
       <workItem from="1754487519294" duration="2152000" />
-      <workItem from="1754507211437" duration="896000" />
+      <workItem from="1754507211437" duration="1264000" />
     </task>
     <task id="LOCAL-00001" summary="index.html&#10;search_by_q.html&#10;views.py&#10;urls.py (project not Missing_App)">
       <created>1737118314494</created>
@@ -314,14 +313,6 @@
       <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
       <updated>1737132370116</updated>
-    </task>
-    <task id="LOCAL-00010" summary="&#10;views.py&#10;search_by_name.html&#10;urls.py">
-      <option name="closed" value="true" />
-      <created>1737399555166</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1737399555166</updated>
     </task>
     <task id="LOCAL-00011" summary="&#10;views.py&#10;search_by_name.html&#10;urls.py">
       <option name="closed" value="true" />
@@ -659,7 +650,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754487842017</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="Update README.md">
+      <option name="closed" value="true" />
+      <created>1754508145000</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1754508145000</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -689,7 +688,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added search by portal or by category &#10;and listed articles with a url&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
     <MESSAGE value="hided portal and added use message&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
     <MESSAGE value="design&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
     <MESSAGE value="design and added the reference language selection&#10;TODO : &#10;list missing articles&#10;making the page redirected to the translated selected language page ( not mandatory)&#10;exclude articles in selected language" />
@@ -714,6 +712,7 @@
     <MESSAGE value="Final Updates" />
     <MESSAGE value="UpdateReadme" />
     <MESSAGE value="requirements.txt" />
-    <option name="LAST_COMMIT_MESSAGE" value="requirements.txt" />
+    <MESSAGE value="Update README.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update README.md" />
   </component>
 </project>

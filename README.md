@@ -43,7 +43,7 @@ python manage.py collectstatic
 5. Run the local server:
 python manage.py runserver
 
-You can now access the tool in your browser at:
+After this steps you can now access the tool in your browser at:
 http://127.0.0.1:8000/
 
 
