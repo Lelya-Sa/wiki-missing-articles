@@ -28,9 +28,11 @@ The current tool interface is available in the following languages:
 - **MediaWiki** - content structure compatibility
 
 ## Installation
-To run the project locally on your machine using the Windows Command Prompt (CMD), follow these steps:
+To run the project locally on your machine using the command line, follow these steps:
 
 Make sure you have Python 3.11 installed on your system.
+
+For Windows:
 
 1. Clone the GitHub repository:
 git clone https://github.com/Lelya-Sa/wiki-missing-articles.git
@@ -46,6 +48,21 @@ python manage.py runserver
 After this steps you can now access the tool in your browser at:
 http://127.0.0.1:8000/
 
+For Mac/Linux:
+
+1. Clone the GitHub repository:
+git clone https://github.com/Lelya-Sa/wiki-missing-articles.git
+2. Enter the project directory:
+cd wiki-missing-articles
+3. Install all required dependencies:
+pip3 install -r requirements.txt
+4. Collect static files:
+python3 manage.py collectstatic
+5. Run the local server:
+python3 manage.py runserver
+
+After this steps you can now access the tool in your browser at:
+http://127.0.0.1:8000/
 
 ## Usage
 1. Select target language and source language.
