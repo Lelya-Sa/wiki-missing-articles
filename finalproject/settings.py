@@ -29,7 +29,6 @@ SECRET_KEY = 'django-insecure-*8$^id4712p@mazemi%r*pn-avn-$n&$#oe^4#$4hlz&b6+p+r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['*']
 
 # DEBUG = False
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'yourdomain.com']
@@ -49,6 +48,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Missing_App'
+]
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+
+# Only needed if you plan to run collectstatic in production
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Only needed if you have a /static folder in your project
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
 ]
 
 MIDDLEWARE = [
@@ -136,8 +150,11 @@ def get_ui_languages_from_api():
             return cached_languages["languages"]
 
         # If not cached, fetch from the Wikimedia API
-        api_url = "https://www.mediawiki.org/w/api.php?action=sitematrix&format=json&origin=*"
-        response = requests.get(api_url)
+        api_url = "https://meta.wikimedia.org/w/api.php?action=sitematrix&format=json"
+        headers = {
+            "User-Agent": "multilingual-missing-articles/1.0 (https://multilingual-missing-articles.toolforge.org/)"
+        }
+        response = requests.get(api_url, headers=headers, timeout=10)
         response.raise_for_status()  # Raise an error for bad responses
         data = response.json()
 
@@ -537,15 +554,6 @@ LANGUAGES = [
 # Indicate where Django should look for translation files:
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
-]
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
 ]
 
 # Default primary key field type

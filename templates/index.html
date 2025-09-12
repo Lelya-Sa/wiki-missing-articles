@@ -6,6 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans "Wikipedia Missing Articles" %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .logos-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .partner-logo {
+            max-height: 75px;
+            max-width: 250px;
+            height: auto;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .wikimedia-logo {
+            max-height: 110px;
+        }
+
+        .technion-logo {
+            max-height: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .logos-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .partner-logo {
+                max-height: 50px;
+                max-width: 150px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="top-bar">
@@ -18,8 +56,8 @@
             </a>
         </div>
         <!-- Top-right Language Button -->
-        <div class="top-right-container" >  
-            
+        <div class="top-right-container" >
+
             <button id="language-search-button" class="search-button">
                 <img src="{% static 'images/language_icon_gray.png' %}" alt="{% trans 'language icon' %}" class="language_icon">
                 {% trans "Page Language" %}
@@ -27,45 +65,60 @@
             <!-- Language Search (Initially hidden) -->
             <div class="language-selector" id="language-selector">
                 <label for="language-search"></label>
-                <input 
-                    type="text" 
-                    id="language-search" 
-                    placeholder="{% trans 'Search for a language...' %}" 
+                <input
+                    type="text"
+                    id="language-search"
+                    placeholder="{% trans 'Search for a language...' %}"
                     autocomplete="off"
                 >
                 <ul id="language-list" class="language-list">
                     <!-- Suggestions will be dynamically populated -->
                 </ul>
             </div>
-            
+
         </div>
     </div>
-    
+
     <div class="central-container" >
-        <div style="min-block-size: 100%; width: 100%"> 
+        <div style="min-block-size: 100%; width: 100%">
             <!-- Wikipedia Globe -->
             <img src="{% static 'images/wikipedia-spins.gif' %}" alt="{% trans 'Wikipedia Globe' %}" class="globe" loading="lazy">
         </div>
         <div style="min-block-size: 100%; width: 100%">
             <br>
         </div>
-        <div style="min-block-size: 100%; width: 100%"> 
+        <div style="min-block-size: 100%; width: 100%">
             <!-- Heading -->
             <h1 id="heading" text-align="center">{% trans "Wikipedia Missing Articles" %}</h1>
+
+            <!-- Partner Logos -->
+            <div class="logos-container">
+                <img src="{% static 'images/wikimedia.jpg' %}"
+                     alt="{% trans 'Wikimedia Israel' %}"
+                     class="partner-logo wikimedia-logo"
+                     title="{% trans 'Wikimedia Israel' %}">
+
+                <img src="{% static 'images/socialhub-logo.jpg' %}"
+                     alt="{% trans 'Technion Social Hub' %}"
+                     class="partner-logo technion-logo"
+                     title="{% trans 'Technion Social Hub' %}">
+            </div>
+
             <p id="tagline" class="tagline">
-                {% trans "Explore missing articles searching by category." %}
+                {% trans "Explore missing articles searching by category" %}
             </p>
             <br>
+
             <!-- Search Options -->
             <div class="search-options">
-                <a href="{% url 'missing_articles_by_category' %}" 
+                <a href="{% url 'missing_articles_by_category' %}"
                    class="category-button" id="search-by-category">
                    {% trans "Search by Category" %}
                 </a>
             </div>
         </div>
     </div>
-    
+
     <div id="welcome-modal" class="modal">
         <div class="modal-content">
             <span class="close-button" id="close-welcome">&times;</span>
@@ -78,7 +131,7 @@
             <p>Currently, we developed search by category, click on the button to get started</p>
         </div>
     </div>
-    
+
     <script src="{% static 'js/welcome-popup.js' %}" defer></script>
     <script src="{% static 'js/language-selector.js' %}" defer></script>
 

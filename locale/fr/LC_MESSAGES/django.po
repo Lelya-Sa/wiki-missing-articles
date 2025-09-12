@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-15 05:02+0300\n"
+"POT-Creation-Date: 2025-09-11 21:23+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,20 +24,20 @@ msgstr "Articles manquants de Wikipedia"
 
 #: .\templates\index.html:13 .\templates\index.html:16
 #: .\templates\index.html:17 .\templates\missing_articles_by_category.html:26
-#: .\templates\missing_articles_by_category.html:29
 #: .\templates\missing_articles_by_category.html:30
+#: .\templates\missing_articles_by_category.html:32
 msgid "Wikipedia Home"
 msgstr "Accueil de Wikipedia"
 
-#: .\templates\index.html:24 .\templates\missing_articles_by_category.html:37
+#: .\templates\index.html:24 .\templates\missing_articles_by_category.html:40
 msgid "language icon"
 msgstr "Icône de langue"
 
-#: .\templates\index.html:25 .\templates\missing_articles_by_category.html:38
+#: .\templates\index.html:25 .\templates\missing_articles_by_category.html:41
 msgid "Page Language"
 msgstr "Langue de la page"
 
-#: .\templates\index.html:33 .\templates\missing_articles_by_category.html:46
+#: .\templates\index.html:33 .\templates\missing_articles_by_category.html:50
 msgid "Search for a language..."
 msgstr "Rechercher une langue..."
 
@@ -57,7 +57,7 @@ msgstr "Rechercher par catégorie"
 msgid "Language & Category Selection"
 msgstr "Sélection de la langue et de la catégorie"
 
-#: .\templates\missing_articles_by_category.html:63
+#: .\templates\missing_articles_by_category.html:67
 msgid ""
 "<h2>Welcome to Search Missing Articles by Category!</h2>\n"
 "         <p>First enter the language you want to contribute to on the left, "
@@ -69,13 +69,15 @@ msgid ""
 "            "
 msgstr ""
 "<h2>Bienvenue dans la recherche d’articles manquants par catégorie !</h2>\n"
-"         <p>Commencez par entrer la langue à laquelle vous souhaitez contribuer à gauche, "
-"et la langue de référence à droite</p>\n"
-"         <p>Ensuite, vous pouvez rechercher dans toutes les catégories de la langue de contribution sélectionnée</p>\n"
-"         <p>Après la soumission, les articles manquants dans la langue que vous souhaitez enrichir s’afficheront ci-dessous</p>\n"
+"         <p>Commencez par entrer la langue à laquelle vous souhaitez "
+"contribuer à gauche, et la langue de référence à droite</p>\n"
+"         <p>Ensuite, vous pouvez rechercher dans toutes les catégories de la "
+"langue de contribution sélectionnée</p>\n"
+"         <p>Après la soumission, les articles manquants dans la langue que "
+"vous souhaitez enrichir s’afficheront ci-dessous</p>\n"
 "            "
 
-#: .\templates\missing_articles_by_category.html:69
+#: .\templates\missing_articles_by_category.html:74
 msgid ""
 "Click here to choose your preferred page language! Not all languages are "
 "supported."
@@ -83,53 +85,56 @@ msgstr ""
 "Cliquez ici pour choisir la langue de page préférée ! Toutes les langues ne "
 "sont pas supportées."
 
-#: .\templates\missing_articles_by_category.html:70
+#: .\templates\missing_articles_by_category.html:76
 msgid "Click here to return to main page"
 msgstr "Cliquez ici pour retourner à la page principale"
 
-#: .\templates\missing_articles_by_category.html:71
+#: .\templates\missing_articles_by_category.html:78
 msgid ""
 "Search for the language you want to contribute to or scroll through the list."
 msgstr ""
 "Recherchez la langue à laquelle vous souhaitez contribuer ou faites défiler "
 "la liste."
 
-#: .\templates\missing_articles_by_category.html:72
+#: .\templates\missing_articles_by_category.html:80
 msgid ""
 "Search for the language you want to refer from or scroll through the list."
 msgstr ""
 "Recherchez la langue depuis laquelle vous souhaitez vous référer ou faites "
 "défiler la liste."
 
-#: .\templates\missing_articles_by_category.html:73
-msgid "Write the category you are interested in"
-msgstr "Saisissez la catégorie qui vous intéresse"
+#: .\templates\missing_articles_by_category.html:82
+msgid ""
+"Write the category you are interested in. Then select the depth of the "
+"subcategory you want to include in the search (1 = only direct children, 3 = "
+"deep search)."
+msgstr ""
 
-#: .\templates\missing_articles_by_category.html:74
+#: .\templates\missing_articles_by_category.html:84
 msgid "When you are done choosing languages and category, click on submit."
 msgstr "Une fois les langues et la catégorie choisies, cliquez sur Soumettre."
 
-#: .\templates\missing_articles_by_category.html:75
+#: .\templates\missing_articles_by_category.html:86
 msgid "The missing articles will appear here"
 msgstr "Les articles manquants apparaîtront ici"
 
-#: .\templates\missing_articles_by_category.html:76
+#: .\templates\missing_articles_by_category.html:87
 msgid "Next"
 msgstr "Suivant"
 
-#: .\templates\missing_articles_by_category.html:77
+#: .\templates\missing_articles_by_category.html:88
 msgid "Back"
 msgstr "Précédent"
 
-#: .\templates\missing_articles_by_category.html:78
+#: .\templates\missing_articles_by_category.html:89
 msgid "Done"
 msgstr "Terminé"
 
-#: .\templates\missing_articles_by_category.html:86
+#: .\templates\missing_articles_by_category.html:97
 msgid "Search Missing Articles by Category"
 msgstr "Rechercher les articles manquants par catégorie"
 
-#: .\templates\missing_articles_by_category.html:91
+#: .\templates\missing_articles_by_category.html:102
 msgid ""
 "\n"
 "                First enter the language you want to contribute to on the "
@@ -141,7 +146,7 @@ msgstr ""
 "contribuer à gauche, et la langue de référence à droite\n"
 "            "
 
-#: .\templates\missing_articles_by_category.html:106
+#: .\templates\missing_articles_by_category.html:116
 msgid ""
 "\n"
 "                            Select the language you want to <b>contribute</"
@@ -153,7 +158,7 @@ msgstr ""
 "<b>contribuer</b> :\n"
 "                        "
 
-#: .\templates\missing_articles_by_category.html:131
+#: .\templates\missing_articles_by_category.html:141
 msgid ""
 "\n"
 "                         Select the language you want to <b>refer</b> from:\n"
@@ -164,7 +169,7 @@ msgstr ""
 "souhaitez <b>vous référer</b> :\n"
 "                         "
 
-#: .\templates\missing_articles_by_category.html:156
+#: .\templates\missing_articles_by_category.html:166
 msgid ""
 "\n"
 "                    Loading languages...\n"
@@ -174,7 +179,7 @@ msgstr ""
 "                    Chargement des langues...\n"
 "                    "
 
-#: .\templates\missing_articles_by_category.html:167
+#: .\templates\missing_articles_by_category.html:177
 msgid ""
 "\n"
 "                    you can search from all categories in the selected "
@@ -186,7 +191,7 @@ msgstr ""
 "la langue de contribution sélectionnée\n"
 "                    "
 
-#: .\templates\missing_articles_by_category.html:178
+#: .\templates\missing_articles_by_category.html:188
 msgid ""
 "\n"
 "                    Write a category name in contribute language:\n"
@@ -197,7 +202,7 @@ msgstr ""
 "contribution :\n"
 "                    "
 
-#: .\templates\missing_articles_by_category.html:206
+#: .\templates\missing_articles_by_category.html:220
 msgid ""
 "\n"
 "                    Submit\n"
@@ -207,7 +212,7 @@ msgstr ""
 "                    Soumettre\n"
 "                    "
 
-#: .\templates\missing_articles_by_category.html:219
+#: .\templates\missing_articles_by_category.html:233
 msgid ""
 "\n"
 "                below are the missing articles in the language you want to "
@@ -219,7 +224,7 @@ msgstr ""
 "à laquelle vous souhaitez contribuer\n"
 "                "
 
-#: .\templates\missing_articles_by_category.html:230
+#: .\templates\missing_articles_by_category.html:244
 msgid ""
 "\n"
 "                Articles Missing in Selected Contribute Language:\n"
@@ -229,3 +234,6 @@ msgstr ""
 "                Articles manquants dans la langue de contribution "
 "sélectionnée :\n"
 "                "
+
+#~ msgid "Write the category you are interested in"
+#~ msgstr "Saisissez la catégorie qui vous intéresse"

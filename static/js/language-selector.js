@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const languageList = document.getElementById("language-list");
 
   let languages = [];
-  let isLoading = true; 
+  let isLoading = true;
+
 
   function changeLanguage(langCode) {
     // Redirect to the translated view with ?lang=xx
@@ -24,10 +25,26 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchUpperLanguages() {
     showLoading(); 
     try {
+      // 1️⃣ Fetch the available codes from translatedpaget
+      const translatedResponse = await fetch("/get_page_translation_supported_languages");
+      if (!translatedResponse.ok) throw new Error("Failed to fetch translated page languages");
+      const translatedData = await translatedResponse.json(); // flat object { code: name }
+      availableCodes = translatedData;
+
+      // 2️⃣ Fetch full languages with native names
       const response = await fetch("/api/supported_languages/");
-      if (!response.ok) throw new Error("Failed to fetch languages");
-      const data = await response.json();
-      languages = data.languages;
+      if (!response.ok) throw new Error("Failed to fetch supported languages");
+      const data = await response.json(); // { languages: [ { code, name, native_name } ] }
+
+      // Filter only codes that exist in translatedData
+      languages = data.languages
+        .filter(lang => lang.code in availableCodes)
+        .map(lang => ({
+          code: lang.code,
+          name: availableCodes[lang.code], // use the name from translatedpaget
+          native_name: lang.native_name || ""
+        }));
+
     } catch (error) {
       console.error("Error fetching languages:", error);
       languageList.innerHTML = "<li style='color: red;'>Failed to load languages.</li>";
@@ -37,21 +54,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Populate the language list based on search query
-  function populateLanguages(query = "") {
-    const currentLang = document.documentElement.lang; // <-- grabs current language from <html lang="...">
+async function populateLanguages(query = "") {
+    const currentLang = document.documentElement.lang; // current <html lang="...">
     const normalizedQuery = query.toLowerCase();
 
-    const filteredLanguages = query
-      ? languages.filter((lang) =>
+    let languageList = document.getElementById("language-list");
+    languageList.innerHTML = ""; // clear previous list
+
+   const filteredLanguages = query
+      ? languages.filter(lang =>
           (lang.name && lang.name.toLowerCase().includes(normalizedQuery)) ||
           (lang.native_name && lang.native_name.toLowerCase().includes(normalizedQuery)) ||
           (lang.code && lang.code.toLowerCase().includes(normalizedQuery))
         )
-
-      : languages; // If no query, show all languages
-
-    languageList.innerHTML = ""; // Clear previous list
+      : languages;
 
     if (filteredLanguages.length === 0) {
       const noResults = document.createElement("li");
@@ -61,9 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    filteredLanguages.forEach((lang) => {
+    filteredLanguages.forEach(lang => {
       const li = document.createElement("li");
-      li.textContent = `${lang.name} - ${lang.native_name ? lang.native_name : ""} (${lang.code})`;
+      li.textContent = `${lang.name} - ${lang.native_name} (${lang.code})`;
       li.dataset.langCode = lang.code;
       if (lang.code === currentLang) {
         li.style.fontWeight = "bold";
@@ -74,6 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
       languageList.appendChild(li);
     });
   }
+
 
   // Toggle dropdown visibility
 languageSearchButton.addEventListener("click", (e) => {
@@ -86,6 +103,7 @@ languageSearchButton.addEventListener("click", (e) => {
     if (isLoading) showLoading(); // Show "Loading..." if still loading
     else populateLanguages(); // Populate the list with all languages if loaded
     languageSearch.focus(); // Focus the search bar
+    languageList.style.display = "block";  // Make sure the list is visible
   } else {
     // Hide the dropdown
     languageSelector.classList.remove("active");

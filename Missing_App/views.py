@@ -38,9 +38,16 @@ from django.utils import translation
 
 WIKI_API_URL = "https://{lang}.wikipedia.org/w/api.php"
 WIKIDATA_URL = "https://www.wikidata.org/wiki/Special:EntityData/{qcode}.json"
+headers = {
+    "User-Agent": "multilingual-missing-articles/1.0 (https://multilingual-missing-articles.toolforge.org/)"
+}
 
 from django.shortcuts import redirect
 from django.shortcuts import render
+
+
+def get_page_translation_supported_languages(request):
+    return JsonResponse(dict(settings.LANGUAGES))
 
 
 def dictfetchall(cursor):
@@ -113,7 +120,7 @@ def translated_page(request):  # TODO support translation to wikipedia languages
 def get_prefix(lang="en", type="category"):
     """
     Get the correct category or portal namespace prefix for a given Wikipedia language.
-
+https://en.wikipedia.org/w/api.php/action=query&meta=siteinfo&siprop=namespaces&format=json
     :param lang: Wikipedia language code (default: 'en')
     :param type: Namespace type ('category' or 'portal')
     :return: Namespace prefix string (e.g., 'Category:', 'تصنيف:')
@@ -127,7 +134,7 @@ def get_prefix(lang="en", type="category"):
         "format": "json"
     }
 
-    response = requests.get(base_url, params=params)
+    response = requests.get(base_url, params=params,headers=headers)
     response.raise_for_status()
     data = response.json()
 
@@ -155,9 +162,10 @@ def get_supported_languages(request):
         return JsonResponse({"languages": cached_languages})
 
     # If not cached, fetch from the Wikimedia API
-    api_url = "https://www.mediawiki.org/w/api.php?action=sitematrix&format=json&origin=*"
+    api_url = "https://meta.wikimedia.org/w/api.php?action=sitematrix&format=json"
+
     try:
-        response = requests.get(api_url)
+        response = requests.get(api_url, headers=headers, timeout=10)
         response.raise_for_status()  # Raise an error for bad responses
         data = response.json()
 
@@ -184,7 +192,7 @@ def get_supported_languages(request):
 
     except requests.RequestException as e:
         error_message = f"An error occurred while searching for languages: {e}"
-        return JsonResponse({"error": "Failed to fetch data from Wikipedia. Please try again later."}, status=500)
+        return JsonResponse({"error": error_message}, status=500)
 
 
 def get_categories_with_query(request, lang, query):
@@ -212,7 +220,7 @@ def get_categories_with_query(request, lang, query):
     }
 
     try:
-        response = requests.get(base_url, params=params)
+        response = requests.get(base_url, params=params, headers=headers)
         response.raise_for_status()
         data = response.json()
 
@@ -244,7 +252,7 @@ def get_qcode(page_name, lang, type="category"):
 
         wikipedia_url =\
             f"https://{lang}.wikipedia.org/w/api.php?action=query&titles={page_name}&prop=pageprops&format=json"
-        response = requests.get(wikipedia_url)
+        response = requests.get(wikipedia_url, headers=headers)
         response.raise_for_status()
         data = response.json()
         """
@@ -309,7 +317,7 @@ def get_page_name_in_refer_lang(qcode, refer_lang, edit_lang=None):
         # Query Wikidata to get translations for the Q code
         wikidata_url \
             = (f"https://www.wikidata.org/w/api.php?action=wbgetentities&ids={qcode}&props=labels&languages={refer_lang}&format=json")
-        response = requests.get(wikidata_url)
+        response = requests.get(wikidata_url, headers=headers)
         response.raise_for_status()
         data = response.json()
         """
@@ -382,7 +390,7 @@ def get_all_subcategories(lang, category, visited=None, current_depth=0, max_dep
     }
     
     url = WIKI_API_URL.format(lang=lang)
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, headers=headers)
     response.raise_for_status()
     data = response.json()
     
@@ -432,7 +440,7 @@ def get_articles_from_other_languages(request, edit_lang, category, refer_lang):
                 "format": "json",
             }
             url = WIKI_API_URL.format(lang=refer_lang)
-            response = requests.get(url, params=params)
+            response = requests.get(url, params=params, headers=headers)
             response.raise_for_status()
             data = response.json()
 

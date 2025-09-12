@@ -32,7 +32,12 @@ document.addEventListener("DOMContentLoaded", () => {
         classes: 'shepherd-theme-arrows',
         scrollTo: true,
         scrollToHandler: (el) => {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (el) { // Check if the element was found
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            else {
+              console.warn(`Element with selector not found.`); // Optional: log a warning
+              }
           },
         cancelIcon: { enabled: true }
       }

@@ -12,4 +12,8 @@ urlpatterns = [
          name='get_articles_from_other_languages'),
     path('get_categories_with_query/<str:lang>/<str:query>/', views.get_categories_with_query,
          name='get_categories_with_query'),
+    path('get_page_translation_supported_languages', views.get_page_translation_supported_languages,
+         name='get_page_translation_supported_languages'),
 ]
+
+
