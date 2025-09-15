@@ -78,7 +78,7 @@ Live version: https://multilingual-missing-articles.toolforge.org/
 
 ## Team
 - **Malak Atshi**
-- **Leyla Salman**
+- **Lelya Salman**
 - **Layla Assy**
 - **Elie Memmi**
 - **Joseph Mechaly**
